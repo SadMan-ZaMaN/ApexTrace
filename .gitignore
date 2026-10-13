@@ -1,0 +1,30 @@
+# Local-only notes: kept on this computer, never on GitHub.
+# Claude Code still reads CLAUDE.md from disk, so ignoring it changes nothing there.
+CLAUDE.md
+docs/PROJECT_CONTEXT.md
+# Any other private note: put it in private/ and it stays local automatically.
+private/
+
+# Python virtual environment (rebuild with: pip install -r requirements.txt)
+.venv/
+
+# FastF1 download cache: bulk raw F1 data, never committed
+cache/
+
+# Python / pytest leftovers
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Large or raw outputs: results/ is for small CSV/JSON + figures only
+*.ff1pkl
+*.pkl
+*.parquet
+*.sqlite
+results/**/raw/

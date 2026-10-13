@@ -1,0 +1,38 @@
+# Makes this folder an installable Python package called "apextrace".
+#
+# Why: with `pip install -e .` ("editable" install), `import apextrace` works
+# from anywhere -- experiments/, tests/, notebooks/ -- without sys.path hacks,
+# and edits to src/apextrace/ take effect immediately (no reinstall).
+#
+# Two dependency lists, two jobs:
+#   - here: the libraries the package needs (no exact versions)
+#   - requirements.txt: the exact versions we used (pip freeze), for reproducibility
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apextrace"
+version = "0.1.0"
+description = "Signal processing and driver-signature analysis of public F1 telemetry"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastf1",
+    "numpy",
+    "scipy",
+    "pandas",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+# "src layout": the package lives in src/apextrace/, so tests can only import
+# the installed package, never a stray copy in the working directory.
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
