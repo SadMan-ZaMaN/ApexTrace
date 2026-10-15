@@ -1,0 +1,133 @@
+corner_type,feature,estimator,scenario,n,bias,std,rmse,p95_abs
+heavy_braking,brake_onset_m,first on sample,real,1000,12.536,8.134,14.944,26.615
+heavy_braking,brake_onset_m,middle of off-on interval,real,1000,0.161,7.658,7.660,14.145
+heavy_braking,brake_onset_m,speed breakpoint,real,1000,3.511,3.010,4.624,7.969
+heavy_braking,brake_onset_m,speed breakpoint inside off-on interval,real,1000,3.218,2.714,4.210,7.488
+heavy_braking,apex_m,lowest sample,real,1000,-1.110,1.758,2.079,4.173
+heavy_braking,min_speed_kmh,lowest sample,real,1000,0.283,0.399,0.489,0.988
+heavy_braking,apex_m,parabola 3 points,real,1000,-0.789,0.635,1.012,1.707
+heavy_braking,min_speed_kmh,parabola 3 points,real,1000,0.027,0.354,0.356,0.678
+heavy_braking,apex_m,parabola 5 points,real,1000,-0.697,0.441,0.825,1.385
+heavy_braking,min_speed_kmh,parabola 5 points,real,1000,-0.335,0.469,0.576,1.191
+heavy_braking,throttle_pickup_m,first sample >= 10 %,real,1000,2.598,1.815,3.169,5.961
+heavy_braking,throttle_pickup_m,interpolated crossing,real,1000,-0.895,0.964,1.316,2.879
+heavy_braking,full_throttle_m,first sample >= 99 %,real,1000,-1.470,3.658,3.942,7.177
+heavy_braking,full_throttle_m,interpolated crossing,real,1000,-1.470,3.658,3.942,7.177
+heavy_braking,entry_speed_kmh,linear interpolation,real,1000,-0.023,0.241,0.242,0.419
+heavy_braking,exit_speed_kmh,linear interpolation,real,1000,-0.036,0.232,0.235,0.427
+heavy_braking,peak_decel_ms2,largest drop between samples,real,1000,-7.482,2.723,7.962,12.310
+heavy_braking,peak_decel_ms2,zero-phase 0.5 Hz then derivative,real,1000,-17.867,1.375,17.920,20.078
+heavy_braking,peak_decel_ms2,zero-phase 0.75 Hz then derivative,real,1000,-14.069,1.449,14.144,16.561
+heavy_braking,peak_decel_ms2,zero-phase 1.0 Hz then derivative,real,1000,-11.748,1.606,11.857,14.732
+heavy_braking,peak_decel_ms2,zero-phase 1.25 Hz then derivative,real,1000,-10.318,1.796,10.473,13.861
+heavy_braking,peak_decel_ms2,zero-phase 1.5 Hz then derivative,real,1000,-9.377,1.974,9.582,13.297
+heavy_braking,brake_onset_m,first on sample,regular,1000,11.734,6.652,13.489,21.854
+heavy_braking,brake_onset_m,middle of off-on interval,regular,1000,0.035,6.913,6.913,11.346
+heavy_braking,brake_onset_m,speed breakpoint,regular,1000,3.855,2.550,4.622,8.151
+heavy_braking,brake_onset_m,speed breakpoint inside off-on interval,regular,1000,3.860,2.538,4.619,8.146
+heavy_braking,apex_m,lowest sample,regular,1000,-0.994,1.488,1.789,3.422
+heavy_braking,min_speed_kmh,lowest sample,regular,1000,0.242,0.347,0.423,0.811
+heavy_braking,apex_m,parabola 3 points,regular,1000,-0.814,0.532,0.973,1.591
+heavy_braking,min_speed_kmh,parabola 3 points,regular,1000,0.071,0.333,0.341,0.643
+heavy_braking,apex_m,parabola 5 points,regular,1000,-0.706,0.326,0.778,1.231
+heavy_braking,min_speed_kmh,parabola 5 points,regular,1000,-0.310,0.349,0.467,0.914
+heavy_braking,throttle_pickup_m,first sample >= 10 %,regular,1000,2.452,1.471,2.859,4.745
+heavy_braking,throttle_pickup_m,interpolated crossing,regular,1000,-0.720,0.618,0.949,1.612
+heavy_braking,full_throttle_m,first sample >= 99 %,regular,1000,-1.954,2.918,3.512,6.796
+heavy_braking,full_throttle_m,interpolated crossing,regular,1000,-1.954,2.918,3.512,6.796
+heavy_braking,entry_speed_kmh,linear interpolation,regular,1000,-0.030,0.234,0.236,0.424
+heavy_braking,exit_speed_kmh,linear interpolation,regular,1000,-0.017,0.216,0.216,0.389
+heavy_braking,peak_decel_ms2,largest drop between samples,regular,1000,-7.477,2.102,7.766,11.122
+heavy_braking,peak_decel_ms2,zero-phase 0.5 Hz then derivative,regular,1000,-17.775,1.343,17.826,19.913
+heavy_braking,peak_decel_ms2,zero-phase 0.75 Hz then derivative,regular,1000,-13.897,1.306,13.958,16.023
+heavy_braking,peak_decel_ms2,zero-phase 1.0 Hz then derivative,regular,1000,-11.516,1.291,11.588,13.730
+heavy_braking,peak_decel_ms2,zero-phase 1.25 Hz then derivative,regular,1000,-10.059,1.311,10.144,12.356
+heavy_braking,peak_decel_ms2,zero-phase 1.5 Hz then derivative,regular,1000,-9.123,1.386,9.228,11.614
+medium,brake_onset_m,first on sample,real,1000,11.213,7.159,13.303,24.165
+medium,brake_onset_m,middle of off-on interval,real,1000,-0.324,6.924,6.932,12.706
+medium,brake_onset_m,speed breakpoint,real,1000,2.802,2.370,3.670,6.519
+medium,brake_onset_m,speed breakpoint inside off-on interval,real,1000,2.606,2.241,3.437,6.296
+medium,apex_m,lowest sample,real,1000,-1.203,2.653,2.913,5.571
+medium,min_speed_kmh,lowest sample,real,1000,0.329,0.457,0.563,1.187
+medium,apex_m,parabola 3 points,real,1000,-0.810,0.792,1.133,1.999
+medium,min_speed_kmh,parabola 3 points,real,1000,0.077,0.367,0.375,0.757
+medium,apex_m,parabola 5 points,real,1000,-0.633,0.740,0.973,1.754
+medium,min_speed_kmh,parabola 5 points,real,1000,-0.236,0.534,0.584,1.317
+medium,throttle_pickup_m,first sample >= 10 %,real,1000,4.172,2.869,5.064,9.719
+medium,throttle_pickup_m,interpolated crossing,real,1000,-1.570,1.524,2.188,4.665
+medium,full_throttle_m,first sample >= 99 %,real,1000,-0.901,4.474,4.563,8.164
+medium,full_throttle_m,interpolated crossing,real,1000,-1.033,4.218,4.343,7.938
+medium,entry_speed_kmh,linear interpolation,real,1000,-0.056,0.228,0.234,0.431
+medium,exit_speed_kmh,linear interpolation,real,1000,-0.033,0.238,0.241,0.438
+medium,peak_decel_ms2,largest drop between samples,real,1000,-6.226,2.243,6.618,10.183
+medium,peak_decel_ms2,zero-phase 0.5 Hz then derivative,real,1000,-14.446,1.173,14.494,16.375
+medium,peak_decel_ms2,zero-phase 0.75 Hz then derivative,real,1000,-11.377,1.237,11.444,13.545
+medium,peak_decel_ms2,zero-phase 1.0 Hz then derivative,real,1000,-9.629,1.370,9.726,12.151
+medium,peak_decel_ms2,zero-phase 1.25 Hz then derivative,real,1000,-8.436,1.528,8.573,11.280
+medium,peak_decel_ms2,zero-phase 1.5 Hz then derivative,real,1000,-7.648,1.674,7.829,10.857
+medium,brake_onset_m,first on sample,regular,1000,10.658,6.066,12.263,19.938
+medium,brake_onset_m,middle of off-on interval,regular,1000,0.010,6.285,6.285,10.216
+medium,brake_onset_m,speed breakpoint,regular,1000,3.060,2.244,3.795,6.919
+medium,brake_onset_m,speed breakpoint inside off-on interval,regular,1000,3.067,2.225,3.789,6.916
+medium,apex_m,lowest sample,regular,1000,-1.102,2.296,2.547,4.687
+medium,min_speed_kmh,lowest sample,regular,1000,0.284,0.378,0.473,0.928
+medium,apex_m,parabola 3 points,regular,1000,-0.881,0.710,1.131,1.958
+medium,min_speed_kmh,parabola 3 points,regular,1000,0.107,0.334,0.351,0.693
+medium,apex_m,parabola 5 points,regular,1000,-0.677,0.497,0.840,1.522
+medium,min_speed_kmh,parabola 5 points,regular,1000,-0.221,0.417,0.472,0.952
+medium,throttle_pickup_m,first sample >= 10 %,regular,1000,3.754,2.273,4.389,7.358
+medium,throttle_pickup_m,interpolated crossing,regular,1000,-1.293,1.029,1.652,2.737
+medium,full_throttle_m,first sample >= 99 %,regular,1000,-1.351,3.483,3.736,6.788
+medium,full_throttle_m,interpolated crossing,regular,1000,-1.351,3.483,3.736,6.788
+medium,entry_speed_kmh,linear interpolation,regular,1000,-0.034,0.228,0.230,0.410
+medium,exit_speed_kmh,linear interpolation,regular,1000,-0.032,0.213,0.216,0.395
+medium,peak_decel_ms2,largest drop between samples,regular,1000,-6.132,1.767,6.382,9.273
+medium,peak_decel_ms2,zero-phase 0.5 Hz then derivative,regular,1000,-14.344,1.129,14.388,16.132
+medium,peak_decel_ms2,zero-phase 0.75 Hz then derivative,regular,1000,-11.226,1.093,11.279,13.072
+medium,peak_decel_ms2,zero-phase 1.0 Hz then derivative,regular,1000,-9.420,1.068,9.480,11.264
+medium,peak_decel_ms2,zero-phase 1.25 Hz then derivative,regular,1000,-8.200,1.078,8.270,10.120
+medium,peak_decel_ms2,zero-phase 1.5 Hz then derivative,regular,1000,-7.415,1.136,7.502,9.498
+fast,brake_onset_m,first on sample,real,1000,12.816,8.225,15.228,27.936
+fast,brake_onset_m,middle of off-on interval,real,1000,0.334,7.696,7.704,14.206
+fast,brake_onset_m,speed breakpoint,real,1000,3.447,3.068,4.615,7.821
+fast,brake_onset_m,speed breakpoint inside off-on interval,real,1000,3.233,2.727,4.229,7.437
+fast,apex_m,lowest sample,real,1000,-0.962,4.344,4.449,8.015
+fast,min_speed_kmh,lowest sample,real,1000,0.444,0.562,0.716,1.498
+fast,apex_m,parabola 3 points,real,1000,0.129,0.796,0.807,1.627
+fast,min_speed_kmh,parabola 3 points,real,1000,0.065,0.345,0.351,0.636
+fast,apex_m,parabola 5 points,real,1000,2.406,1.596,2.887,5.188
+fast,min_speed_kmh,parabola 5 points,real,1000,-0.729,1.059,1.286,2.571
+fast,throttle_pickup_m,first sample >= 10 %,real,1000,6.862,4.702,8.319,15.518
+fast,throttle_pickup_m,interpolated crossing,real,1000,-3.101,2.774,4.161,8.298
+fast,full_throttle_m,first sample >= 99 %,real,1000,1.516,5.789,5.984,12.686
+fast,full_throttle_m,interpolated crossing,real,1000,0.873,4.883,4.961,9.292
+fast,entry_speed_kmh,linear interpolation,real,1000,-0.032,0.236,0.238,0.430
+fast,exit_speed_kmh,linear interpolation,real,1000,-0.030,0.220,0.222,0.407
+fast,peak_decel_ms2,largest drop between samples,real,1000,-7.343,2.571,7.780,12.026
+fast,peak_decel_ms2,zero-phase 0.5 Hz then derivative,real,1000,-20.159,1.358,20.205,22.450
+fast,peak_decel_ms2,zero-phase 0.75 Hz then derivative,real,1000,-13.725,1.460,13.802,16.212
+fast,peak_decel_ms2,zero-phase 1.0 Hz then derivative,real,1000,-10.926,1.600,11.043,13.853
+fast,peak_decel_ms2,zero-phase 1.25 Hz then derivative,real,1000,-9.665,1.755,9.823,12.981
+fast,peak_decel_ms2,zero-phase 1.5 Hz then derivative,real,1000,-8.964,1.918,9.167,12.594
+fast,brake_onset_m,first on sample,regular,1000,11.847,6.649,13.585,21.766
+fast,brake_onset_m,middle of off-on interval,regular,1000,0.293,6.898,6.904,11.181
+fast,brake_onset_m,speed breakpoint,regular,1000,3.927,2.504,4.657,8.089
+fast,brake_onset_m,speed breakpoint inside off-on interval,regular,1000,3.928,2.494,4.653,8.117
+fast,apex_m,lowest sample,regular,1000,-0.693,3.816,3.879,6.599
+fast,min_speed_kmh,lowest sample,regular,1000,0.371,0.422,0.561,1.127
+fast,apex_m,parabola 3 points,regular,1000,0.007,0.720,0.720,1.370
+fast,min_speed_kmh,parabola 3 points,regular,1000,0.112,0.281,0.302,0.560
+fast,apex_m,parabola 5 points,regular,1000,2.419,0.686,2.514,3.553
+fast,min_speed_kmh,parabola 5 points,regular,1000,-0.632,0.898,1.098,2.014
+fast,throttle_pickup_m,first sample >= 10 %,regular,1000,6.470,3.705,7.456,12.086
+fast,throttle_pickup_m,interpolated crossing,regular,1000,-2.634,2.022,3.321,5.338
+fast,full_throttle_m,first sample >= 99 %,regular,1000,0.758,4.523,4.586,7.751
+fast,full_throttle_m,interpolated crossing,regular,1000,0.758,4.523,4.586,7.751
+fast,entry_speed_kmh,linear interpolation,regular,1000,-0.010,0.231,0.232,0.418
+fast,exit_speed_kmh,linear interpolation,regular,1000,-0.023,0.234,0.235,0.409
+fast,peak_decel_ms2,largest drop between samples,regular,1000,-7.180,2.005,7.455,10.713
+fast,peak_decel_ms2,zero-phase 0.5 Hz then derivative,regular,1000,-19.966,1.279,20.007,22.082
+fast,peak_decel_ms2,zero-phase 0.75 Hz then derivative,regular,1000,-13.420,1.236,13.477,15.640
+fast,peak_decel_ms2,zero-phase 1.0 Hz then derivative,regular,1000,-10.579,1.226,10.650,12.873
+fast,peak_decel_ms2,zero-phase 1.25 Hz then derivative,regular,1000,-9.319,1.246,9.402,11.726
+fast,peak_decel_ms2,zero-phase 1.5 Hz then derivative,regular,1000,-8.629,1.302,8.726,11.153

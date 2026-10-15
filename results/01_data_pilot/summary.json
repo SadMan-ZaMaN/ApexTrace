@@ -472,16 +472,62 @@
       }
     ]
   },
+  "check_10_corner_choice": {
+    "rule": "see check_10_choose_corners docstring",
+    "halfway_min_speed_kmh": 124.5,
+    "candidates": [
+      "T1",
+      "T5",
+      "T6",
+      "T9",
+      "T12"
+    ],
+    "chosen": {
+      "heavy_braking": {
+        "corner": "T6",
+        "marker_m": 2616.8,
+        "entry_speed_kmh": 324.0,
+        "min_speed_kmh": 68.0,
+        "speed_drop_kmh": 256.0,
+        "gap_free_q_laps": {
+          "NOR": 4,
+          "PIA": 2
+        }
+      },
+      "medium": {
+        "corner": "T5",
+        "marker_m": 1416.3,
+        "entry_speed_kmh": 294.0,
+        "min_speed_kmh": 108.0,
+        "speed_drop_kmh": 186.0,
+        "gap_free_q_laps": {
+          "NOR": 4,
+          "PIA": 4
+        }
+      },
+      "fast": {
+        "corner": "T9",
+        "marker_m": 3682.0,
+        "entry_speed_kmh": 320.0,
+        "min_speed_kmh": 181.0,
+        "speed_drop_kmh": 139.0,
+        "gap_free_q_laps": {
+          "NOR": 3,
+          "PIA": 4
+        }
+      }
+    }
+  },
   "check_9_cost": {
     "session_cache_mb": {
       "2024-12-06_Practice_2": 61.3071,
       "2024-12-07_Qualifying": 40.4046
     },
-    "http_cache_mb": 17.1254,
-    "total_cache_mb": 118.8371,
+    "http_cache_mb": 17.2605,
+    "total_cache_mb": 118.9723,
     "load_from_cache_s": {
-      "Q": 1.6368,
-      "FP2": 1.1691
+      "Q": 1.0977,
+      "FP2": 1.2835
     }
   }
 }

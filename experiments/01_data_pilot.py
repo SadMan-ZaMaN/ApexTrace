@@ -636,6 +636,135 @@ def check_7_corners(q_session):
     }
 
 
+# ---------------------------------------------------------------- check 10
+
+# Corner window used to count feed gaps: from 300 m before the corner marker
+# (covers the braking zone) to 200 m after it (covers the exit). Phase 3
+# sets the exact windows; this is only for choosing corners.
+WINDOW_BEFORE_M = 300
+WINDOW_AFTER_M = 200
+MIN_SPEED_DROP_KMH = 50
+
+
+def check_10_choose_corners(q_session, kept_laps):
+    """Choose the 3 pilot corners with a fixed rule, before comparing any drivers.
+
+    Per corner, on Norris's pole lap (the lap FastF1's corner distances are
+    measured on):
+      - entry speed = highest speed from 500 m to 50 m before the marker
+      - minimum speed within 100 m of the marker; it must be a true dip
+        (not at the edge of that +-100 m search window)
+      - speed drop = entry - minimum
+
+    A corner is a candidate if it has a real braking zone (drop >= 50 km/h)
+    and its whole window [-300 m, +200 m] lies inside the lap. When two
+    markers share one dip (a chicane), only the marker nearest the dip
+    counts. Then:
+      - heavy braking = the biggest speed drop
+      - fast          = the highest minimum speed
+      - medium        = of the rest, the minimum speed closest to halfway
+                        between the heavy and fast corners' minimum speeds
+
+    Also counts, per driver, the kept Q laps with no feed gap inside each
+    corner's window (gaps.csv from check 1).
+    """
+    corners = pd.read_csv(OUT_DIR / "corners.csv")
+    gaps = pd.read_csv(OUT_DIR / "gaps.csv")
+    pole_lap = q_session.laps.pick_fastest()
+    car = pole_lap.get_car_data().add_distance()
+    distance = car["Distance"].to_numpy()
+    speed = car["Speed"].to_numpy()
+    lap_length = distance[-1]
+
+    q_laps_by_driver = {}
+    for session_name, driver, lap in kept_laps:
+        if session_name == "Q":
+            q_laps_by_driver.setdefault(driver, []).append(int(lap["LapNumber"]))
+
+    rows = []
+    for _, corner in corners.iterrows():
+        marker = corner["Distance"]
+        letter = corner["Letter"] if isinstance(corner["Letter"], str) else ""
+        name = f"T{int(corner['Number'])}{letter}"
+
+        entry_mask = (distance >= marker - 500) & (distance <= marker - 50)
+        search_mask = (distance >= marker - 100) & (distance <= marker + 100)
+        entry_speed = float(np.max(speed[entry_mask])) if entry_mask.any() else float("nan")
+        search_indices = np.where(search_mask)[0]
+        lowest = search_indices[np.argmin(speed[search_indices])]
+        true_dip = search_indices[0] < lowest < search_indices[-1]
+        min_speed = float(speed[lowest])
+
+        window_start = marker - WINDOW_BEFORE_M
+        window_end = marker + WINDOW_AFTER_M
+        inside_lap = window_start >= 0 and window_end <= lap_length
+
+        row = {
+            "Corner": name,
+            "Marker_m": round(float(marker), 1),
+            "EntrySpeed_kmh": entry_speed,
+            "MinSpeed_kmh": min_speed,
+            "MinSpeedAt_m": round(float(distance[lowest]), 1),
+            "SpeedDrop_kmh": entry_speed - min_speed,
+            "TrueDip": bool(true_dip),
+            "WindowInsideLap": bool(inside_lap),
+        }
+        for driver in DRIVERS:
+            usable = 0
+            for lap_number in q_laps_by_driver[driver]:
+                lap_gaps = gaps[(gaps["Session"] == "Q") & (gaps["Driver"] == driver)
+                                & (gaps["LapNumber"] == lap_number)]
+                in_window = ((lap_gaps["Distance_m"] >= window_start)
+                             & (lap_gaps["Distance_m"] <= window_end))
+                if not in_window.any():
+                    usable += 1
+            row[f"GapFreeQLaps_{driver}"] = usable
+        row["Candidate"] = bool(true_dip and inside_lap and row["SpeedDrop_kmh"] >= MIN_SPEED_DROP_KMH)
+        rows.append(row)
+
+    table = pd.DataFrame(rows)
+    # Two markers can share one speed dip (T6/T7 is a chicane with a single
+    # slowest point). The dip belongs to the marker nearest to it; the other
+    # marker stops being a candidate.
+    for dip_at, group in table[table["Candidate"]].groupby("MinSpeedAt_m"):
+        if len(group) > 1:
+            nearest = (group["Marker_m"] - dip_at).abs().idxmin()
+            for index in group.index:
+                if index != nearest:
+                    table.loc[index, "Candidate"] = False
+    candidates = table[table["Candidate"]]
+    heavy = candidates.loc[candidates["SpeedDrop_kmh"].idxmax()]
+    fast = candidates.loc[candidates["MinSpeed_kmh"].idxmax()]
+    halfway = (heavy["MinSpeed_kmh"] + fast["MinSpeed_kmh"]) / 2
+    rest = candidates[~candidates["Corner"].isin([heavy["Corner"], fast["Corner"]])]
+    medium = rest.loc[(rest["MinSpeed_kmh"] - halfway).abs().idxmin()]
+
+    table["Role"] = ""
+    for role, choice in [("heavy braking", heavy), ("medium", medium), ("fast", fast)]:
+        table.loc[table["Corner"] == choice["Corner"], "Role"] = role
+    table.to_csv(OUT_DIR / "corner_choice.csv", index=False)
+
+    print("\n--- Check 10: choosing the 3 corners (NOR pole lap) ---")
+    print(table[["Corner", "Marker_m", "EntrySpeed_kmh", "MinSpeed_kmh", "SpeedDrop_kmh",
+                 "TrueDip", "WindowInsideLap", "GapFreeQLaps_NOR", "GapFreeQLaps_PIA",
+                 "Candidate", "Role"]].to_string(index=False))
+    chosen = {}
+    for role, choice in [("heavy_braking", heavy), ("medium", medium), ("fast", fast)]:
+        chosen[role] = {
+            "corner": choice["Corner"],
+            "marker_m": float(choice["Marker_m"]),
+            "entry_speed_kmh": float(choice["EntrySpeed_kmh"]),
+            "min_speed_kmh": float(choice["MinSpeed_kmh"]),
+            "speed_drop_kmh": float(choice["SpeedDrop_kmh"]),
+            "gap_free_q_laps": {driver: int(choice[f"GapFreeQLaps_{driver}"]) for driver in DRIVERS},
+        }
+        print(f"{role}: {choice['Corner']} ({choice['EntrySpeed_kmh']:.0f} -> "
+              f"{choice['MinSpeed_kmh']:.0f} km/h), gap-free Q laps NOR "
+              f"{choice['GapFreeQLaps_NOR']}, PIA {choice['GapFreeQLaps_PIA']}")
+    return {"rule": "see check_10_choose_corners docstring", "halfway_min_speed_kmh": float(halfway),
+            "candidates": list(candidates["Corner"]), "chosen": chosen}
+
+
 # ---------------------------------------------------------------- check 9
 
 def folder_size_mb(folder):
@@ -689,6 +818,7 @@ def main():
     summary["check_4_position"] = check_4_position(kept_laps)
     summary["check_5_distance"] = check_5_distance(kept_laps, gaps_per_lap)
     summary["check_7_corners"] = check_7_corners(sessions["Q"])
+    summary["check_10_corner_choice"] = check_10_choose_corners(sessions["Q"], kept_laps)
     summary["check_9_cost"] = check_9_cost(load_seconds)
 
     with open(OUT_DIR / "summary.json", "w", encoding="utf-8") as file:

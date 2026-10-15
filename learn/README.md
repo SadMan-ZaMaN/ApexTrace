@@ -1,0 +1,56 @@
+# Learn ApexTrace, A to Z
+
+This folder teaches you the whole project: the idea, the research method, the
+signal processing, the statistics, and every file of code. It was written
+while the project was being built (October 2026), so you can study it after
+your exams and then explain any part to a faculty member or an interviewer.
+
+## Reading order
+
+| # | Chapter | What you'll understand | Time |
+|---|---|---|---|
+| 1 | [01_big_picture.md](01_big_picture.md) | The research question, the hypotheses, the plan, and why this is research and not a dashboard | 30 min |
+| 2 | [02_setup_and_tools.md](02_setup_and_tools.md) | venv, `pip install -e .`, pytest, git workflow, FastF1 and pandas basics; `data_loading.py` | 1 h |
+| 3 | [03_the_data.md](03_the_data.md) | What the F1 timing feed really is (Phase 1): sampling, gaps, resolution, distance drift; `quality.py` | 1.5 h |
+| 4 | [04_measurement_science.md](04_measurement_science.md) | Phase 2: synthetic laps, filters and group delay, the inspection paradox, naive vs refined estimators, Monte Carlo | 3 h |
+| 5 | [05_alignment.md](05_alignment.md) | Phase 3: projection onto a path, why X/Y is noisy along the track, the complementary filter, cross-correlation | 1.5 h |
+| 6 | [06_features_and_writeup.md](06_features_and_writeup.md) | Phase 4: the 11 features, uncertainty words, the Norris vs Piastri pilot, writing honestly | 1 h |
+| 7 | [07_statistics.md](07_statistics.md) | Phase 5: preregistration, permutation tests, bootstrap, effect sizes, multiple comparisons, ICC, power | 2 h |
+| 8 | Phase 6 onwards | Added as they are built (identification on 2023-2024 via OpenF1, driver vs car) | |
+| — | [viva_questions.md](viva_questions.md) | Practice questions with answers, per chapter | |
+| — | [exercises.md](exercises.md) | Hands-on: change a number, predict, run, check | |
+
+## How to study each chapter
+
+1. Read the chapter once, quickly.
+2. Open the code files it names, and read them with the chapter beside you.
+   Every function has a docstring with the *why* and a worked number.
+3. Run the experiment script the chapter names, and look at the figures in
+   `results/`.
+4. Do one or two exercises from `exercises.md`.
+5. Answer the viva questions out loud without looking. Check yourself.
+
+## Running everything (PowerShell, in the project folder)
+
+```powershell
+.venv\Scripts\Activate.ps1                       # once per terminal
+python -m pytest                                 # all tests (takes ~10 s)
+python experiments\00_hello_lap.py               # first plot
+python experiments\01_data_pilot.py              # Phase 1 data checks
+python experiments\02_group_delay_demo.py        # Phase 2 filter demo
+python experiments\03_synthetic_errors.py        # Phase 2 Monte Carlo (~2 min)
+```
+
+Every number in the docs comes from one of these scripts. If you change
+code, re-run the script and the numbers update.
+
+## Where things are
+
+| Folder | What's in it |
+|---|---|
+| `src/apextrace/` | The Python package: the reusable code (one module per job) |
+| `experiments/` | Numbered scripts that produce every result and figure |
+| `tests/` | Automatic checks (pytest), all on synthetic data |
+| `results/` | Outputs: CSV, JSON, PNG figures |
+| `docs/` | The research record: `research_log.md` (diary), `decisions.md` (every choice and why), `data_report.md`, `related_work.md` |
+| `learn/` | This guide |

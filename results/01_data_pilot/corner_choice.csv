@@ -1,0 +1,17 @@
+Corner,Marker_m,EntrySpeed_kmh,MinSpeed_kmh,MinSpeedAt_m,SpeedDrop_kmh,TrueDip,WindowInsideLap,GapFreeQLaps_NOR,GapFreeQLaps_PIA,Candidate,Role
+T1,377.9,289.0,172.0,398.1,117.0,True,True,4,4,True,
+T2,626.7,289.0,232.0,536.4,57.0,False,True,4,4,False,
+T3,834.5,270.0,268.0,743.0,2.0,False,True,4,4,False,
+T4,1009.6,275.0,275.0,915.2,0.0,False,True,4,4,False,
+T5,1416.3,294.0,108.0,1433.1,186.0,True,True,4,4,True,medium
+T6,2616.8,324.0,68.0,2630.1,256.0,True,True,4,2,True,heavy braking
+T7,2677.4,324.0,68.0,2630.1,256.0,True,True,4,2,False,
+T8,2877.3,324.0,197.0,2785.7,127.0,False,True,3,3,False,
+T9,3682.0,320.0,181.0,3678.1,139.0,True,True,3,4,True,fast
+T10,4026.2,318.0,256.0,3935.0,62.0,False,True,3,3,False,
+T11,4187.1,281.0,137.0,4283.8,144.0,False,True,4,3,False,
+T12,4305.0,281.0,106.0,4319.3,175.0,True,True,4,3,True,
+T13,4411.5,281.0,106.0,4319.3,175.0,False,True,4,4,False,
+T14,4534.7,281.0,148.0,4438.4,133.0,False,True,4,4,False,
+T15,4804.9,253.0,246.0,4715.2,7.0,False,True,4,4,False,
+T16,5043.7,271.0,138.0,5051.4,133.0,True,False,4,4,False,

@@ -20,7 +20,8 @@ proposal — check before relying on it.
 | 2026-10-14 | Direction, research question, pilot and protocol agreed. Repo created. **Phase 0 setup:** CLAUDE.md split, `docs/` created, `.venv` + FastF1 installed, `apextrace` package installable, smoke test passing. |
 | 2026-10-15 | **Phase 0 done** (hello-lap plot). **Phase 1 started:** `data_loading.py` (`load_session` with 2025 guard, `select_laps` with drop reasons, tested), lap table for 2024 Abu Dhabi Q + FP2 (checks 6, 8). Q: 4 push laps per driver. FP2: matched 7-lap medium long runs. |
 | 2026-10-16 | Phase 1 checks 1–5, 7, 9 done: `quality.py` (tested), all numbers in `results/01_data_pilot/summary.json`. Found: 40 ms timing clock, feed dropouts up to 1.36 s, X/Y can't show lines, gap-free Q laps' distances agree within 2 m. |
-| next | Phase 1 check 10: choose the 3 corners, decide a rule for feed gaps inside corner windows, write `docs/data_report.md` + `decisions.md` (milestone M1). |
+| 2026-10-16 (later) | Sadman in exams: Claude builds autonomously, documents everything in `learn/`. **M1** (data report, corners T6/T5/T9), **Phase 2 / M2** (synthetic + Monte Carlo error table), **Phase 3 / M3** (alignment: X/Y projection + complementary fusion, 1.15 m), **Phase 4** (features, output A draft), **Phase 5 prepared** (stats.py, preregistration Part A). F1 archive now returns 401 → Phase 6 via OpenF1 (identical feed, checked). |
+| next | Sadman commits (preregistration first) → run `06_pilot_stats.py`. Then Phase 6: OpenF1 adapter, 2023–2024 qualifying dataset, identification (H3). |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -161,6 +162,7 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── corners.py          # corner windows, corner types
 │   ├── alignment.py        # cross-correlation lag, parabolic peak, DTW
 │   ├── events.py           # brake onset, apex, throttle pickup (sub-sample)
+│   ├── track.py            # FastF1 lap -> samples on the track coordinate
 │   ├── features.py         # feature vectors per (driver, lap, corner)
 │   ├── stats.py            # ICC, bootstrap, permutation tests
 │   ├── identification.py   # splits, baselines, models, metrics

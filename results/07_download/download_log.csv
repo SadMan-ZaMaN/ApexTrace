@@ -1,0 +1,11 @@
+Year,Round,Event,Status,Drivers,Laps,Seconds,Error
+2023,1,Bahrain Grand Prix,failed,0,0,11.7,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,2,Saudi Arabian Grand Prix,failed,0,0,7.7,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,3,Australian Grand Prix,failed,0,0,9.6,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,4,Azerbaijan Grand Prix,failed,0,0,8.2,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,5,Miami Grand Prix,failed,0,0,8.9,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,6,Monaco Grand Prix,failed,0,0,7.9,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,7,Spanish Grand Prix,failed,0,0,8.0,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,8,Canadian Grand Prix,failed,0,0,8.0,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,9,Austrian Grand Prix,failed,0,0,8.6,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`
+2023,10,British Grand Prix,failed,0,0,8.4,DataNotLoadedError: The data you are trying to access has not been loaded yet. See `Session.load`

@@ -170,3 +170,100 @@ extreme value (the best lap) carries that value's noise and its confounders.
 Decide a rule for (lap, corner) pairs with a feed gap inside the corner window:
 at Turn 6, PIA's Q laps 2 and 7 both have gaps nearby. Then write
 `docs/data_report.md` and log the choices in `decisions.md`.
+
+---
+
+## 2026-10-16 (later) — Phase 1 finished (M1), Phase 2: measurement science
+
+Context: Sadman has exams; Claude builds autonomously, and everything is
+documented in `learn/` for later study.
+
+**Phase 1 finished:** check 10 chose T6 (heavy braking), T5 (medium) and T9
+(fast) by a fixed rule (decisions.md); gap rule decided; `docs/data_report.md`
+written. **Milestone M1 done.**
+
+**Phase 2 built:** `synthetic.py` (true corners at 500 Hz, realistic physics:
+4.8–5.9 g peak braking, ~110–125 m braking zone at the T6 type),
+`degrade_like_feed()` (real interval distribution, 1 km/h rounding, on/off
+brake), `resampling.py`, `filters.py`, `events.py` (naive vs refined
+estimators). 45 tests, including a 200-corner full-path test.
+
+**Results**
+- `02_group_delay_demo.py`: causal filters delay a mid-braking point by
+  +14 to +25 m; zero-phase filters by only +2 to +3 m. **But** zero-phase
+  smoothing still moves a braking-*onset* detector 23–36 m *early*: it removes
+  the delay, not the smearing of a sharp event (Consonance lesson 4). Group
+  delays: MA(5) 0.50 s, Butterworth 0.5 Hz 0.46 s, EMA(0.5) 0.21 s. Raw
+  derivative noise from 1 km/h rounding: 0.49 m/s² (0.05 g), against the
+  theoretical 0.42 m/s² for regular sampling.
+- Real speed spectrum: never meets the 1 km/h rounding floor; it flattens at
+  14× the floor above a knee at **1.19 Hz**. The flat part behaves like noise
+  from irregular sampling and interpolation, not from rounding.
+- `03_synthetic_errors.py` (1,000 laps per corner type): see decisions.md for
+  the chosen estimators. Brake onset: naive +12.5 m late; midpoint unbiased,
+  std 7.7 m (**matches the 7.7 m predicted from real intervals in Phase 1**);
+  breakpoint inside the interval: +3.2 ± 2.7 m. Averaging N laps shrinks the
+  spread like 1/√N (16 laps: 2.70 → 0.68 m). Irregular sampling costs ~11 %
+  more error than regular sampling at the same rate. Peak deceleration can't
+  be measured (biased −6 to −20 m/s²) → replaced by mean deceleration.
+
+**Negative result kept:** peak deceleration isn't measurable from this feed.
+
+---
+
+## 2026-10-16 (later) — Phase 3: alignment (M3)
+
+**Built:** `alignment.py` (projection onto a path, normalised cross-correlation,
+parabolic peak), `track.py` (FastF1 lap → samples with track coordinate),
+`corners.py` (corner positions, windows, gap check, fused coordinate).
+Tests: projection on a curved track, hairpin snapping, the 7.3 m synthetic
+shift recovered to < 0.1 m, fusion removing a 12 m drift. 53 tests pass.
+`experiments/04_alignment.py` → `results/04_alignment/`.
+
+**Results (30 laps, 2024 Abu Dhabi Q + FP2)**
+- Projection: median 0.05 m from the path; s ran backwards (> 0.5 m) once.
+- X/Y has ~3 m longitudinal noise per sample (4.5 m std of increment
+  residuals); likely timestamp jitter (residual correlates with interval
+  length, r ≈ −0.3 to −0.4; no constant lag).
+- Integrated distance drifts relative to X/Y by up to 13 m at T9 in Q
+  (std 4.8 m on gap-free laps).
+- Fused coordinate: offset noise 1.15 m with 1/speed² weighting (1.46 m
+  without). The theory said ~0.6 m; the measured value is used.
+- Sampling phase uniform (KS p = 0.43): averaging laps is valid.
+- Usable (lap, corner) pairs, Q: T6 NOR 4 / PIA 2, T5 4 / 4, T9 3 / 4.
+  FP2: T6 8 / 9, T5 7 / 10, T9 10 / 10.
+- The aligned overlays (`corners_Q.png`, `corners_FP2.png`) line up within a
+  few metres in the braking zones.
+
+**Surprise:** the plan assumed X/Y projection would be clean. It isn't
+along the track, but it is drift-free, and fusing it with speed is a
+classic complementary filter.
+
+---
+
+## 2026-10-16 (later) — Phase 4 (features, output A), Phase 5 prepared, data-source problem
+
+**Phase 4:** `features.py` (11 features, estimators from Phase 2; full-path test
+on 150 synthetic corners). `experiments/05_pilot_features.py` → 75 of 90
+(lap, corner) pairs usable. Qualifying, descriptive: NOR's brake onset is later
+than PIA's at T5 (+7.42 m, SE 2.11, 4 vs 4 laps, same laps for both) and T9
+(+7.20 m, SE 2.05, 3 vs 4); T6 inconclusive (+3.06, SE 6.22, 4 vs 2). Minimum
+speeds within 0.5 km/h; corner times within 0.03 s. Visual check: the event
+markers sit where expected. Output A drafted: `docs/writeups/norris_vs_piastri.md`.
+
+**Phase 5 prepared:** `stats.py` (exact permutation test, bootstrap interval,
+Hedges' g, Holm, Benjamini–Hochberg, ICC(1), minimum detectable effect), with
+9 tests on known answers (false-positive rate ~5 %, bootstrap coverage ~95 %,
+hand-computed ICC). `docs/preregistration.md` Part A written. **The pilot can't
+produce any discovery:** with 4 vs 4 laps the smallest possible p-value is
+0.029, and Benjamini–Hochberg over 27 tests would need 16 of them at that
+minimum. 80 % power needs d ≥ 2.38. `experiments/06_pilot_stats.py` refuses to
+run until the preregistration is committed (checked: it stops).
+
+**Data-source problem:** the F1 live-timing archive returns 401 for everything
+not already cached (FastF1 download of 2023 failed for all sessions tried).
+OpenF1 serves the identical feed (checked sample by sample on the pole lap).
+Phase 6 will use OpenF1 (decisions.md).
+
+**Next:** Sadman commits (the preregistration first). Then run
+`06_pilot_stats.py`, and build the OpenF1 adapter for Phase 6.
