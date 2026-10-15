@@ -18,7 +18,8 @@ proposal — check before relying on it.
 |------|-------|
 | 2026-10-11 | Brainstormed F1 + signals project ideas (§4). |
 | 2026-10-14 | Direction, research question, pilot and protocol agreed. Repo created. **Phase 0 setup:** CLAUDE.md split, `docs/` created, `.venv` + FastF1 installed, `apextrace` package installable, smoke test passing. |
-| next | Finish Phase 0 with the hello-lap plot (`experiments/00_hello_lap.py`), then Phase 1: `data_loading.py` (`load_session`, `select_laps` with drop reasons) and the NOR/PIA lap table for 2024 Abu Dhabi Q and FP2. |
+| 2026-10-15 | **Phase 0 done** (hello-lap plot). **Phase 1 started:** `data_loading.py` (`load_session` with 2025 guard, `select_laps` with drop reasons, tested), lap table for 2024 Abu Dhabi Q + FP2 (checks 6, 8). Q: 4 push laps per driver. FP2: matched 7-lap medium long runs. |
+| next | Phase 1 checks 1–5, 7, 9: `quality.py` + extend `experiments/01_data_pilot.py` (timing histogram, resolution, brake, position data, distance drift, circuit info, cache cost). Then choose the 3 corners and write `docs/data_report.md`. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -239,4 +240,11 @@ synthetic signals and tiny derived fixtures.
 Anything that took real debugging: what broke, why, and the fix. Read this
 before "simplifying" code.
 
-*(nothing yet)*
+- **2026-10-15 — Don't judge "slow laps" against the driver's session best.**
+  The first `select_laps` (and FastF1's `pick_quicklaps()`) used 107 % of the
+  driver's fastest lap of the session. In 2024 Abu Dhabi FP2 that cut 6 of
+  Norris's 7 medium long-run laps but only 2 of Piastri's, only because his
+  soft-tyre lap was 0.23 s quicker. Fix: 107 % of the best lap *of the same
+  stint*, plus a "not a timed run" rule for whole stints (> 115 % of the
+  driver's best). Tests `test_long_run_is_judged_against_its_own_stint` and
+  `test_stint_that_was_never_a_timed_run_is_dropped` guard it.

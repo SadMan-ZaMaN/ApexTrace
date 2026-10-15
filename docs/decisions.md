@@ -47,3 +47,28 @@ lines. The long reference parts moved word for word to
 `docs/PROJECT_CONTEXT.md`, which **keeps the original section numbers**, so
 "§9.7" still means the same thing everywhere. The chat reply that had been
 pasted by accident at the end of the file was deleted.
+
+## 2026-10-15 — Lap selection rules (`select_laps`)
+A lap is kept only if it has a lap time, is not an out lap or in lap, was not
+deleted, ran under green flag only (track status `1`), and passed FastF1's
+timing check (`IsAccurate`). Then two pace rules:
+- **Slow lap:** slower than **107 % of the best clean lap of its own stint**
+  (one set of tyres). Removes cool-down laps.
+- **Not a timed run:** the stint's best lap is slower than **115 % of the
+  driver's best clean lap** of the session. Removes runs that were never
+  timed, such as practice starts at the end of FP2.
+
+Every dropped lap is logged with its reason(s).
+**Why per stint, not per session:** with the session best as reference, the
+107 % rule cut 6 of Norris's 7 FP2 long-run laps but only 2 of Piastri's,
+only because his soft-tyre lap was quicker (details in the research log of
+2026-10-15). **Why 115 %:** in 2024 Abu Dhabi FP2, long runs were 106–109 %
+of the driver's best and end-of-session runs 130–141 %; 115 % sits in that gap.
+Re-check this gap when more sessions are loaded (Phase 6).
+**Consequence:** we don't use FastF1's `pick_quicklaps()`, which compares
+with the session best. In qualifying it keeps the same laps as our rules.
+
+## 2026-10-15 — 2025 guard in code
+`load_session()` refuses any 2025 session unless the environment variable
+`FINAL_TEST=1` is set. It was added now rather than in Phase 6, because one
+accidental look at 2025 can't be undone.

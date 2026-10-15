@@ -1,0 +1,86 @@
+Session,Driver,LapNumber,Segment,Stint,Compound,TyreLife,FreshTyre,LapTime_s,Deleted,TrackStatus,OutLap,InLap,IsAccurate,Kept,Reason
+Q,NOR,1,Q1,1.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,NOR,2,Q1,1.0,SOFT,2.0,True,83.682,False,1,False,False,True,True,
+Q,NOR,3,Q1,1.0,SOFT,3.0,True,111.944,False,1,False,True,False,False,in lap; timing check failed
+Q,NOR,4,Q1,2.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,NOR,5,Q1,2.0,SOFT,2.0,True,92.797,False,1,False,True,False,False,in lap; timing check failed
+Q,NOR,6,Q2,3.0,SOFT,3.0,False,,False,12,True,False,False,False,no lap time; out lap; not green (track status 12); timing check failed
+Q,NOR,7,Q2,3.0,SOFT,4.0,False,83.098,False,1,False,False,True,True,
+Q,NOR,8,Q2,3.0,SOFT,5.0,False,106.466,False,1,False,True,False,False,in lap; timing check failed
+Q,NOR,9,Q2,4.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,NOR,10,Q2,4.0,SOFT,2.0,True,108.371,False,1,False,True,False,False,in lap; timing check failed
+Q,NOR,11,Q3,5.0,SOFT,3.0,False,,False,12,True,False,False,False,no lap time; out lap; not green (track status 12); timing check failed
+Q,NOR,12,Q3,5.0,SOFT,4.0,False,82.949,False,1,False,False,True,True,
+Q,NOR,13,Q3,5.0,SOFT,5.0,False,101.66,False,1,False,True,False,False,in lap; timing check failed
+Q,NOR,14,Q3,6.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,NOR,15,Q3,6.0,SOFT,2.0,True,82.595,False,1,False,False,True,True,
+Q,NOR,16,Q3,6.0,SOFT,3.0,True,118.346,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,1,Q1,1.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,PIA,2,Q1,1.0,SOFT,2.0,True,83.64,False,1,False,False,True,True,
+Q,PIA,3,Q1,1.0,SOFT,3.0,True,113.277,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,4,Q1,2.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,PIA,5,Q1,2.0,SOFT,2.0,True,104.277,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,6,Q2,3.0,SOFT,3.0,False,,False,12,True,False,False,False,no lap time; out lap; not green (track status 12); timing check failed
+Q,PIA,7,Q2,3.0,SOFT,4.0,False,83.199,False,1,False,False,True,True,
+Q,PIA,8,Q2,3.0,SOFT,5.0,False,108.472,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,9,Q2,4.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,PIA,10,Q2,4.0,SOFT,2.0,True,109.777,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,11,Q3,5.0,SOFT,3.0,False,,False,12,True,False,False,False,no lap time; out lap; not green (track status 12); timing check failed
+Q,PIA,12,Q3,5.0,SOFT,4.0,False,82.985,False,1,False,False,True,True,
+Q,PIA,13,Q3,5.0,SOFT,5.0,False,104.998,False,1,False,True,False,False,in lap; timing check failed
+Q,PIA,14,Q3,6.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+Q,PIA,15,Q3,6.0,SOFT,2.0,True,82.804,False,1,False,False,True,True,
+Q,PIA,16,Q3,6.0,SOFT,3.0,True,116.68,False,1,False,True,False,False,in lap; timing check failed
+FP2,NOR,1,,1.0,MEDIUM,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,NOR,2,,1.0,MEDIUM,2.0,True,85.02,False,12,False,False,True,False,not green (track status 12)
+FP2,NOR,3,,1.0,MEDIUM,3.0,True,136.397,False,1,False,False,True,False,slow lap (162 % of stint best)
+FP2,NOR,4,,1.0,MEDIUM,4.0,True,84.332,False,1,False,False,True,True,
+FP2,NOR,5,,1.0,MEDIUM,5.0,True,145.033,False,1,False,False,True,False,slow lap (172 % of stint best)
+FP2,NOR,6,,1.0,MEDIUM,6.0,True,122.444,False,1,False,False,True,False,slow lap (145 % of stint best)
+FP2,NOR,7,,1.0,MEDIUM,7.0,True,84.501,False,1,False,False,True,True,
+FP2,NOR,8,,1.0,MEDIUM,8.0,True,102.471,False,1,False,True,False,False,in lap; timing check failed
+FP2,NOR,9,,2.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,NOR,10,,2.0,SOFT,2.0,True,83.517,False,1,False,False,True,True,
+FP2,NOR,11,,2.0,SOFT,3.0,True,142.41,False,1,False,True,False,False,in lap; timing check failed
+FP2,NOR,12,,3.0,SOFT,4.0,False,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,NOR,13,,3.0,SOFT,5.0,False,90.295,False,1,False,True,False,False,in lap; timing check failed
+FP2,NOR,14,,4.0,MEDIUM,9.0,False,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,NOR,15,,4.0,MEDIUM,10.0,False,90.039,False,1,False,False,True,True,
+FP2,NOR,16,,4.0,MEDIUM,11.0,False,89.713,False,1,False,False,True,True,
+FP2,NOR,17,,4.0,MEDIUM,12.0,False,89.795,False,1,False,False,True,True,
+FP2,NOR,18,,4.0,MEDIUM,13.0,False,89.604,False,1,False,False,True,True,
+FP2,NOR,19,,4.0,MEDIUM,14.0,False,89.537,False,1,False,False,True,True,
+FP2,NOR,20,,4.0,MEDIUM,15.0,False,89.347,False,1,False,False,True,True,
+FP2,NOR,21,,4.0,MEDIUM,16.0,False,89.758,False,1,False,False,True,True,
+FP2,NOR,22,,4.0,MEDIUM,17.0,False,91.484,False,1,False,True,False,False,in lap; timing check failed
+FP2,NOR,23,,5.0,SOFT,1.0,False,108.448,False,1,True,False,False,False,out lap; timing check failed
+FP2,NOR,24,,5.0,SOFT,2.0,False,118.104,False,1,False,False,True,False,not a timed run (stint best 141 % of driver's best)
+FP2,NOR,25,,5.0,SOFT,3.0,False,144.78,False,1,False,True,False,False,in lap; timing check failed
+FP2,PIA,1,,1.0,MEDIUM,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,PIA,2,,1.0,MEDIUM,2.0,True,85.617,False,12,False,False,True,False,not green (track status 12)
+FP2,PIA,3,,1.0,MEDIUM,3.0,True,140.043,False,1,False,False,True,False,slow lap (165 % of stint best)
+FP2,PIA,4,,1.0,MEDIUM,4.0,True,84.932,False,1,False,False,True,True,
+FP2,PIA,5,,1.0,MEDIUM,5.0,True,148.727,False,1,False,False,True,False,slow lap (175 % of stint best)
+FP2,PIA,6,,1.0,MEDIUM,6.0,True,85.472,False,1,False,False,True,True,
+FP2,PIA,7,,1.0,MEDIUM,7.0,True,,False,1,False,False,False,False,no lap time; timing check failed
+FP2,PIA,8,,1.0,MEDIUM,8.0,True,128.588,False,1,False,False,True,False,slow lap (152 % of stint best)
+FP2,PIA,9,,1.0,MEDIUM,9.0,True,84.798,False,1,False,False,True,True,
+FP2,PIA,10,,1.0,MEDIUM,10.0,True,108.425,False,1,False,True,False,False,in lap; timing check failed
+FP2,PIA,11,,2.0,SOFT,1.0,True,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,PIA,12,,2.0,SOFT,2.0,True,83.751,False,1,False,False,True,True,
+FP2,PIA,13,,2.0,SOFT,3.0,True,124.217,False,1,False,True,False,False,in lap; timing check failed
+FP2,PIA,14,,3.0,SOFT,4.0,False,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,PIA,15,,3.0,SOFT,5.0,False,84.579,False,1,False,False,True,True,
+FP2,PIA,16,,3.0,SOFT,6.0,False,113.789,False,1,False,True,False,False,in lap; timing check failed
+FP2,PIA,17,,4.0,MEDIUM,11.0,False,,False,1,True,False,False,False,no lap time; out lap; timing check failed
+FP2,PIA,18,,4.0,MEDIUM,12.0,False,90.464,False,1,False,False,True,True,
+FP2,PIA,19,,4.0,MEDIUM,13.0,False,89.22,False,1,False,False,True,True,
+FP2,PIA,20,,4.0,MEDIUM,14.0,False,89.221,False,1,False,False,True,True,
+FP2,PIA,21,,4.0,MEDIUM,15.0,False,89.512,False,1,False,False,True,True,
+FP2,PIA,22,,4.0,MEDIUM,16.0,False,89.058,False,1,False,False,True,True,
+FP2,PIA,23,,4.0,MEDIUM,17.0,False,89.212,False,1,False,False,True,True,
+FP2,PIA,24,,4.0,MEDIUM,18.0,False,90.876,False,1,False,False,True,True,
+FP2,PIA,25,,4.0,MEDIUM,19.0,False,91.821,False,1,False,True,False,False,in lap; timing check failed
+FP2,PIA,26,,5.0,SOFT,1.0,False,108.218,False,1,True,False,False,False,out lap; timing check failed
+FP2,PIA,27,,5.0,SOFT,2.0,False,108.944,False,1,False,False,True,False,not a timed run (stint best 130 % of driver's best)
+FP2,PIA,28,,5.0,SOFT,3.0,False,127.461,False,1,False,True,False,False,in lap; timing check failed
