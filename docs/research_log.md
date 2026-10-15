@@ -96,3 +96,77 @@ extreme value (the best lap) carries that value's noise and its confounders.
 - Extend `01_data_pilot.py`: timing histogram (check 1), channel resolution (2),
   brake values (3), position data rate and noise (4), distance drift on the 4 Q
   laps per driver (5), `get_circuit_info()` corners (7), cache size and load time (9).
+
+---
+
+## 2026-10-16 — Phase 1: data checks 1–5, 7, 9
+
+**Did**
+- `src/apextrace/quality.py`: `sample_intervals`, `interval_summary`,
+  `event_timing_error_s`, `share_on_grid`, `find_gaps`, `smallest_step`,
+  `path_length`, `distance_to_path`. `tests/test_quality.py` has 11 tests on
+  synthetic signals, including a Monte Carlo check of the timing-error formula.
+  5 deliberate bugs, all caught.
+- `experiments/01_data_pilot.py` now runs checks 1–9 and writes everything to
+  `results/01_data_pilot/`: `summary.json`, `lap_table.csv`, `gaps.csv`,
+  `interval_histogram.csv`, `lap_distances.csv`, `corners.csv`,
+  `sample_intervals.png`, `corners_on_speed.png`.
+
+**Results** (30 kept laps: 2024 Abu Dhabi Q + FP2, NOR + PIA; numbers from `summary.json`)
+- **Check 1, timing.** Car data: 3.77 samples/s on average (mean interval
+  0.265 s), median 0.24 s. Every interval is a whole number of **40 ms clock
+  ticks** (100 % within 2 ms). Normal intervals run from 0.16 to 0.56 s, which
+  at 300 km/h is **13–47 m between samples** (mean 22 m). Position data: 3.85/s,
+  on a 20 ms clock.
+- **Feed dropouts:** 36 car-data gaps of 0.64–1.36 s (up to 113 m at 300 km/h)
+  in 21 of 30 laps. Every one coincides with a position-data gap, and both
+  drivers lose data at the same session moments (24 distinct moments), so these
+  are pauses in the whole timing feed, not car problems. Some fall in braking
+  zones: PIA Q lap 2 goes from 295 to 139 km/h across a 1.16 s gap at ~2,520 m
+  (Turn 6). Full list: `gaps.csv`.
+- **Event timing error** (an on/off event placed at the middle of its interval,
+  one lap): 0.093 s with gaps, 0.087 s without, against 0.077 s if sampling were
+  regular at the mean interval. At 300 km/h that is 7.7 m, against the 6.4 m of
+  the naive formula. The reason is the inspection paradox: events land in long
+  intervals more often.
+- **Check 2, resolution:** Speed in whole km/h (61–327), Throttle in whole %
+  (0–100), RPM in whole rpm, X/Y/Z in whole decimetres (0.1 m). DRS codes 8,
+  10, 12, 14.
+- **Check 3, brake:** `bool`, only True/False; braking in 14.8 % of samples.
+- **Check 4, position:** all samples `OnTrack`. Other laps lie a median of 0.06 m
+  (95th percentile 0.54 m) from a driver's reference path, and **exactly the
+  same** from the teammate's path (0.06 / 0.54 m), and FP2 laps from the Q path
+  (0.05 / 0.49 m). Real racing lines differ by more than that between drivers.
+  ⚠️ Hypothesis: the position feed is smoothed or matched to a track model. Either
+  way, X/Y can't show racing-line differences.
+- **Check 5, distance** (integrating speed from the exact lap start to the exact
+  lap end): mean 5,219 m, 62 m (1.2 %) shorter than the official centre-line
+  length of 5,281 m (formula1.com, checked); the X/Y path gives 5,230 m. A racing
+  line is shorter than the centre line, so being short isn't an error by itself.
+  Lap-to-lap: in Q, gap-free laps are within 2.0 m of the driver's mean, laps
+  with gaps up to 9.0 m. In FP2 the spread is up to 19 m, with or without gaps
+  (cause not known yet). FastF1's default `add_distance()` leaves out the stretch
+  from the last sample to the line and spreads more (up to 43 m).
+  → Distance needs aligning (Phase 3); feed gaps are a main error source.
+- **Check 7, corners:** `get_circuit_info()` gives 16 corners with a distance
+  along the session's fastest lap (NOR's pole lap), at the position sample
+  nearest each marker, so each corner's distance is uncertain by about half a
+  sample (up to ~10 m at speed). Usable for placing corner windows.
+- **Check 9, cost:** cache 40.4 MB for Q, 61.3 MB for FP2, plus a 17.1 MB HTTP
+  cache. Load from cache 1–3 s; the first download of Q took ~19 s. Phase 6
+  estimate: ~46 qualifying sessions × ~40 MB ≈ 1.9 GB ⚠️ (session count not
+  checked yet).
+
+**Surprises and traps found**
+- FastF1 3.8.3's docs say interpolated rows have `Source == 'interpolated'`,
+  but the code writes `'interpolation'`. A check for `'interpolated'` silently
+  finds nothing.
+- Sampling isn't "3.7 Hz with jitter". It is a 40 ms clock with 4–14 ticks
+  between samples, plus dropouts. The synthetic-lap generator (Phase 2) must
+  draw intervals from the real distribution (`interval_histogram.csv`), not
+  use 3.7 Hz plus small jitter. Otherwise the error bars will be too optimistic.
+
+**Next (Day 4):** choose the 3 corners (check 10), using `corners_on_speed.png`.
+Decide a rule for (lap, corner) pairs with a feed gap inside the corner window:
+at Turn 6, PIA's Q laps 2 and 7 both have gaps nearby. Then write
+`docs/data_report.md` and log the choices in `decisions.md`.

@@ -1,0 +1,487 @@
+{
+  "event": "2024 Abu Dhabi",
+  "sessions": [
+    "Q",
+    "FP2"
+  ],
+  "drivers": [
+    "NOR",
+    "PIA"
+  ],
+  "check_6_usable_laps": {
+    "laps_total": 85,
+    "laps_kept": 30,
+    "kept_by_session_driver_compound": {
+      "FP2 NOR MEDIUM": 9,
+      "FP2 NOR SOFT": 1,
+      "FP2 PIA MEDIUM": 10,
+      "FP2 PIA SOFT": 2,
+      "Q NOR SOFT": 4,
+      "Q PIA SOFT": 4
+    },
+    "drop_reasons": {
+      "no lap time": 21,
+      "out lap": 22,
+      "timing check failed": 45,
+      "in lap": 22,
+      "not green (track status 12)": 6,
+      "slow lap (> 107 % of stint best)": 6,
+      "not a timed run (stint best > 115 % of driver's best)": 2
+    },
+    "check_8_helper_chain": {
+      "Q NOR": {
+        "select_laps": [
+          2,
+          7,
+          12,
+          15
+        ],
+        "fastf1_helpers": [
+          2,
+          7,
+          12,
+          15
+        ],
+        "same": true
+      },
+      "Q PIA": {
+        "select_laps": [
+          2,
+          7,
+          12,
+          15
+        ],
+        "fastf1_helpers": [
+          2,
+          7,
+          12,
+          15
+        ],
+        "same": true
+      },
+      "FP2 NOR": {
+        "select_laps": [
+          4,
+          7,
+          10,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "fastf1_helpers": [
+          4,
+          7,
+          10,
+          20
+        ],
+        "same": false
+      },
+      "FP2 PIA": {
+        "select_laps": [
+          4,
+          6,
+          9,
+          12,
+          15,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24
+        ],
+        "fastf1_helpers": [
+          4,
+          6,
+          9,
+          12,
+          15,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "same": false
+      }
+    }
+  },
+  "check_1_sample_timing": {
+    "source_counts": {
+      "car": 9785,
+      "pos": 9996
+    },
+    "car": {
+      "count": 9755,
+      "mean_s": 0.2652,
+      "median_s": 0.24,
+      "p5_s": 0.16,
+      "p95_s": 0.44,
+      "min_s": 0.159,
+      "max_s": 1.36,
+      "rate_from_mean_hz": 3.7714,
+      "rate_from_median_hz": 4.1667,
+      "clock_tick_s": 0.04,
+      "share_within_1ms_of_tick": 0.9644,
+      "share_within_2ms_of_tick": 1.0,
+      "normal_max_s": 0.56,
+      "gaps_longer_than_threshold": 36,
+      "event_timing_error_s": 0.0925,
+      "event_timing_error_without_gaps_s": 0.0869,
+      "regular_sampling_error_s": 0.0765,
+      "metres_between_samples": {
+        "300 km/h": {
+          "min": 13.25,
+          "mean": 22.0961,
+          "normal_max": 46.6667,
+          "max": 113.3333
+        },
+        "200 km/h": {
+          "min": 8.8333,
+          "mean": 14.7308,
+          "normal_max": 31.1111,
+          "max": 75.5556
+        },
+        "100 km/h": {
+          "min": 4.4167,
+          "mean": 7.3654,
+          "normal_max": 15.5556,
+          "max": 37.7778
+        }
+      },
+      "event_timing_error_m": {
+        "300 km/h": 7.7105,
+        "200 km/h": 5.1403,
+        "100 km/h": 2.5702
+      }
+    },
+    "pos": {
+      "count": 9966,
+      "mean_s": 0.2596,
+      "median_s": 0.24,
+      "p5_s": 0.14,
+      "p95_s": 0.42,
+      "min_s": 0.019,
+      "max_s": 1.28,
+      "rate_from_mean_hz": 3.8522,
+      "rate_from_median_hz": 4.1667,
+      "clock_tick_s": 0.02,
+      "share_within_1ms_of_tick": 0.8737,
+      "share_within_2ms_of_tick": 0.9979,
+      "normal_max_s": 0.54,
+      "gaps_longer_than_threshold": 36,
+      "event_timing_error_s": 0.0928,
+      "event_timing_error_without_gaps_s": 0.0866,
+      "regular_sampling_error_s": 0.0749,
+      "metres_between_samples": {
+        "300 km/h": {
+          "min": 1.5833,
+          "mean": 21.6329,
+          "normal_max": 45.0,
+          "max": 106.6667
+        },
+        "200 km/h": {
+          "min": 1.0556,
+          "mean": 14.4219,
+          "normal_max": 30.0,
+          "max": 71.1111
+        },
+        "100 km/h": {
+          "min": 0.5278,
+          "mean": 7.211,
+          "normal_max": 15.0,
+          "max": 35.5556
+        }
+      },
+      "event_timing_error_m": {
+        "300 km/h": 7.7358,
+        "200 km/h": 5.1572,
+        "100 km/h": 2.5786
+      }
+    },
+    "gaps": {
+      "threshold_s": 0.6,
+      "car_gaps": 36,
+      "with_position_gap_at_same_time": 36,
+      "distinct_moments": 24,
+      "laps_with_gaps": 21,
+      "laps_total": 30,
+      "longest_s": 1.36
+    }
+  },
+  "check_2_resolution": {
+    "channels": {
+      "Speed": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": 61.0,
+        "max": 327.0,
+        "distinct_values": 267
+      },
+      "Throttle": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": 0.0,
+        "max": 100.0,
+        "distinct_values": 99
+      },
+      "RPM": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": 5361.0,
+        "max": 12381.0,
+        "distinct_values": 3530
+      },
+      "nGear": {
+        "dtype": "int64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": 2.0,
+        "max": 8.0,
+        "distinct_values": 7
+      },
+      "DRS": {
+        "dtype": "int64",
+        "smallest_step": 2.0,
+        "whole_numbers_only": true,
+        "min": 8.0,
+        "max": 14.0,
+        "distinct_values": 4
+      },
+      "X": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": -2195.0,
+        "max": 5797.0,
+        "distinct_values": 5042
+      },
+      "Y": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": -5347.0,
+        "max": 11775.0,
+        "distinct_values": 6680
+      },
+      "Z": {
+        "dtype": "float64",
+        "smallest_step": 1.0,
+        "whole_numbers_only": true,
+        "min": -243.0,
+        "max": -130.0,
+        "distinct_values": 113
+      }
+    },
+    "drs_codes": [
+      8,
+      10,
+      12,
+      14
+    ]
+  },
+  "check_3_brake": {
+    "dtype": "bool",
+    "distinct_values": [
+      "False",
+      "True"
+    ],
+    "share_of_samples_braking": 0.1477,
+    "samples": 9785
+  },
+  "check_4_position": {
+    "status_counts": {
+      "OnTrack": 9996
+    },
+    "reference_laps": {
+      "NOR": 15,
+      "PIA": 15
+    },
+    "same_driver_Q": {
+      "points": 1949,
+      "median_m": 0.0591,
+      "p95_m": 0.543,
+      "max_m": 2.1178
+    },
+    "other_driver_Q": {
+      "points": 2598,
+      "median_m": 0.0608,
+      "p95_m": 0.5408,
+      "max_m": 2.1319
+    },
+    "same_driver_FP2_vs_Q": {
+      "points": 7398,
+      "median_m": 0.0534,
+      "p95_m": 0.4948,
+      "max_m": 2.146
+    }
+  },
+  "check_5_distance": {
+    "official_length_m": 5281,
+    "groups": {
+      "Q NOR": {
+        "laps": 4,
+        "edges_mean_m": 5222.125,
+        "edges_range_m": 4.7,
+        "edges_std_m": 2.3071,
+        "fastf1_default_range_m": 22.8,
+        "xy_path_mean_m": 5229.825
+      },
+      "Q PIA": {
+        "laps": 4,
+        "edges_mean_m": 5219.3,
+        "edges_range_m": 15.5,
+        "edges_std_m": 6.512,
+        "fastf1_default_range_m": 6.5,
+        "xy_path_mean_m": 5232.85
+      },
+      "FP2 NOR": {
+        "laps": 10,
+        "edges_mean_m": 5213.73,
+        "edges_range_m": 29.7,
+        "edges_std_m": 7.8968,
+        "fastf1_default_range_m": 36.8,
+        "xy_path_mean_m": 5228.31
+      },
+      "FP2 PIA": {
+        "laps": 12,
+        "edges_mean_m": 5221.75,
+        "edges_range_m": 32.4,
+        "edges_std_m": 10.1959,
+        "fastf1_default_range_m": 43.0,
+        "xy_path_mean_m": 5230.7167
+      }
+    },
+    "all_laps_edges_mean_m": 5218.8,
+    "all_laps_edges_range_m": 39.5,
+    "mean_edges_minus_official_m": -62.2,
+    "mean_edges_minus_xy_path_m": -11.28,
+    "deviation_from_driver_session_mean_by_gaps": {
+      "Q no_gaps": {
+        "laps": 5,
+        "max_abs_deviation_m": 2.0,
+        "mean_abs_deviation_m": 1.5
+      },
+      "Q with_gaps": {
+        "laps": 3,
+        "max_abs_deviation_m": 9.0,
+        "mean_abs_deviation_m": 6.0667
+      },
+      "FP2 no_gaps": {
+        "laps": 4,
+        "max_abs_deviation_m": 14.9,
+        "mean_abs_deviation_m": 5.675
+      },
+      "FP2 with_gaps": {
+        "laps": 18,
+        "max_abs_deviation_m": 19.1,
+        "mean_abs_deviation_m": 7.0278
+      }
+    }
+  },
+  "check_7_corners": {
+    "corner_count": 16,
+    "corners": [
+      {
+        "number": 1,
+        "letter": "",
+        "distance_m": 377.9
+      },
+      {
+        "number": 2,
+        "letter": "",
+        "distance_m": 626.7
+      },
+      {
+        "number": 3,
+        "letter": "",
+        "distance_m": 834.5
+      },
+      {
+        "number": 4,
+        "letter": "",
+        "distance_m": 1009.6
+      },
+      {
+        "number": 5,
+        "letter": "",
+        "distance_m": 1416.3
+      },
+      {
+        "number": 6,
+        "letter": "",
+        "distance_m": 2616.8
+      },
+      {
+        "number": 7,
+        "letter": "",
+        "distance_m": 2677.4
+      },
+      {
+        "number": 8,
+        "letter": "",
+        "distance_m": 2877.3
+      },
+      {
+        "number": 9,
+        "letter": "",
+        "distance_m": 3682.0
+      },
+      {
+        "number": 10,
+        "letter": "",
+        "distance_m": 4026.2
+      },
+      {
+        "number": 11,
+        "letter": "",
+        "distance_m": 4187.1
+      },
+      {
+        "number": 12,
+        "letter": "",
+        "distance_m": 4305.0
+      },
+      {
+        "number": 13,
+        "letter": "",
+        "distance_m": 4411.5
+      },
+      {
+        "number": 14,
+        "letter": "",
+        "distance_m": 4534.7
+      },
+      {
+        "number": 15,
+        "letter": "",
+        "distance_m": 4804.9
+      },
+      {
+        "number": 16,
+        "letter": "",
+        "distance_m": 5043.7
+      }
+    ]
+  },
+  "check_9_cost": {
+    "session_cache_mb": {
+      "2024-12-06_Practice_2": 61.3071,
+      "2024-12-07_Qualifying": 40.4046
+    },
+    "http_cache_mb": 17.1254,
+    "total_cache_mb": 118.8371,
+    "load_from_cache_s": {
+      "Q": 1.6368,
+      "FP2": 1.1691
+    }
+  }
+}

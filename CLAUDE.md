@@ -19,7 +19,8 @@ proposal — check before relying on it.
 | 2026-10-11 | Brainstormed F1 + signals project ideas (§4). |
 | 2026-10-14 | Direction, research question, pilot and protocol agreed. Repo created. **Phase 0 setup:** CLAUDE.md split, `docs/` created, `.venv` + FastF1 installed, `apextrace` package installable, smoke test passing. |
 | 2026-10-15 | **Phase 0 done** (hello-lap plot). **Phase 1 started:** `data_loading.py` (`load_session` with 2025 guard, `select_laps` with drop reasons, tested), lap table for 2024 Abu Dhabi Q + FP2 (checks 6, 8). Q: 4 push laps per driver. FP2: matched 7-lap medium long runs. |
-| next | Phase 1 checks 1–5, 7, 9: `quality.py` + extend `experiments/01_data_pilot.py` (timing histogram, resolution, brake, position data, distance drift, circuit info, cache cost). Then choose the 3 corners and write `docs/data_report.md`. |
+| 2026-10-16 | Phase 1 checks 1–5, 7, 9 done: `quality.py` (tested), all numbers in `results/01_data_pilot/summary.json`. Found: 40 ms timing clock, feed dropouts up to 1.36 s, X/Y can't show lines, gap-free Q laps' distances agree within 2 m. |
+| next | Phase 1 check 10: choose the 3 corners, decide a rule for feed gaps inside corner windows, write `docs/data_report.md` + `decisions.md` (milestone M1). |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -106,11 +107,16 @@ comparison; FP2 = repeatability on matched runs only. Three corners (heavy
 braking, medium speed, fast), chosen from the data in Phase 1.
 
 **Data facts to keep in mind every session** (§7, §9):
-- FastF1 car data ✅ arrives at ~3.7 Hz with irregular timing → Nyquist ≈ 1.85 Hz,
-  one sample every ~22.5 m at 300 km/h. Upsampling adds no information.
+- Car data (measured 2026-10-16): 3.77 samples/s on average, on a 40 ms clock,
+  0.16–0.56 s between samples (13–47 m at 300 km/h), plus feed dropouts of
+  0.6–1.4 s in 21 of 30 laps. Nyquist ≈ 1.85 Hz. Upsampling adds no information.
 - `Brake` is boolean ✅ → measure braking by deceleration derived from speed.
-- Rows with `Source == 'interpolated'` are not measurements. Merging car and
+  Speed is in whole km/h, Throttle in whole %.
+- Rows whose `Source` is not `'car'`/`'pos'` are not measurements (FastF1 3.8.3
+  writes `'interpolation'`; its docs say `'interpolated'`). Merging car and
   position data interpolates; resample once, from the original data.
+- X/Y can't show racing-line differences: laps sit as close to the teammate's
+  path as to their own (median 0.06 m).
 - `add_distance()` integrates speed, so distance drifts → align laps (§9.5).
 - Causal filters shift events: a 5-sample moving average delays by ≈ 0.54 s
   ≈ 37.5 m at 250 km/h → use zero-phase filtering (`filtfilt`, §9.3).
