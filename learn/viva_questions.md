@@ -179,3 +179,21 @@ Near 1: stable, distinctive; near 0: noise.
 **Q: What is statistical power and what did it tell you?**
 The chance to detect a real effect. With 4 vs 4 laps, only effects of
 d ≥ 2.38 have 80 % power; 20 laps per driver would bring it down to 0.91.
+
+## Chapter 8: data sources
+
+**Q: Your main data source stopped working mid-project. What did you do?**
+Turned on debug logging to see the real HTTP errors (401 from the F1 archive),
+checked the alternative (OpenF1) serves the same feed sample by sample (320/320
+car samples identical on the pole lap), rebuilt the lap table, and validated
+end to end against the cached FastF1 data: identical kept laps for 20/20
+drivers, features within 0.23 m.
+
+**Q: Why match deleted laps by lap time and not lap number?**
+Race control's lap number in the message doesn't match the timing feed's
+numbering (PIA's deleted 1:22.985 is his lap 12, the message says "LAP 13");
+the lap time is unambiguous.
+
+**Q: What is a regression check?**
+Re-running an existing result after changing code, to show it didn't change
+(the pilot features were identical, 90 of 90 rows, after splitting track.py).

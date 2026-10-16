@@ -307,3 +307,38 @@ conclusion until Phase 6 has all drivers.
 The p-values themselves were always right.
 
 **Phase 5 done (M5).**
+
+---
+
+## 2026-10-17 — Phase 6, part 1: OpenF1 adapter, validated
+
+**Built:**
+- `openf1.py`: cached downloads with retry/backoff; sessions, drivers;
+  deleted laps from race-control messages (matched by lap time, reinstatements
+  undone); flag intervals (yellow per mini-sector until CLEAR, red, SC, VSC);
+  the lap table with FastF1's columns; per-lap car and position streams;
+  lap → track coordinate.
+- `track.py` refactor: a source-independent core (`clip_to_lap`,
+  `samples_on_track`, `reference_path_from_xy`) plus thin FastF1 wrappers.
+  Checked: all 90 pilot feature rows identical before and after.
+- `check_not_frozen()` shared by both data sources (2025 guard).
+- 6 new tests (deleted/reinstated, flag intervals, the lap-table rules,
+  overlapping stints, edge samples). 70 tests pass.
+
+**Validation (`experiments/07_openf1_validation.py`, 2024 Abu Dhabi):**
+- Lap times identical on every non-out lap in Q (FP2: 92.6 %), out/in laps
+  100 %, deleted laps 100 %, green/not green 100 %, stint and compound 100 %.
+- First run: OpenF1 kept ~1 lap per driver instead of ~4, because FastF1's
+  check 4 (lap start = previous lap end within 3 ms) fails on OpenF1's
+  less precise lap start times, and stint boundaries overlap. After the two
+  fixes: **kept laps identical for 20 of 20 drivers in both sessions.**
+- Features: all 75 usable pilot (lap, corner) pairs usable in both;
+  differences ≤ 0.23 m (brake onset), ≤ 0.10 m (apex), ≤ 0.004 km/h (min speed).
+
+**Removed:** `experiments/07_download_qualifying.py` (FastF1 download, which no
+longer works: every 2023 session failed with 401 on 2026-10-16).
+
+**Next (Phase 6, part 2):** download 2023–2024 qualifying through OpenF1 (only
+the kept laps' car and position data), automatic corner detection (braking
+corners from the reference lap's speed dips), and the dataset: one row per
+(session, driver, lap, corner).

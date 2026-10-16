@@ -22,7 +22,8 @@ proposal — check before relying on it.
 | 2026-10-16 | Phase 1 checks 1–5, 7, 9 done: `quality.py` (tested), all numbers in `results/01_data_pilot/summary.json`. Found: 40 ms timing clock, feed dropouts up to 1.36 s, X/Y can't show lines, gap-free Q laps' distances agree within 2 m. |
 | 2026-10-16 (later) | Sadman in exams: Claude builds autonomously, documents everything in `learn/`. **M1** (data report, corners T6/T5/T9), **Phase 2 / M2** (synthetic + Monte Carlo error table), **Phase 3 / M3** (alignment: X/Y projection + complementary fusion, 1.15 m), **Phase 4** (features, output A draft), **Phase 5 prepared** (stats.py, preregistration Part A). F1 archive now returns 401 → Phase 6 via OpenF1 (identical feed, checked). |
 | 2026-10-17 | **Phase 5 done (M5):** preregistered pilot tests run after commit `ab2510c`: 0 of 27 discoveries (as predicted); NOR brakes ~7 m later at T5/T9 (g ≈ 2, p = 0.057), not confirmed. `min_permutation_p` corrected (deviations file). Sadman commits part by part. |
-| next | Phase 6, part 1: OpenF1 adapter (laps table + car/position data), validated against the FastF1 pilot; then the 2023–2024 qualifying download. |
+| 2026-10-17 | **Phase 6, part 1:** OpenF1 adapter (`openf1.py`), `track.py` split into a source-independent core; validated on Abu Dhabi: kept laps identical for 20/20 drivers, features within 0.23 m. |
+| next | Phase 6, part 2: download 2023–2024 qualifying via OpenF1, automatic corner detection, the multi-session dataset. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -163,7 +164,8 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── corners.py          # corner windows, corner types
 │   ├── alignment.py        # cross-correlation lag, parabolic peak, DTW
 │   ├── events.py           # brake onset, apex, throttle pickup (sub-sample)
-│   ├── track.py            # FastF1 lap -> samples on the track coordinate
+│   ├── track.py            # lap samples -> track coordinate (core + FastF1 wrappers)
+│   ├── openf1.py           # OpenF1 data source: lap table, streams (FastF1 archive now 401)
 │   ├── features.py         # feature vectors per (driver, lap, corner)
 │   ├── stats.py            # ICC, bootstrap, permutation tests
 │   ├── identification.py   # splits, baselines, models, metrics
@@ -261,3 +263,8 @@ before "simplifying" code.
   for equal groups** (no mirror split otherwise). Found when a 3 vs 4 test gave
   p = 1/35 below the stated "minimum" 2/35. Guarded by
   `test_minimum_p_for_unequal_groups_has_no_mirror_split`.
+- **2026-10-17 — OpenF1 lap table: don't use FastF1's "lap start = previous
+  lap end (3 ms)" check, and give overlapping stint laps to the NEW stint.**
+  OpenF1 lap starts are only accurate to ~0.1 s; with the check, ~3 of 4 push
+  laps per driver were dropped. Guarded by the validation experiment (kept laps
+  identical for 20/20 drivers) and `test_overlapping_stints_give_the_shared_lap_to_the_new_stint`.

@@ -172,3 +172,21 @@ adapter that rebuilds the lap table: track status from race-control flags,
 deleted laps from race-control messages, and a timing check from sector sums.
 The adapter is validated by re-computing the Abu Dhabi pilot features and
 comparing them with the FastF1-based ones.
+
+## 2026-10-17 — OpenF1 adapter validated; two adaptations of FastF1's rules
+`src/apextrace/openf1.py` rebuilds FastF1's lap table from OpenF1. Validated on
+2024 Abu Dhabi Q and FP2, all 20 drivers (`results/07_openf1_validation/`):
+**the kept laps are identical for 20 of 20 drivers in both sessions**, and the
+75 pilot (lap, corner) features match FastF1's within 0.23 m (brake onset),
+0.10 m (apex) and 0.004 km/h (minimum speed). Two rules had to change:
+- **Timing check:** FastF1's 4th check (a lap starts where the previous one
+  ended, within 3 ms) is dropped for OpenF1. OpenF1's lap start times are
+  accurate only to ~0.05–0.15 s, and for out laps they mark the pit exit, so the
+  check failed almost every push lap. Checks 1–3 are kept. Result: the timing
+  check agrees with FastF1 on 100 % of qualifying laps and 95.5 % of FP2 laps.
+- **Stints:** OpenF1 stints overlap by one lap (the out lap of the new stint
+  is also listed as the last lap of the old one); the later stint wins, as
+  in FastF1.
+Known small difference: tyre age agrees on 97.7 % of qualifying laps but only
+61 % of FP2 laps (FastF1 seems to count used tyres differently). Lap
+selection doesn't use tyre age.

@@ -16,7 +16,8 @@ your exams and then explain any part to a faculty member or an interviewer.
 | 5 | [05_alignment.md](05_alignment.md) | Phase 3: projection onto a path, why X/Y is noisy along the track, the complementary filter, cross-correlation | 1.5 h |
 | 6 | [06_features_and_writeup.md](06_features_and_writeup.md) | Phase 4: the 11 features, uncertainty words, the Norris vs Piastri pilot, writing honestly | 1 h |
 | 7 | [07_statistics.md](07_statistics.md) | Phase 5: preregistration, permutation tests, bootstrap, effect sizes, multiple comparisons, ICC, power | 2 h |
-| 8 | Phase 6 onwards | Added as they are built (identification on 2023-2024 via OpenF1, driver vs car) | |
+| 8 | [08_data_sources.md](08_data_sources.md) | Phase 6 part 1: the F1 archive closed (401); proving OpenF1 is the same data; rebuilding the lap table; regression checks | 1 h |
+| 9 | Phase 6 part 2 onwards | Added as they are built (multi-season dataset, identification, driver vs car) | |
 | — | [viva_questions.md](viva_questions.md) | Practice questions with answers, per chapter | |
 | — | [exercises.md](exercises.md) | Hands-on: change a number, predict, run, check | |
 

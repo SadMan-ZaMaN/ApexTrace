@@ -1,0 +1,24 @@
+Driver,LapNumber,LapTime_fastf1,PitOutTime_fastf1,PitInTime_fastf1,Deleted_fastf1,TrackStatus_fastf1,IsAccurate_fastf1,Compound_fastf1,TyreLife_fastf1,Stint_fastf1,DriverNumber,Team,Stint_openf1,Compound_openf1,TyreLife_openf1,LapTime_openf1,LapStartDate,PitOutTime_openf1,PitInTime_openf1,Deleted_openf1,DeletedReason,TrackStatus_openf1,Sector1Time_s,Sector2Time_s,Sector3Time_s,IsAccurate_openf1,_merge
+ALB,7,,,,False,1,False,MEDIUM,7.0,2.0,23,Williams,2,MEDIUM,3.0,0 days 00:02:37.506000,2024-12-06 13:12:17.521,,,False,,1,25.525,53.396,78.585,True,both
+ALO,3,,,,False,1,False,MEDIUM,3.0,1.0,14,Aston Martin,1,MEDIUM,3.0,0 days 00:02:36.767000,2024-12-06 13:05:29.153,,,False,,1,30.542,74.285,51.94,True,both
+ALO,5,,,,False,1,False,MEDIUM,5.0,1.0,14,Aston Martin,1,MEDIUM,5.0,0 days 00:02:37.872000,2024-12-06 13:09:31.403,,,False,,1,27.725,70.917,59.23,True,both
+ALO,10,,,,False,1,False,SOFT,3.0,2.0,14,Aston Martin,2,SOFT,3.0,0 days 00:02:50.901000,2024-12-06 13:31:43.475,,,False,,1,36.354,78.751,55.796,True,both
+GAS,6,,,,False,1,False,MEDIUM,6.0,2.0,10,Alpine,2,MEDIUM,3.0,0 days 00:02:41.247000,2024-12-06 13:11:02.713,,,False,,1,30.094,74.339,56.814,True,both
+GAS,12,,,,False,1,False,SOFT,3.0,3.0,10,Alpine,3,SOFT,3.0,0 days 00:02:45.104000,2024-12-06 13:33:17.792,,,False,,1,28.396,75.59,61.118,True,both
+HAM,6,,,,False,1,False,MEDIUM,3.0,2.0,44,Mercedes,2,MEDIUM,3.0,0 days 00:02:47.886000,2024-12-06 13:12:12.385,,,False,,1,34.007,73.772,60.107,True,both
+HUL,3,,,,False,1,False,MEDIUM,3.0,1.0,27,Haas F1 Team,1,MEDIUM,3.0,0 days 00:02:40.276000,2024-12-06 13:04:55.340,,,False,,1,28.095,70.336,61.845,True,both
+LEC,3,,,,False,1,False,MEDIUM,3.0,1.0,16,Ferrari,1,MEDIUM,3.0,0 days 00:02:42.825000,2024-12-06 13:04:47.462,,,False,,1,32.946,68.768,61.111,True,both
+LEC,5,,,,False,1,False,MEDIUM,5.0,1.0,16,Ferrari,1,MEDIUM,5.0,0 days 00:02:42.386000,2024-12-06 13:08:54.804,,,False,,1,28.952,77.644,55.79,True,both
+LEC,8,,,,False,1,False,MEDIUM,8.0,1.0,16,Ferrari,1,MEDIUM,8.0,0 days 00:02:43.454000,2024-12-06 13:15:15.229,,,False,,1,22.686,80.815,59.953,True,both
+MAG,3,,,,False,12,False,MEDIUM,3.0,1.0,20,Haas F1 Team,1,MEDIUM,3.0,0 days 00:02:53.972000,2024-12-06 13:03:39.702,,,False,,12,38.716,74.658,60.598,True,both
+MAG,5,,,,False,1,False,MEDIUM,5.0,1.0,20,Haas F1 Team,1,MEDIUM,5.0,0 days 00:02:41.352000,2024-12-06 13:07:59.153,,,False,,1,30.508,68.07,62.774,True,both
+PIA,7,,,,False,1,False,MEDIUM,7.0,1.0,81,McLaren,1,MEDIUM,7.0,0 days 00:02:31.381000,2024-12-06 13:12:01.309,,,False,,1,30.532,60.258,60.591,True,both
+RUS,3,,,,False,1,False,MEDIUM,3.0,1.0,63,Mercedes,1,MEDIUM,3.0,0 days 00:02:35.663000,2024-12-06 13:05:43.186,,,False,,1,31.051,69.831,54.781,True,both
+RUS,6,,,,False,1,False,MEDIUM,6.0,1.0,63,Mercedes,1,MEDIUM,6.0,0 days 00:02:41.957000,2024-12-06 13:11:45.310,,,False,,1,30.892,71.806,59.259,True,both
+RUS,8,,,,False,1,False,MEDIUM,8.0,1.0,63,Mercedes,1,MEDIUM,8.0,0 days 00:02:36.608000,2024-12-06 13:15:52.836,,,False,,1,35.959,63.684,56.965,True,both
+RUS,23,,,,False,1,False,MEDIUM,10.0,3.0,63,Mercedes,3,MEDIUM,10.0,0 days 00:02:30.594000,2024-12-06 14:01:17.805,,,False,,1,21.641,45.29,83.663,True,both
+SAI,3,,,,False,1,False,MEDIUM,3.0,1.0,55,Ferrari,1,MEDIUM,3.0,0 days 00:02:39.486000,2024-12-06 13:04:28.194,,,False,,1,31.712,73.644,54.13,True,both
+SAI,5,,,,False,1,False,MEDIUM,5.0,1.0,55,Ferrari,1,MEDIUM,5.0,0 days 00:02:48.489000,2024-12-06 13:08:32.223,,,False,,1,31.405,83.426,53.658,True,both
+SAI,8,,,,False,1,False,MEDIUM,8.0,1.0,55,Ferrari,1,MEDIUM,8.0,0 days 00:02:55.115000,2024-12-06 13:14:51.808,,,False,,1,26.046,92.482,56.587,True,both
+STR,5,,,,False,1,False,MEDIUM,5.0,1.0,18,Aston Martin,1,MEDIUM,5.0,0 days 00:02:30.521000,2024-12-06 13:07:28.140,,,False,,1,27.456,67.729,55.336,True,both
+TSU,5,,,,False,1,False,MEDIUM,5.0,1.0,22,RB,1,MEDIUM,5.0,0 days 00:02:33.768000,2024-12-06 13:07:19.833,,,False,,1,38.126,62.18,53.462,True,both

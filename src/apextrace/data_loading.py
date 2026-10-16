@@ -36,6 +36,16 @@ SLOW_LAP_FACTOR = 1.07
 TIMED_RUN_FACTOR = 1.15
 
 
+def check_not_frozen(year):
+    """Raise PermissionError for the frozen 2025 season unless FINAL_TEST=1 (used by every data source)."""
+    if int(year) == FROZEN_TEST_YEAR and os.environ.get("FINAL_TEST") != "1":
+        raise PermissionError(
+            f"{year} is the frozen final test set. Set FINAL_TEST=1 only for "
+            f"the one-time final evaluation, after docs/preregistration.md "
+            f"is committed."
+        )
+
+
 def load_session(year, event, session_name, cache_dir=DEFAULT_CACHE_DIR):
     """Load one session (laps, car data, position data, messages) via FastF1's cache.
 
@@ -50,12 +60,7 @@ def load_session(year, event, session_name, cache_dir=DEFAULT_CACHE_DIR):
     Raises PermissionError for a 2025 session unless the environment variable
     FINAL_TEST is set to "1" (only for the one-time final evaluation).
     """
-    if year == FROZEN_TEST_YEAR and os.environ.get("FINAL_TEST") != "1":
-        raise PermissionError(
-            f"{year} is the frozen final test set. Set FINAL_TEST=1 only for "
-            f"the one-time final evaluation, after docs/preregistration.md "
-            f"is committed."
-        )
+    check_not_frozen(year)
 
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
