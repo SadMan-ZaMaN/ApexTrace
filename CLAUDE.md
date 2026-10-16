@@ -21,7 +21,8 @@ proposal — check before relying on it.
 | 2026-10-15 | **Phase 0 done** (hello-lap plot). **Phase 1 started:** `data_loading.py` (`load_session` with 2025 guard, `select_laps` with drop reasons, tested), lap table for 2024 Abu Dhabi Q + FP2 (checks 6, 8). Q: 4 push laps per driver. FP2: matched 7-lap medium long runs. |
 | 2026-10-16 | Phase 1 checks 1–5, 7, 9 done: `quality.py` (tested), all numbers in `results/01_data_pilot/summary.json`. Found: 40 ms timing clock, feed dropouts up to 1.36 s, X/Y can't show lines, gap-free Q laps' distances agree within 2 m. |
 | 2026-10-16 (later) | Sadman in exams: Claude builds autonomously, documents everything in `learn/`. **M1** (data report, corners T6/T5/T9), **Phase 2 / M2** (synthetic + Monte Carlo error table), **Phase 3 / M3** (alignment: X/Y projection + complementary fusion, 1.15 m), **Phase 4** (features, output A draft), **Phase 5 prepared** (stats.py, preregistration Part A). F1 archive now returns 401 → Phase 6 via OpenF1 (identical feed, checked). |
-| next | Sadman commits (preregistration first) → run `06_pilot_stats.py`. Then Phase 6: OpenF1 adapter, 2023–2024 qualifying dataset, identification (H3). |
+| 2026-10-17 | **Phase 5 done (M5):** preregistered pilot tests run after commit `ab2510c`: 0 of 27 discoveries (as predicted); NOR brakes ~7 m later at T5/T9 (g ≈ 2, p = 0.057), not confirmed. `min_permutation_p` corrected (deviations file). Sadman commits part by part. |
+| next | Phase 6, part 1: OpenF1 adapter (laps table + car/position data), validated against the FastF1 pilot; then the 2023–2024 qualifying download. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -256,3 +257,7 @@ before "simplifying" code.
   stint*, plus a "not a timed run" rule for whole stints (> 115 % of the
   driver's best). Tests `test_long_run_is_judged_against_its_own_stint` and
   `test_stint_that_was_never_a_timed_run_is_dropped` guard it.
+- **2026-10-17 — Minimum permutation p-value is 1/C for unequal groups, 2/C only
+  for equal groups** (no mirror split otherwise). Found when a 3 vs 4 test gave
+  p = 1/35 below the stated "minimum" 2/35. Guarded by
+  `test_minimum_p_for_unequal_groups_has_no_mirror_split`.

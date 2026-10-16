@@ -68,11 +68,22 @@ def permutation_test(a, b, rng=None, max_exact=20000, n_random=20000):
 
 
 def min_permutation_p(n_a, n_b):
-    """Smallest two-sided p-value an exact permutation test can give: 2 / C(n_a + n_b, n_a).
+    """Smallest two-sided p-value an exact permutation test can give.
 
-    Example: 4 vs 4 laps -> 2 / 70 = 0.029; 2 vs 4 -> 2 / 15 = 0.13.
+    There are C(n_a + n_b, n_a) splits. The real split is always counted, so
+    p >= 1 / C. With EQUAL group sizes, the mirror-image split (the two groups
+    swapped) has exactly the same |difference|, so p >= 2 / C. With unequal
+    sizes the swapped split doesn't exist (the groups would have the wrong
+    sizes), so the minimum is 1 / C.
+    Examples: 4 vs 4 laps -> 2 / 70 = 0.029; 3 vs 4 -> 1 / 35 = 0.029;
+    2 vs 4 -> 1 / 15 = 0.067.
+    (Bug history: a first version used 2 / C for every case, which overstated
+    the minimum for unequal groups; found when a 3 vs 4 test reached 1/35.)
     """
-    return 2.0 / math.comb(n_a + n_b, n_a)
+    splits = math.comb(n_a + n_b, n_a)
+    if n_a == n_b:
+        return 2.0 / splits
+    return 1.0 / splits
 
 
 def bootstrap_ci(a, b, rng=None, n_boot=10000, level=0.95):

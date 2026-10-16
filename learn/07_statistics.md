@@ -23,8 +23,11 @@ laps: C(8,4) = 70 splits). p = share of splits at least as extreme as the real
 one. It makes no assumption of normality, which suits tiny samples.
 
 **The minimum possible p-value:** with 70 splits, the real split and its mirror
-image are the most extreme possible, so p ≥ 2/70 = 0.029. With 2 vs 4 laps,
-p ≥ 2/15 = 0.13: nothing can ever be "significant".
+image (groups swapped) are the most extreme possible, so p ≥ 2/70 = 0.029. With
+unequal groups there is no mirror split, so the minimum is 1/C: 3 vs 4 laps →
+1/35 = 0.029, 2 vs 4 → 1/15 = 0.067. (Our preregistration first wrote 2/C for
+every case; the correction is in `docs/preregistration_deviations.md`. A
+deviations file, instead of editing the preregistration, is how you stay honest.)
 
 **Bootstrap confidence interval** ("how much could the difference wobble?").
 Resample each driver's laps *with replacement*, recompute the difference,
@@ -66,3 +69,18 @@ tested pipeline. Confirmatory tests need many sessions (Phase 6 onwards).
 - Bootstrap interval covers a known shift about 95 % of the time (300 trials).
 - ICC by hand: groups [1, 3] and [5, 7] → 14/18 = 0.778.
 - Power: 6/10/20 laps per driver → 1.77/1.32/0.91, as the plan said.
+
+## What the pilot tests found (`results/06_pilot_stats/`)
+
+- **0 discoveries of 27** after Benjamini–Hochberg, exactly as stated in advance.
+- Largest effects: brake onset +7.42 m at T5 (g +2.16, p = 0.057) and +7.20 m at
+  T9 (g +1.92, p = 0.057); full throttle at T9 −56.7 m (g −4.43, p = 0.029,
+  the minimum possible).
+- **Looking at the raw data behind the biggest effect** (always do this): at
+  T9 Piastri holds 80–95 % throttle for ~50–80 m and then reads 99 % for
+  ~100 m, so a fixed 99 % threshold exaggerates the gap. A threshold-free
+  feature would be more robust.
+- **H1:** minimum speed varies from lap to lap by 2–12× its measurement error,
+  so laps genuinely differ. Brake onset in qualifying is often at the
+  measurement-error level. ICC with only 2 drivers has very wide intervals.
+- Verdict: *consistent with* Norris braking ~7 m later at T5 and T9, *not confirmed*.

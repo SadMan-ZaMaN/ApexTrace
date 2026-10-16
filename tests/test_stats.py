@@ -29,6 +29,14 @@ def test_minimum_p_for_4_vs_4_laps():
     assert p == pytest.approx(2 / 70)
 
 
+def test_minimum_p_for_unequal_groups_has_no_mirror_split():
+    # 3 vs 4 laps: 35 splits, and swapping the groups is not a valid split
+    assert min_permutation_p(3, 4) == pytest.approx(1 / 35)
+    assert min_permutation_p(2, 4) == pytest.approx(1 / 15)
+    _, p = permutation_test([10, 11, 12], [1, 2, 3, 4])
+    assert p == pytest.approx(min_permutation_p(3, 4))
+
+
 def test_permutation_false_positive_rate_is_about_5_percent():
     # Two groups from the SAME distribution: about 5 % of p-values below 0.05
     rng = np.random.default_rng(31)

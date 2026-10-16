@@ -66,9 +66,12 @@ T9; Piastri 2 at T6 and 4 at T5 and T9.*
 
 ## What we can't say (yet)
 
-- **Nothing here is a statistical test.** With 2–4 laps per driver, only very
-  large effects could be confirmed. The tests are written down (preregistered)
-  *before* they are run, in the next phase.
+- **None of these differences is statistically confirmed.** The tests were
+  written down (preregistered) before being run. With 2–4 laps per driver,
+  none of the 27 comparisons survives the correction for running many tests
+  (`results/06_pilot_stats/`). The two braking-point differences have the
+  largest effect sizes (p = 0.057 each), so the right wording is "consistent
+  with", not "proven".
 - **Not all laps are comparable.** Q1, Q2 and Q3 laps differ in track grip
   and tyre wear. At Turn 5 both drivers have the same four laps (Q1, Q2 and
   two in Q3). At Turn 6 both usable Piastri laps are from Q3, while Norris's

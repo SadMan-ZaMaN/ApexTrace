@@ -267,3 +267,43 @@ Phase 6 will use OpenF1 (decisions.md).
 
 **Next:** Sadman commits (the preregistration first). Then run
 `06_pilot_stats.py`, and build the OpenF1 adapter for Phase 6.
+
+---
+
+## 2026-10-17 — Phase 5: preregistered pilot tests run (H1, H2)
+
+Ran `experiments/06_pilot_stats.py` after the preregistration was committed
+(`ab2510c`); the script checks this with git. Results: `results/06_pilot_stats/`.
+
+**H2 (qualifying, NOR − PIA, 27 tests):** **0 discoveries** after
+Benjamini–Hochberg, as stated in advance. Largest effects:
+- Brake onset T5: +7.42 m, Hedges' g +2.16, p = 0.057 (4 vs 4 laps).
+- Brake onset T9: +7.20 m, g +1.92, p = 0.057 (3 vs 4).
+- Full throttle T9: −56.71 m, g −4.43, p = 0.029 (the smallest possible for
+  3 vs 4).
+- Throttle pickup T6: +3.54 m, g +2.05, p = 0.067 (the smallest possible for 4 vs 2).
+The bootstrap 95 % intervals for both brake onsets exclude 0 ([+3.5, +10.5] m
+at T5, [+3.5, +10.4] m at T9). But with 3–4 laps the bootstrap only knows the
+variation it has seen, so these intervals are too narrow to rely on alone.
+Pilot verdict: **consistent with Norris braking ~7 m later at T5 and T9, not
+confirmed.**
+
+**The T9 full-throttle effect, looked at in the raw traces:** NOR reaches
+100 % about 30–55 m after the marker. PIA holds partial throttle (80–95 %) for
+~50–80 m, then reads 99 % for ~100 m before 100 %. The pattern is real in all
+4 laps, but the size of the 57 m figure depends on where the fixed 99 %
+threshold falls. Idea for Phase 6 (exploratory, not preregistered): a
+threshold-free throttle feature, such as mean throttle over the 100 m after the apex.
+
+**H1 (exploratory):** lap-to-lap SD / per-lap measurement error, Q: brake onset
+0.19–3.04 (often at the measurement-error level); minimum speed 1.98–12.19
+(laps genuinely differ by several km/h, far more than the 0.35 km/h
+measurement error). FP2 long runs: larger (brake onset 2.3–5.9). ICC with 2
+drivers: very wide intervals (e.g. T5 brake onset 0.74 [0.34, 0.99]); no
+conclusion until Phase 6 has all drivers.
+
+**Correction found:** `min_permutation_p` used 2/C also for unequal groups
+(wrong: 1/C). Fixed and tested; recorded in `docs/preregistration_deviations.md`.
+The p-values themselves were always right.
+
+**Phase 5 done (M5).**
