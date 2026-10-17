@@ -218,3 +218,57 @@ def min_detectable_effect(n_a, n_b, alpha=0.05, power=0.8):
         else:
             high = middle
     return (low + high) / 2
+
+
+def icc_from_groups(values, groups):
+    """ICC(1), the same formula as icc_oneway, computed with group sums (fast for thousands of groups).
+
+    icc_oneway loops over groups, which is clear but slow inside a bootstrap
+    with ~3,000 groups and hundreds of resamples. Here pandas computes each
+    group's size, mean and sum of squares in one pass; the ANOVA formulas are
+    unchanged (tests check both give the same number). Groups of one value
+    carry no within-group information but still count in MSB.
+    """
+    import pandas as pd
+
+    frame = pd.DataFrame({"value": np.asarray(values, dtype=float), "group": np.asarray(groups)}).dropna()
+    grouped = frame.groupby("group")["value"]
+    sizes = grouped.size().to_numpy(dtype=float)
+    means = grouped.mean().to_numpy()
+    grand_mean = frame["value"].mean()
+    n_total = sizes.sum()
+    k = len(sizes)
+    if k < 2 or n_total - k < 1:
+        return float("nan")
+    ss_between = float(np.sum(sizes * (means - grand_mean) ** 2))
+    deviations = frame["value"] - grouped.transform("mean")
+    ss_within = float(np.sum(deviations ** 2))
+    ms_between = ss_between / (k - 1)
+    ms_within = ss_within / (n_total - k)
+    k0 = (n_total - np.sum(sizes ** 2) / n_total) / (k - 1)
+    denominator = ms_between + (k0 - 1) * ms_within
+    return float((ms_between - ms_within) / denominator) if denominator > 0 else float("nan")
+
+
+def icc_from_group_stats(sizes, means, within_ss):
+    """ICC(1) from per-group summaries: size n_g, mean m_g, within-group sum of squares SS_g.
+
+    The one-way ANOVA only needs these three numbers per group:
+      grand mean = sum(n_g m_g) / N,  SSB = sum(n_g (m_g - grand)^2),  SSW = sum(SS_g).
+    So a bootstrap can resample groups (or sessions of groups) by picking rows
+    of this small summary table, instead of re-reading thousands of laps each
+    time. Gives exactly the same number as icc_oneway on the raw values.
+    """
+    sizes = np.asarray(sizes, dtype=float)
+    means = np.asarray(means, dtype=float)
+    within_ss = np.asarray(within_ss, dtype=float)
+    n_total = sizes.sum()
+    k = len(sizes)
+    if k < 2 or n_total - k < 1:
+        return float("nan")
+    grand_mean = np.sum(sizes * means) / n_total
+    ms_between = np.sum(sizes * (means - grand_mean) ** 2) / (k - 1)
+    ms_within = np.sum(within_ss) / (n_total - k)
+    k0 = (n_total - np.sum(sizes ** 2) / n_total) / (k - 1)
+    denominator = ms_between + (k0 - 1) * ms_within
+    return float((ms_between - ms_within) / denominator) if denominator > 0 else float("nan")

@@ -239,3 +239,27 @@ at most every 2.1 s, cached gzip-compressed.
 Result: **21,493 clean rows, 44 sessions**. The rules were fixed on the
 evidence of `results/10_eda/outliers.csv`, before looking at any driver
 comparison or model.
+
+## 2026-10-17 — Identification protocol (H3, development on 2023–2024)
+- Unit: one lap; features = the lap's mean field-relative value per corner type
+  (`identification.lap_vectors`, 30 columns).
+- Split: leave-one-session-out; imputer, scaler and model fitted on training
+  sessions only (scikit-learn pipelines). Field-relative values use the
+  held-out session's own median, which needs no labels.
+- Task (a), main evidence: each team-season's two drivers with the most laps,
+  sessions where both have laps, at least 5 sessions (20 team-seasons).
+  Task (b): all drivers of a season with laps in ≥ 5 sessions (confounded by the car).
+- Baselines: majority, lap time only, raw lap statistics; models: logistic
+  regression (class-balanced), nearest centroid. Checks: shuffled labels within
+  sessions (5×), ablation by feature group, weekend vote.
+- Comparison across team-seasons: Wilcoxon signed-rank test on paired balanced
+  accuracies; 95 % bootstrap intervals over team-seasons.
+
+## 2026-10-17 — H4 development can't use team changers from 2023–2024
+OpenF1 has data from 2023 only (the F1 archive needed for 2022 returns 401),
+and no regular driver changed teams between 2023 and 2024 (the AlphaTauri →
+RB change is a rename; stand-ins have too few laps). So the H4 method is
+developed on "same driver, same car, new year" (is a driver's 2024 signature
+closest to their own 2023 one?), and the real team-change test (Hamilton,
+Sainz, Ocon, Hülkenberg, Lawson ↔ Tsunoda) runs once on 2025, after
+preregistration Part B is committed.

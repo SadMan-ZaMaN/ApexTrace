@@ -375,3 +375,45 @@ min speed ↔ corner time −0.62, apex ↔ throttle pickup +0.57.
 type), then H3: identification on held-out sessions with baselines
 (majority, lap time only, raw stats) and our features; ablation; shuffled
 labels.
+
+---
+
+## 2026-10-17 (later) — Phase 6, part 3: H1 with all drivers, H3 identification (development)
+
+**Built:** `identification.py` (lap vectors per corner type, leave-one-session-out
+with a leakage assert, scikit-learn pipelines fitted on training sessions only,
+balanced accuracy / macro-F1, shuffled labels within sessions);
+`stats.icc_from_groups` and `stats.icc_from_group_stats` (fast ICC, tested equal
+to `icc_oneway`); `11_repeatability.py`, `12_identification.py`. 6 identification
+tests, including a synthetic signature whose accuracy must fall in its
+theoretical range (an upper bound catches leakage). scikit-learn 1.9.1 added.
+
+**H1 (`results/11_repeatability/`), 21,493 clean rows:** lap-level ICC
+0.15–0.58 (drivers clearly distinguishable on the same day); weekend-level ICC
+0.04–0.40. Braking points are distinctive on the day but hardly persist (slow
+corners: 0.45 vs 0.04); minimum speed persists best (0.23/0.30/0.40 slow/medium/fast)
+and medium-corner throttle (0.38). Lap-to-lap spread is 5–25× the measurement
+error: the limit is real variation, not the 4 Hz feed.
+Mistake caught: the first weekend-level bootstrap resampled sessions,
+duplicating identical driver means; estimates fell outside their intervals.
+Fixed by resampling driver-seasons (sessions for the lap level). With group
+summaries the run went from 9.6 min to 13 s (1,000 resamples).
+
+**H3 (`results/12_identification/`), 3,873 laps:** teammates (20 team-seasons):
+ours 0.685 [0.654, 0.716], weekend vote 0.763, lap time only 0.565 (ours better
+in 18/20, Wilcoxon p = 0.0001), raw lap statistics 0.729 (ours better in 8/20,
+p = 0.14), shuffled labels 0.500 (no leakage). Ablation: throttle carries the
+most (without it 0.633). All drivers per season: ours 0.245 / 0.240 (chance
+0.048 / 0.045), raw 0.326 / 0.287, lap time 0.079 / 0.087 (confounded by the car).
+Investigated the raw baseline: the strongest single statistic is the share of
+samples with the brake flag on (0.610 on average; Alpine GAS/OCO 0.92 and 0.88,
+same sign in 94.7 % / 100 % of weekends); max speed alone 0.502. Driving habit or
+the car's brake-sensor threshold? Can't be told with 2023–24 → H4.
+
+**Verdict (development):** corner features carry a teammate signature that
+generalises to unseen weekends (clearly above chance and lap time) but don't
+beat simple whole-lap telemetry statistics. Part of any signature may be the car.
+
+**Next (Phase 7):** H4 development on "same driver, same car, new year"
+(2023 → 2024); write preregistration Part B (final H3 + H4 on 2025); Sadman
+commits it; then the one-time 2025 run.

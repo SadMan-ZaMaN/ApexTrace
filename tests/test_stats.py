@@ -89,3 +89,28 @@ def test_min_detectable_effect_matches_the_plan():
     assert min_detectable_effect(6, 6) == pytest.approx(1.77, abs=0.03)
     assert min_detectable_effect(10, 10) == pytest.approx(1.32, abs=0.03)
     assert min_detectable_effect(20, 20) == pytest.approx(0.91, abs=0.03)
+
+
+def test_icc_from_groups_matches_icc_oneway():
+    from apextrace.stats import icc_from_groups
+
+    rng = np.random.default_rng(34)
+    groups = np.repeat(np.arange(40), rng.integers(2, 7, size=40))
+    values = rng.normal(0, 1, len(groups)) + rng.normal(0, 1.5, 40)[groups]
+    assert icc_from_groups(values, groups) == pytest.approx(icc_oneway(values, groups))
+    assert icc_from_groups([1, 3, 5, 7], ["A", "A", "B", "B"]) == pytest.approx(14 / 18)
+
+
+def test_icc_from_group_stats_matches_icc_oneway():
+    from apextrace.stats import icc_from_group_stats
+
+    rng = np.random.default_rng(35)
+    groups = np.repeat(np.arange(30), rng.integers(2, 6, size=30))
+    values = rng.normal(0, 1, len(groups)) + rng.normal(0, 2, 30)[groups]
+    sizes, means, within = [], [], []
+    for g in np.unique(groups):
+        v = values[groups == g]
+        sizes.append(len(v))
+        means.append(v.mean())
+        within.append(np.sum((v - v.mean()) ** 2))
+    assert icc_from_group_stats(sizes, means, within) == pytest.approx(icc_oneway(values, groups))

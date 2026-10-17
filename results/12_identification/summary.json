@@ -1,0 +1,199 @@
+{
+ "laps": 3873,
+ "cleaning": {
+  "usable_rows": 24496,
+  "dropped_not_dry": 2997,
+  "dropped_min_speed_below_40": 6,
+  "set_missing_brake_onset_m": 111,
+  "set_missing_mean_decel_ms2": 232,
+  "set_missing_apex_m": 130,
+  "set_missing_throttle_pickup_m": 126,
+  "clean_rows": 21493
+ },
+ "teammates": {
+  "majority | balanced_accuracy": {
+   "mean": 0.4849625215662579,
+   "ci95_low": 0.4710581281592541,
+   "ci95_high": 0.4959419229668442,
+   "team_seasons": 20
+  },
+  "lap time only | balanced_accuracy": {
+   "mean": 0.5646305999051809,
+   "ci95_low": 0.5376475366936556,
+   "ci95_high": 0.5917624719019076,
+   "team_seasons": 20
+  },
+  "raw lap statistics | balanced_accuracy": {
+   "mean": 0.7289341867495434,
+   "ci95_low": 0.6795664299499888,
+   "ci95_high": 0.7796066082096279,
+   "team_seasons": 20
+  },
+  "our features (nearest centroid) | balanced_accuracy": {
+   "mean": 0.684884275396921,
+   "ci95_low": 0.66027079104445,
+   "ci95_high": 0.7090411056496188,
+   "team_seasons": 20
+  },
+  "our features | balanced_accuracy": {
+   "mean": 0.6854923185005213,
+   "ci95_low": 0.6536892393619966,
+   "ci95_high": 0.716177497509707,
+   "team_seasons": 20
+  },
+  "our features | weekend vote": {
+   "mean": 0.7634609892601378,
+   "ci95_low": 0.734442746795688,
+   "ci95_high": 0.7937854374405263,
+   "team_seasons": 20
+  },
+  "our features + lap time | balanced_accuracy": {
+   "mean": 0.690292450443387,
+   "ci95_low": 0.6589279814644718,
+   "ci95_high": 0.7199410847482092,
+   "team_seasons": 20
+  },
+  "shuffled labels | balanced_accuracy": {
+   "mean": 0.49976961195273645,
+   "ci95_low": 0.49270160072921404,
+   "ci95_high": 0.5067894038727073,
+   "team_seasons": 20
+  },
+  "without braking | balanced_accuracy": {
+   "mean": 0.6741029335528936,
+   "ci95_low": 0.6450437368291482,
+   "ci95_high": 0.7035346537363542,
+   "team_seasons": 20
+  },
+  "without apex | balanced_accuracy": {
+   "mean": 0.6904037420597873,
+   "ci95_low": 0.6623785014045879,
+   "ci95_high": 0.7188710348728378,
+   "team_seasons": 20
+  },
+  "without throttle | balanced_accuracy": {
+   "mean": 0.6333986125161927,
+   "ci95_low": 0.610963433231372,
+   "ci95_high": 0.6569907000168658,
+   "team_seasons": 20
+  },
+  "without speeds | balanced_accuracy": {
+   "mean": 0.7072690152790869,
+   "ci95_low": 0.677073392379978,
+   "ci95_high": 0.7383520382708534,
+   "team_seasons": 20
+  },
+  "without time | balanced_accuracy": {
+   "mean": 0.6848194327227326,
+   "ci95_low": 0.6567777720864799,
+   "ci95_high": 0.7122055933814787,
+   "team_seasons": 20
+  },
+  "raw mean_speed alone | balanced_accuracy": {
+   "mean": 0.5512743141371432,
+   "ci95_low": 0.5190531326871222,
+   "ci95_high": 0.5843611875343251,
+   "team_seasons": 20
+  },
+  "raw mean_speed | same sign share": {
+   "mean": 0.6571499716313958,
+   "ci95_low": 0.5950849681579172,
+   "ci95_high": 0.7252589444868858,
+   "team_seasons": 20
+  },
+  "raw max_speed alone | balanced_accuracy": {
+   "mean": 0.5021735636385943,
+   "ci95_low": 0.48150425410279896,
+   "ci95_high": 0.5224159943567075,
+   "team_seasons": 20
+  },
+  "raw max_speed | same sign share": {
+   "mean": 0.5596699301730261,
+   "ci95_low": 0.5330025464731347,
+   "ci95_high": 0.5911838168281667,
+   "team_seasons": 20
+  },
+  "raw mean_throttle alone | balanced_accuracy": {
+   "mean": 0.5908121368198174,
+   "ci95_low": 0.5745209300616537,
+   "ci95_high": 0.6070246272208396,
+   "team_seasons": 20
+  },
+  "raw mean_throttle | same sign share": {
+   "mean": 0.7383127549265321,
+   "ci95_low": 0.6870641292402128,
+   "ci95_high": 0.7867820378151261,
+   "team_seasons": 20
+  },
+  "raw share_full_throttle alone | balanced_accuracy": {
+   "mean": 0.5429839262696861,
+   "ci95_low": 0.5046789307422364,
+   "ci95_high": 0.5790677394754026,
+   "team_seasons": 20
+  },
+  "raw share_full_throttle | same sign share": {
+   "mean": 0.6592280444873323,
+   "ci95_low": 0.6171500400399393,
+   "ci95_high": 0.702634673666117,
+   "team_seasons": 20
+  },
+  "raw share_braking alone | balanced_accuracy": {
+   "mean": 0.6103520382164804,
+   "ci95_low": 0.5520197064962545,
+   "ci95_high": 0.6738559506997103,
+   "team_seasons": 20
+  },
+  "raw share_braking | same sign share": {
+   "mean": 0.7323149451168027,
+   "ci95_low": 0.6607544987692047,
+   "ci95_high": 0.8072130387242615,
+   "team_seasons": 20
+  },
+  "ours minus lap time only": {
+   "mean_difference": 0.12086171859534041,
+   "wins": 18,
+   "team_seasons": 20,
+   "wilcoxon_p": 0.0001049041748046875
+  },
+  "ours minus raw lap statistics": {
+   "mean_difference": -0.04344186824902203,
+   "wins": 8,
+   "team_seasons": 20,
+   "wilcoxon_p": 0.14290618896484375
+  }
+ },
+ "seasons": [
+  {
+   "year": 2023,
+   "drivers": 21,
+   "laps": 1851,
+   "chance": 0.047619047619047616,
+   "majority | balanced_accuracy": 0.043836246842111945,
+   "majority | macro_f1": 0.008029365540444353,
+   "lap time only | balanced_accuracy": 0.07878527801970743,
+   "lap time only | macro_f1": 0.051556680621233655,
+   "raw lap statistics | balanced_accuracy": 0.3257205255272747,
+   "raw lap statistics | macro_f1": 0.3033663110623901,
+   "our features | balanced_accuracy": 0.2452710846232015,
+   "our features | macro_f1": 0.23637175338310318,
+   "our features + lap time | balanced_accuracy": 0.2504162852969255,
+   "our features + lap time | macro_f1": 0.24305836250180782
+  },
+  {
+   "year": 2024,
+   "drivers": 22,
+   "laps": 1992,
+   "chance": 0.045454545454545456,
+   "majority | balanced_accuracy": 0.045454545454545456,
+   "majority | macro_f1": 0.005689839572192514,
+   "lap time only | balanced_accuracy": 0.08685397979040235,
+   "lap time only | macro_f1": 0.060864401007252454,
+   "raw lap statistics | balanced_accuracy": 0.28686990130361256,
+   "raw lap statistics | macro_f1": 0.2683889747334678,
+   "our features | balanced_accuracy": 0.24014827254405346,
+   "our features | macro_f1": 0.23527191316015295,
+   "our features + lap time | balanced_accuracy": 0.2458375450979534,
+   "our features + lap time | macro_f1": 0.24134606138673964
+  }
+ ]
+}

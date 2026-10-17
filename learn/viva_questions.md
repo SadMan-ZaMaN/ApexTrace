@@ -220,3 +220,33 @@ else at the same place on the same day.
 Listed them, found the causes (wet laps, broken data, corner sequences,
 flat-bottomed corners), and wrote cleaning rules before any modelling:
 dry only, broken rows dropped, impossible values set to missing per feature.
+
+## Chapter 10: repeatability and identification
+
+**Q: What's the difference between your lap-level and weekend-level ICC?**
+Lap level: groups are (session, corner, driver), so it asks whether laps of one
+driver at one corner on one day resemble each other more than other drivers'.
+Weekend level: groups are each driver's session means within a season, so it asks
+whether the driver's offset persists across weekends. Braking points: 0.45
+vs 0.04 (slow corners), distinctive on the day but not persistent.
+
+**Q: How did you bootstrap the ICC, and what went wrong first?**
+Resample the independent units: whole sessions for the lap level,
+driver-seasons for the weekend level. Resampling sessions for the weekend level
+duplicated identical driver means, inflating the ICC; estimates fell outside
+their own intervals, which revealed the mistake.
+
+**Q: How do you know your identification has no leakage?**
+Leave-one-session-out with an assert that no session is on both sides,
+pipelines fitted on training data only, and a shuffled-label check that gives
+0.500, i.e. chance.
+
+**Q: Did your features beat the baselines?**
+Teammates: 0.685 vs 0.565 for lap time only (18 of 20 team-seasons, Wilcoxon
+p = 0.0001), but not the raw-statistics baseline (0.729, p = 0.14), whose power
+comes mostly from the share of time with the brake flag on: either a driving
+habit or the car's brake-sensor threshold; H4 is needed to tell.
+
+**Q: Which features carry the signature?**
+Throttle features (removing them drops accuracy most, 0.685 → 0.633), and
+minimum speed and throttle persist best across weekends (H1).

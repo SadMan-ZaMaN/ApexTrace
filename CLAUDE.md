@@ -24,7 +24,8 @@ proposal — check before relying on it.
 | 2026-10-17 | **Phase 5 done (M5):** preregistered pilot tests run after commit `ab2510c`: 0 of 27 discoveries (as predicted); NOR brakes ~7 m later at T5/T9 (g ≈ 2, p = 0.057), not confirmed. `min_permutation_p` corrected (deviations file). Sadman commits part by part. |
 | 2026-10-17 | **Phase 6, part 1:** OpenF1 adapter (`openf1.py`), `track.py` split into a source-independent core; validated on Abu Dhabi: kept laps identical for 20/20 drivers, features within 0.23 m. |
 | 2026-10-17 (later) | **Phase 6, part 2:** OpenF1 download (47 sessions, 4,499 laps), automatic corner detection, braking-event rule, dataset (24,496 usable rows), raw-sample Parquet, EDA + cleaning rules → 21,493 clean dry rows, 44 sessions. |
-| next | Phase 6, part 3: H1 with all drivers (ICC), H3 identification on held-out sessions vs baselines, ablation. |
+| 2026-10-17 (later) | **Phase 6, part 3:** H1 with all drivers (lap ICC 0.15–0.58, weekend ICC 0.04–0.40; braking doesn't persist, min speed/throttle do); H3 dev: teammates 0.685 vs lap time 0.565 (p = 0.0001), not better than raw lap stats (0.729); shuffled 0.500. |
+| next | Phase 7: H4 dev (same driver 2023 → 2024), preregistration Part B (Sadman commits), one-time 2025 run. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
