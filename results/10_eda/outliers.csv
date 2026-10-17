@@ -1,0 +1,799 @@
+feature,value,limit_low,limit_high,year,location,driver,lap,corner,corner_type
+brake_onset_m,2.328,-400.0,0.0,2023,Melbourne,ALO,4,C1,medium
+brake_onset_m,17.236,-400.0,0.0,2023,Silverstone,NOR,5,C6,fast
+brake_onset_m,5.222,-400.0,0.0,2023,Silverstone,PER,5,C6,fast
+brake_onset_m,7.82,-400.0,0.0,2023,Silverstone,ZHO,5,C3,medium
+brake_onset_m,4.89,-400.0,0.0,2023,Spa-Francorchamps,ALB,2,C7,slow
+brake_onset_m,11.814,-400.0,0.0,2023,Spa-Francorchamps,ALB,4,C7,slow
+brake_onset_m,5.466,-400.0,0.0,2023,Spa-Francorchamps,ALB,7,C7,slow
+brake_onset_m,16.119,-400.0,0.0,2023,Spa-Francorchamps,ALO,15,C7,slow
+brake_onset_m,14.684,-400.0,0.0,2023,Spa-Francorchamps,ALO,18,C7,slow
+brake_onset_m,16.972,-400.0,0.0,2023,Spa-Francorchamps,HAM,2,C7,slow
+brake_onset_m,14.981,-400.0,0.0,2023,Spa-Francorchamps,LEC,16,C7,slow
+brake_onset_m,18.4,-400.0,0.0,2023,Spa-Francorchamps,LEC,22,C7,slow
+brake_onset_m,20.721,-400.0,0.0,2023,Spa-Francorchamps,MAG,7,C7,slow
+brake_onset_m,17.401,-400.0,0.0,2023,Spa-Francorchamps,NOR,20,C7,slow
+brake_onset_m,16.396,-400.0,0.0,2023,Spa-Francorchamps,OCO,2,C7,slow
+brake_onset_m,8.257,-400.0,0.0,2023,Spa-Francorchamps,RUS,11,C7,slow
+brake_onset_m,28.061,-400.0,0.0,2023,Spa-Francorchamps,SAI,3,C7,slow
+brake_onset_m,17.734,-400.0,0.0,2023,Spa-Francorchamps,SAI,5,C7,slow
+brake_onset_m,21.736,-400.0,0.0,2023,Spa-Francorchamps,SAI,16,C7,slow
+brake_onset_m,6.387,-400.0,0.0,2023,Spa-Francorchamps,SAI,22,C3,slow
+brake_onset_m,13.656,-400.0,0.0,2023,Spa-Francorchamps,SAR,2,C7,slow
+brake_onset_m,12.29,-400.0,0.0,2023,Spa-Francorchamps,STR,2,C7,slow
+brake_onset_m,12.843,-400.0,0.0,2023,Spa-Francorchamps,STR,7,C7,slow
+brake_onset_m,16.698,-400.0,0.0,2023,Spa-Francorchamps,STR,14,C2,medium
+brake_onset_m,1.241,-400.0,0.0,2023,Spa-Francorchamps,STR,18,C2,medium
+brake_onset_m,12.134,-400.0,0.0,2023,Spa-Francorchamps,STR,18,C7,slow
+brake_onset_m,22.389,-400.0,0.0,2023,Spa-Francorchamps,TSU,14,C7,slow
+brake_onset_m,16.058,-400.0,0.0,2023,Spa-Francorchamps,ZHO,2,C7,slow
+brake_onset_m,11.816,-400.0,0.0,2023,Spa-Francorchamps,ZHO,8,C7,slow
+brake_onset_m,17.068,-400.0,0.0,2023,Suzuka,ALB,8,C6,slow
+brake_onset_m,8.092,-400.0,0.0,2023,Suzuka,ALB,11,C6,slow
+brake_onset_m,9.194,-400.0,0.0,2023,Suzuka,HAM,2,C6,slow
+brake_onset_m,11.772,-400.0,0.0,2023,Suzuka,NOR,2,C6,slow
+brake_onset_m,14.68,-400.0,0.0,2023,Suzuka,PER,8,C6,slow
+brake_onset_m,13.453,-400.0,0.0,2023,Lusail,OCO,23,C3,fast
+brake_onset_m,10.032,-400.0,0.0,2023,Lusail,TSU,9,C3,fast
+brake_onset_m,9.297,-400.0,0.0,2023,Austin,ALO,2,C5,slow
+brake_onset_m,21.84,-400.0,0.0,2023,Austin,OCO,2,C3,medium
+brake_onset_m,13.462,-400.0,0.0,2024,Melbourne,LEC,2,C3,fast
+brake_onset_m,31.894,-400.0,0.0,2024,Melbourne,LEC,2,C4,fast
+brake_onset_m,29.161,-400.0,0.0,2024,Melbourne,LEC,5,C4,fast
+brake_onset_m,26.101,-400.0,0.0,2024,Melbourne,LEC,8,C4,fast
+brake_onset_m,36.18,-400.0,0.0,2024,Melbourne,LEC,14,C4,fast
+brake_onset_m,50.828,-400.0,0.0,2024,Melbourne,OCO,7,C4,fast
+brake_onset_m,26.843,-400.0,0.0,2024,Melbourne,SAI,14,C4,fast
+brake_onset_m,45.53,-400.0,0.0,2024,Melbourne,SAI,17,C4,fast
+brake_onset_m,3.985,-400.0,0.0,2024,Shanghai,ALB,10,C1,slow
+brake_onset_m,1.302,-400.0,0.0,2024,Shanghai,ALO,8,C1,slow
+brake_onset_m,1.687,-400.0,0.0,2024,Shanghai,BOT,8,C1,slow
+brake_onset_m,42.197,-400.0,0.0,2024,Shanghai,BOT,11,C1,slow
+brake_onset_m,3.921,-400.0,0.0,2024,Shanghai,BOT,14,C1,slow
+brake_onset_m,40.706,-400.0,0.0,2024,Shanghai,HAM,2,C1,slow
+brake_onset_m,35.997,-400.0,0.0,2024,Shanghai,LEC,4,C1,slow
+brake_onset_m,39.298,-400.0,0.0,2024,Shanghai,LEC,7,C1,slow
+brake_onset_m,45.428,-400.0,0.0,2024,Shanghai,LEC,19,C1,slow
+brake_onset_m,8.606,-400.0,0.0,2024,Shanghai,OCO,2,C1,slow
+brake_onset_m,4.137,-400.0,0.0,2024,Shanghai,OCO,5,C1,slow
+brake_onset_m,2.49,-400.0,0.0,2024,Shanghai,OCO,14,C1,slow
+brake_onset_m,2.248,-400.0,0.0,2024,Shanghai,SAI,2,C1,slow
+brake_onset_m,5.605,-400.0,0.0,2024,Shanghai,STR,2,C1,slow
+brake_onset_m,4.57,-400.0,0.0,2024,Shanghai,STR,11,C1,slow
+brake_onset_m,47.992,-400.0,0.0,2024,Shanghai,ZHO,4,C1,slow
+brake_onset_m,0.582,-400.0,0.0,2024,Miami,ZHO,8,C2,fast
+brake_onset_m,35.654,-400.0,0.0,2024,Imola,SAI,2,C1,medium
+brake_onset_m,1.38,-400.0,0.0,2024,Montréal,ALB,8,C1,medium
+brake_onset_m,30.422,-400.0,0.0,2024,Montréal,VER,2,C3,medium
+brake_onset_m,2.493,-400.0,0.0,2024,Austin,GAS,11,C7,fast
+brake_onset_m,40.781,-400.0,0.0,2024,Mexico City,BOT,2,C1,slow
+brake_onset_m,36.819,-400.0,0.0,2024,Mexico City,COL,2,C1,slow
+brake_onset_m,36.903,-400.0,0.0,2024,Mexico City,GAS,5,C1,slow
+brake_onset_m,36.78,-400.0,0.0,2024,Mexico City,GAS,9,C1,slow
+brake_onset_m,35.514,-400.0,0.0,2024,Mexico City,GAS,17,C1,slow
+brake_onset_m,36.808,-400.0,0.0,2024,Mexico City,HAM,2,C1,slow
+brake_onset_m,36.725,-400.0,0.0,2024,Mexico City,HAM,10,C1,slow
+brake_onset_m,42.455,-400.0,0.0,2024,Mexico City,HAM,15,C1,slow
+brake_onset_m,38.186,-400.0,0.0,2024,Mexico City,HAM,18,C1,slow
+brake_onset_m,38.275,-400.0,0.0,2024,Mexico City,HUL,2,C1,slow
+brake_onset_m,41.416,-400.0,0.0,2024,Mexico City,HUL,14,C1,slow
+brake_onset_m,43.095,-400.0,0.0,2024,Mexico City,HUL,17,C1,slow
+brake_onset_m,37.026,-400.0,0.0,2024,Mexico City,LAW,2,C1,slow
+brake_onset_m,44.901,-400.0,0.0,2024,Mexico City,LEC,2,C1,slow
+brake_onset_m,50.292,-400.0,0.0,2024,Mexico City,LEC,14,C1,slow
+brake_onset_m,39.842,-400.0,0.0,2024,Mexico City,LEC,17,C1,slow
+brake_onset_m,40.123,-400.0,0.0,2024,Mexico City,MAG,8,C1,slow
+brake_onset_m,46.376,-400.0,0.0,2024,Mexico City,MAG,14,C1,slow
+brake_onset_m,28.619,-400.0,0.0,2024,Mexico City,MAG,17,C1,slow
+brake_onset_m,36.308,-400.0,0.0,2024,Mexico City,NOR,5,C1,slow
+brake_onset_m,39.687,-400.0,0.0,2024,Mexico City,NOR,11,C1,slow
+brake_onset_m,37.783,-400.0,0.0,2024,Mexico City,NOR,14,C1,slow
+brake_onset_m,37.956,-400.0,0.0,2024,Mexico City,OCO,2,C1,slow
+brake_onset_m,28.151,-400.0,0.0,2024,Mexico City,OCO,5,C1,slow
+brake_onset_m,51.358,-400.0,0.0,2024,Mexico City,PER,2,C1,slow
+brake_onset_m,37.198,-400.0,0.0,2024,Mexico City,PIA,2,C1,slow
+brake_onset_m,43.62,-400.0,0.0,2024,Mexico City,PIA,7,C1,slow
+brake_onset_m,41.531,-400.0,0.0,2024,Mexico City,RUS,2,C1,slow
+brake_onset_m,39.459,-400.0,0.0,2024,Mexico City,SAI,2,C1,slow
+brake_onset_m,36.912,-400.0,0.0,2024,Mexico City,SAI,17,C1,slow
+brake_onset_m,40.521,-400.0,0.0,2024,Mexico City,STR,2,C1,slow
+brake_onset_m,44.376,-400.0,0.0,2024,Mexico City,STR,5,C1,slow
+brake_onset_m,39.249,-400.0,0.0,2024,Mexico City,STR,8,C1,slow
+brake_onset_m,39.91,-400.0,0.0,2024,Mexico City,STR,11,C1,slow
+brake_onset_m,39.786,-400.0,0.0,2024,Mexico City,TSU,2,C1,slow
+brake_onset_m,36.023,-400.0,0.0,2024,Mexico City,TSU,5,C1,slow
+brake_onset_m,41.973,-400.0,0.0,2024,Mexico City,VER,5,C1,slow
+brake_onset_m,38.612,-400.0,0.0,2024,Mexico City,ZHO,2,C1,slow
+brake_onset_m,39.089,-400.0,0.0,2024,Mexico City,ZHO,5,C1,slow
+brake_onset_m,39.231,-400.0,0.0,2024,Mexico City,ZHO,8,C1,slow
+brake_onset_m,14.724,-400.0,0.0,2024,São Paulo,TSU,17,C7,slow
+brake_onset_m,3.487,-400.0,0.0,2024,São Paulo,VER,18,C7,slow
+brake_onset_m,21.572,-400.0,0.0,2024,Las Vegas,ALB,5,C3,slow
+brake_onset_m,16.394,-400.0,0.0,2024,Las Vegas,COL,5,C3,slow
+brake_onset_m,24.308,-400.0,0.0,2024,Las Vegas,LEC,5,C3,slow
+brake_onset_m,13.861,-400.0,0.0,2024,Las Vegas,LEC,7,C3,slow
+brake_onset_m,21.294,-400.0,0.0,2024,Las Vegas,LEC,18,C3,slow
+brake_onset_m,17.257,-400.0,0.0,2024,Las Vegas,NOR,15,C3,slow
+brake_onset_m,20.883,-400.0,0.0,2024,Las Vegas,OCO,7,C3,slow
+brake_onset_m,13.529,-400.0,0.0,2024,Las Vegas,OCO,13,C3,slow
+brake_onset_m,28.968,-400.0,0.0,2024,Las Vegas,OCO,17,C3,slow
+brake_onset_m,16.406,-400.0,0.0,2024,Las Vegas,RUS,15,C3,slow
+brake_onset_m,18.215,-400.0,0.0,2024,Las Vegas,SAI,2,C3,slow
+brake_onset_m,19.758,-400.0,0.0,2024,Las Vegas,SAI,16,C3,slow
+brake_onset_m,16.65,-400.0,0.0,2024,Las Vegas,SAI,19,C3,slow
+brake_onset_m,15.116,-400.0,0.0,2024,Las Vegas,ZHO,2,C3,slow
+brake_onset_m,15.918,-400.0,0.0,2024,Las Vegas,ZHO,4,C3,slow
+brake_onset_m,21.032,-400.0,0.0,2024,Las Vegas,ZHO,12,C3,slow
+brake_onset_m,18.508,-400.0,0.0,2024,Las Vegas,ZHO,16,C3,slow
+brake_onset_m,12.89,-400.0,0.0,2024,Lusail,SAI,19,C3,fast
+min_speed_kmh,0.0,40.0,330.0,2023,Jeddah,DEV,9,C1,slow
+min_speed_kmh,0.0,40.0,330.0,2023,Jeddah,DEV,9,C3,medium
+min_speed_kmh,0.0,40.0,330.0,2023,Jeddah,DEV,9,C4,medium
+min_speed_kmh,0.0,40.0,330.0,2023,Jeddah,DEV,9,C6,slow
+min_speed_kmh,39.992,40.0,330.0,2023,Monaco,STR,8,C3,slow
+min_speed_kmh,37.831,40.0,330.0,2024,Jeddah,NOR,7,C6,slow
+min_speed_kmh,35.92,40.0,330.0,2024,São Paulo,COL,4,C6,slow
+min_speed_kmh,39.926,40.0,330.0,2024,São Paulo,COL,4,C7,slow
+mean_decel_ms2,1.528,3.0,60.0,2023,Jeddah,BOT,15,C1,slow
+mean_decel_ms2,2.773,3.0,60.0,2023,Jeddah,BOT,17,C1,slow
+mean_decel_ms2,2.675,3.0,60.0,2023,Jeddah,MAG,4,C1,slow
+mean_decel_ms2,2.85,3.0,60.0,2023,Jeddah,PIA,22,C1,slow
+mean_decel_ms2,1.114,3.0,60.0,2023,Melbourne,ALO,15,C6,fast
+mean_decel_ms2,0.238,3.0,60.0,2023,Melbourne,ALO,17,C6,fast
+mean_decel_ms2,1.093,3.0,60.0,2023,Melbourne,ALO,25,C6,fast
+mean_decel_ms2,2.663,3.0,60.0,2023,Melbourne,BOT,2,C4,fast
+mean_decel_ms2,0.516,3.0,60.0,2023,Melbourne,BOT,7,C6,fast
+mean_decel_ms2,1.038,3.0,60.0,2023,Melbourne,BOT,11,C6,fast
+mean_decel_ms2,0.543,3.0,60.0,2023,Melbourne,DEV,7,C4,fast
+mean_decel_ms2,1.139,3.0,60.0,2023,Melbourne,DEV,9,C4,fast
+mean_decel_ms2,0.396,3.0,60.0,2023,Melbourne,DEV,20,C4,fast
+mean_decel_ms2,2.442,3.0,60.0,2023,Melbourne,DEV,20,C6,fast
+mean_decel_ms2,1.997,3.0,60.0,2023,Melbourne,GAS,4,C6,fast
+mean_decel_ms2,2.804,3.0,60.0,2023,Melbourne,GAS,8,C6,fast
+mean_decel_ms2,1.835,3.0,60.0,2023,Melbourne,GAS,14,C6,fast
+mean_decel_ms2,0.981,3.0,60.0,2023,Melbourne,GAS,16,C6,fast
+mean_decel_ms2,1.747,3.0,60.0,2023,Melbourne,GAS,20,C6,fast
+mean_decel_ms2,1.325,3.0,60.0,2023,Melbourne,GAS,22,C6,fast
+mean_decel_ms2,1.555,3.0,60.0,2023,Melbourne,GAS,24,C6,fast
+mean_decel_ms2,1.305,3.0,60.0,2023,Melbourne,HAM,8,C6,fast
+mean_decel_ms2,2.9,3.0,60.0,2023,Melbourne,HAM,15,C6,fast
+mean_decel_ms2,2.886,3.0,60.0,2023,Melbourne,HAM,17,C6,fast
+mean_decel_ms2,1.74,3.0,60.0,2023,Melbourne,HUL,21,C6,fast
+mean_decel_ms2,2.591,3.0,60.0,2023,Melbourne,HUL,25,C6,fast
+mean_decel_ms2,1.662,3.0,60.0,2023,Melbourne,LEC,24,C4,fast
+mean_decel_ms2,1.29,3.0,60.0,2023,Melbourne,NOR,10,C6,fast
+mean_decel_ms2,1.364,3.0,60.0,2023,Melbourne,NOR,12,C6,fast
+mean_decel_ms2,1.191,3.0,60.0,2023,Melbourne,OCO,5,C4,fast
+mean_decel_ms2,1.131,3.0,60.0,2023,Melbourne,OCO,7,C4,fast
+mean_decel_ms2,1.981,3.0,60.0,2023,Melbourne,OCO,13,C4,fast
+mean_decel_ms2,2.846,3.0,60.0,2023,Melbourne,OCO,13,C6,fast
+mean_decel_ms2,1.774,3.0,60.0,2023,Melbourne,PIA,9,C6,fast
+mean_decel_ms2,0.416,3.0,60.0,2023,Melbourne,PIA,11,C6,fast
+mean_decel_ms2,2.94,3.0,60.0,2023,Melbourne,RUS,6,C6,fast
+mean_decel_ms2,2.096,3.0,60.0,2023,Melbourne,RUS,8,C6,fast
+mean_decel_ms2,2.975,3.0,60.0,2023,Melbourne,RUS,14,C6,fast
+mean_decel_ms2,0.296,3.0,60.0,2023,Melbourne,RUS,16,C6,fast
+mean_decel_ms2,1.134,3.0,60.0,2023,Melbourne,RUS,24,C6,fast
+mean_decel_ms2,2.811,3.0,60.0,2023,Melbourne,RUS,28,C6,fast
+mean_decel_ms2,2.252,3.0,60.0,2023,Melbourne,SAI,5,C4,fast
+mean_decel_ms2,0.751,3.0,60.0,2023,Melbourne,SAI,9,C4,fast
+mean_decel_ms2,2.531,3.0,60.0,2023,Melbourne,SAI,9,C6,fast
+mean_decel_ms2,1.632,3.0,60.0,2023,Melbourne,SAI,15,C4,fast
+mean_decel_ms2,1.999,3.0,60.0,2023,Melbourne,SAI,19,C6,fast
+mean_decel_ms2,1.446,3.0,60.0,2023,Melbourne,SAR,7,C4,fast
+mean_decel_ms2,0.849,3.0,60.0,2023,Melbourne,SAR,9,C4,fast
+mean_decel_ms2,2.667,3.0,60.0,2023,Melbourne,SAR,11,C6,fast
+mean_decel_ms2,1.267,3.0,60.0,2023,Melbourne,STR,19,C4,fast
+mean_decel_ms2,2.725,3.0,60.0,2023,Melbourne,STR,23,C6,fast
+mean_decel_ms2,1.711,3.0,60.0,2023,Melbourne,STR,25,C6,fast
+mean_decel_ms2,2.417,3.0,60.0,2023,Melbourne,TSU,17,C6,fast
+mean_decel_ms2,1.386,3.0,60.0,2023,Melbourne,TSU,21,C6,fast
+mean_decel_ms2,0.881,3.0,60.0,2023,Melbourne,VER,4,C6,fast
+mean_decel_ms2,1.558,3.0,60.0,2023,Melbourne,VER,6,C6,fast
+mean_decel_ms2,-0.109,3.0,60.0,2023,Melbourne,VER,8,C6,fast
+mean_decel_ms2,0.31,3.0,60.0,2023,Melbourne,VER,12,C6,fast
+mean_decel_ms2,1.149,3.0,60.0,2023,Melbourne,VER,15,C6,fast
+mean_decel_ms2,0.572,3.0,60.0,2023,Melbourne,VER,23,C6,fast
+mean_decel_ms2,1.233,3.0,60.0,2023,Melbourne,ZHO,7,C6,fast
+mean_decel_ms2,2.954,3.0,60.0,2023,Baku,ALB,10,C4,slow
+mean_decel_ms2,2.774,3.0,60.0,2023,Baku,BOT,10,C4,slow
+mean_decel_ms2,1.172,3.0,60.0,2023,Baku,BOT,18,C4,slow
+mean_decel_ms2,2.716,3.0,60.0,2023,Baku,OCO,15,C4,slow
+mean_decel_ms2,2.444,3.0,60.0,2023,Baku,SAI,14,C4,slow
+mean_decel_ms2,2.976,3.0,60.0,2023,Baku,SAR,10,C4,slow
+mean_decel_ms2,2.933,3.0,60.0,2023,Baku,SAR,18,C4,slow
+mean_decel_ms2,2.894,3.0,60.0,2023,Monaco,ALO,21,C7,medium
+mean_decel_ms2,2.859,3.0,60.0,2023,Monaco,GAS,14,C4,slow
+mean_decel_ms2,2.11,3.0,60.0,2023,Monaco,LEC,2,C7,medium
+mean_decel_ms2,2.744,3.0,60.0,2023,Monaco,NOR,16,C4,slow
+mean_decel_ms2,2.949,3.0,60.0,2023,Monaco,PIA,14,C4,slow
+mean_decel_ms2,2.869,3.0,60.0,2023,Monaco,SAI,2,C7,medium
+mean_decel_ms2,2.492,3.0,60.0,2023,Monaco,SAI,6,C7,medium
+mean_decel_ms2,2.976,3.0,60.0,2023,Silverstone,OCO,10,C5,fast
+mean_decel_ms2,2.801,3.0,60.0,2023,Silverstone,OCO,17,C4,slow
+mean_decel_ms2,1.554,3.0,60.0,2023,Silverstone,PIA,5,C5,fast
+mean_decel_ms2,2.204,3.0,60.0,2023,Spa-Francorchamps,ALB,2,C7,slow
+mean_decel_ms2,2.354,3.0,60.0,2023,Spa-Francorchamps,LEC,8,C6,medium
+mean_decel_ms2,2.786,3.0,60.0,2023,Spa-Francorchamps,LEC,16,C7,slow
+mean_decel_ms2,2.715,3.0,60.0,2023,Spa-Francorchamps,RUS,11,C7,slow
+mean_decel_ms2,2.212,3.0,60.0,2023,Spa-Francorchamps,SAI,22,C3,slow
+mean_decel_ms2,1.021,3.0,60.0,2023,Spa-Francorchamps,STR,15,C4,medium
+mean_decel_ms2,2.505,3.0,60.0,2023,Spa-Francorchamps,STR,18,C2,medium
+mean_decel_ms2,2.842,3.0,60.0,2023,Spa-Francorchamps,STR,18,C7,slow
+mean_decel_ms2,2.863,3.0,60.0,2023,Spa-Francorchamps,ZHO,2,C7,slow
+mean_decel_ms2,2.87,3.0,60.0,2023,Zandvoort,ALB,9,C6,slow
+mean_decel_ms2,2.989,3.0,60.0,2023,Zandvoort,ALB,14,C6,slow
+mean_decel_ms2,2.646,3.0,60.0,2023,Zandvoort,BOT,5,C6,slow
+mean_decel_ms2,2.516,3.0,60.0,2023,Zandvoort,BOT,9,C6,slow
+mean_decel_ms2,2.961,3.0,60.0,2023,Zandvoort,HAM,5,C6,slow
+mean_decel_ms2,2.617,3.0,60.0,2023,Zandvoort,HAM,7,C2,medium
+mean_decel_ms2,2.888,3.0,60.0,2023,Zandvoort,HAM,12,C2,medium
+mean_decel_ms2,2.565,3.0,60.0,2023,Zandvoort,HAM,15,C2,medium
+mean_decel_ms2,2.475,3.0,60.0,2023,Zandvoort,HAM,15,C5,medium
+mean_decel_ms2,2.998,3.0,60.0,2023,Zandvoort,HAM,15,C6,slow
+mean_decel_ms2,2.801,3.0,60.0,2023,Zandvoort,HAM,16,C6,slow
+mean_decel_ms2,2.097,3.0,60.0,2023,Zandvoort,HAM,21,C6,slow
+mean_decel_ms2,2.38,3.0,60.0,2023,Zandvoort,LEC,7,C2,medium
+mean_decel_ms2,2.089,3.0,60.0,2023,Zandvoort,LEC,10,C6,slow
+mean_decel_ms2,2.704,3.0,60.0,2023,Zandvoort,LEC,14,C6,slow
+mean_decel_ms2,2.313,3.0,60.0,2023,Zandvoort,MAG,2,C2,medium
+mean_decel_ms2,2.945,3.0,60.0,2023,Zandvoort,MAG,2,C6,slow
+mean_decel_ms2,2.422,3.0,60.0,2023,Zandvoort,MAG,3,C2,medium
+mean_decel_ms2,2.957,3.0,60.0,2023,Zandvoort,NOR,3,C2,medium
+mean_decel_ms2,2.819,3.0,60.0,2023,Zandvoort,NOR,5,C6,slow
+mean_decel_ms2,2.738,3.0,60.0,2023,Zandvoort,OCO,2,C3,fast
+mean_decel_ms2,2.379,3.0,60.0,2023,Zandvoort,OCO,5,C6,slow
+mean_decel_ms2,2.651,3.0,60.0,2023,Zandvoort,OCO,11,C2,medium
+mean_decel_ms2,2.38,3.0,60.0,2023,Zandvoort,PIA,3,C2,medium
+mean_decel_ms2,2.331,3.0,60.0,2023,Zandvoort,PIA,14,C2,medium
+mean_decel_ms2,2.872,3.0,60.0,2023,Zandvoort,SAI,9,C6,slow
+mean_decel_ms2,2.655,3.0,60.0,2023,Zandvoort,SAI,15,C6,slow
+mean_decel_ms2,2.751,3.0,60.0,2023,Zandvoort,SAR,4,C6,slow
+mean_decel_ms2,2.353,3.0,60.0,2023,Zandvoort,ZHO,2,C2,medium
+mean_decel_ms2,2.826,3.0,60.0,2023,Monza,ALO,7,C1,slow
+mean_decel_ms2,2.084,3.0,60.0,2023,Monza,HUL,4,C1,slow
+mean_decel_ms2,2.27,3.0,60.0,2023,Monza,LAW,2,C1,slow
+mean_decel_ms2,1.997,3.0,60.0,2023,Monza,LAW,8,C1,slow
+mean_decel_ms2,2.893,3.0,60.0,2023,Monza,NOR,4,C1,slow
+mean_decel_ms2,1.984,3.0,60.0,2023,Monza,NOR,7,C1,slow
+mean_decel_ms2,2.544,3.0,60.0,2023,Monza,PER,20,C1,slow
+mean_decel_ms2,2.837,3.0,60.0,2023,Monza,SAI,11,C1,slow
+mean_decel_ms2,2.085,3.0,60.0,2023,Monza,SAR,11,C1,slow
+mean_decel_ms2,2.083,3.0,60.0,2023,Monza,ZHO,4,C1,slow
+mean_decel_ms2,2.96,3.0,60.0,2023,Suzuka,ALB,11,C6,slow
+mean_decel_ms2,2.664,3.0,60.0,2023,Suzuka,HAM,2,C6,slow
+mean_decel_ms2,2.631,3.0,60.0,2023,Suzuka,PER,8,C6,slow
+mean_decel_ms2,2.702,3.0,60.0,2023,Lusail,BOT,11,C4,fast
+mean_decel_ms2,2.842,3.0,60.0,2023,Lusail,RUS,8,C4,fast
+mean_decel_ms2,2.841,3.0,60.0,2023,Lusail,RUS,17,C4,fast
+mean_decel_ms2,-0.402,3.0,60.0,2023,Lusail,TSU,9,C4,fast
+mean_decel_ms2,2.927,3.0,60.0,2023,Austin,LEC,20,C2,fast
+mean_decel_ms2,2.765,3.0,60.0,2023,Austin,NOR,2,C2,fast
+mean_decel_ms2,2.061,3.0,60.0,2023,Austin,OCO,2,C2,fast
+mean_decel_ms2,2.833,3.0,60.0,2023,Austin,OCO,2,C3,medium
+mean_decel_ms2,2.086,3.0,60.0,2023,Austin,OCO,11,C2,fast
+mean_decel_ms2,2.202,3.0,60.0,2023,Austin,OCO,14,C2,fast
+mean_decel_ms2,2.934,3.0,60.0,2023,Austin,PIA,5,C2,fast
+mean_decel_ms2,2.913,3.0,60.0,2023,Austin,RUS,2,C2,fast
+mean_decel_ms2,2.738,3.0,60.0,2023,Austin,SAI,11,C2,fast
+mean_decel_ms2,2.643,3.0,60.0,2023,Austin,ZHO,2,C2,fast
+mean_decel_ms2,2.664,3.0,60.0,2023,Mexico City,HAM,8,C1,slow
+mean_decel_ms2,2.715,3.0,60.0,2023,Mexico City,MAG,2,C1,slow
+mean_decel_ms2,2.674,3.0,60.0,2023,Mexico City,MAG,8,C1,slow
+mean_decel_ms2,1.998,3.0,60.0,2023,Las Vegas,HUL,7,C3,slow
+mean_decel_ms2,1.84,3.0,60.0,2023,Las Vegas,NOR,2,C3,slow
+mean_decel_ms2,2.62,3.0,60.0,2023,Las Vegas,SAI,2,C3,slow
+mean_decel_ms2,2.87,3.0,60.0,2023,Las Vegas,SAI,18,C3,slow
+mean_decel_ms2,2.148,3.0,60.0,2023,Las Vegas,SAR,7,C3,slow
+mean_decel_ms2,1.142,3.0,60.0,2023,Las Vegas,VER,5,C3,slow
+mean_decel_ms2,1.762,3.0,60.0,2023,Las Vegas,VER,10,C3,slow
+mean_decel_ms2,2.562,3.0,60.0,2023,Las Vegas,ZHO,2,C3,slow
+mean_decel_ms2,2.183,3.0,60.0,2024,Jeddah,BOT,2,C1,slow
+mean_decel_ms2,2.887,3.0,60.0,2024,Jeddah,HAM,20,C1,slow
+mean_decel_ms2,2.759,3.0,60.0,2024,Jeddah,OCO,5,C1,slow
+mean_decel_ms2,2.889,3.0,60.0,2024,Jeddah,VER,5,C1,slow
+mean_decel_ms2,1.746,3.0,60.0,2024,Melbourne,BOT,2,C5,fast
+mean_decel_ms2,0.636,3.0,60.0,2024,Melbourne,BOT,8,C5,fast
+mean_decel_ms2,2.081,3.0,60.0,2024,Melbourne,BOT,14,C5,fast
+mean_decel_ms2,1.914,3.0,60.0,2024,Melbourne,LEC,2,C3,fast
+mean_decel_ms2,1.075,3.0,60.0,2024,Melbourne,LEC,2,C4,fast
+mean_decel_ms2,1.075,3.0,60.0,2024,Melbourne,LEC,2,C5,fast
+mean_decel_ms2,2.604,3.0,60.0,2024,Melbourne,LEC,5,C4,fast
+mean_decel_ms2,2.419,3.0,60.0,2024,Melbourne,LEC,5,C5,fast
+mean_decel_ms2,2.012,3.0,60.0,2024,Melbourne,LEC,8,C4,fast
+mean_decel_ms2,2.012,3.0,60.0,2024,Melbourne,LEC,8,C5,fast
+mean_decel_ms2,2.701,3.0,60.0,2024,Melbourne,LEC,11,C5,fast
+mean_decel_ms2,2.566,3.0,60.0,2024,Melbourne,LEC,14,C4,fast
+mean_decel_ms2,2.355,3.0,60.0,2024,Melbourne,LEC,14,C5,fast
+mean_decel_ms2,2.8,3.0,60.0,2024,Melbourne,MAG,2,C5,fast
+mean_decel_ms2,2.315,3.0,60.0,2024,Melbourne,MAG,6,C5,fast
+mean_decel_ms2,1.801,3.0,60.0,2024,Melbourne,MAG,9,C5,fast
+mean_decel_ms2,2.604,3.0,60.0,2024,Melbourne,OCO,7,C4,fast
+mean_decel_ms2,2.897,3.0,60.0,2024,Melbourne,OCO,7,C5,fast
+mean_decel_ms2,1.939,3.0,60.0,2024,Melbourne,OCO,17,C5,fast
+mean_decel_ms2,2.139,3.0,60.0,2024,Melbourne,OCO,20,C5,fast
+mean_decel_ms2,0.737,3.0,60.0,2024,Melbourne,SAI,5,C5,fast
+mean_decel_ms2,1.948,3.0,60.0,2024,Melbourne,SAI,11,C5,fast
+mean_decel_ms2,1.39,3.0,60.0,2024,Melbourne,SAI,14,C4,fast
+mean_decel_ms2,1.39,3.0,60.0,2024,Melbourne,SAI,14,C5,fast
+mean_decel_ms2,1.256,3.0,60.0,2024,Melbourne,STR,3,C5,fast
+mean_decel_ms2,2.56,3.0,60.0,2024,Melbourne,STR,22,C5,fast
+mean_decel_ms2,2.232,3.0,60.0,2024,Suzuka,LEC,2,C2,medium
+mean_decel_ms2,0.835,3.0,60.0,2024,Shanghai,ALO,8,C1,slow
+mean_decel_ms2,2.359,3.0,60.0,2024,Shanghai,GAS,2,C2,slow
+mean_decel_ms2,1.147,3.0,60.0,2024,Shanghai,GAS,11,C2,slow
+mean_decel_ms2,2.992,3.0,60.0,2024,Shanghai,LEC,10,C2,slow
+mean_decel_ms2,2.882,3.0,60.0,2024,Shanghai,OCO,14,C2,slow
+mean_decel_ms2,1.406,3.0,60.0,2024,Shanghai,SAI,2,C1,slow
+mean_decel_ms2,2.405,3.0,60.0,2024,Shanghai,SAI,2,C2,slow
+mean_decel_ms2,2.812,3.0,60.0,2024,Shanghai,STR,2,C1,slow
+mean_decel_ms2,1.979,3.0,60.0,2024,Shanghai,STR,11,C1,slow
+mean_decel_ms2,2.685,3.0,60.0,2024,Miami,SAI,14,C5,slow
+mean_decel_ms2,0.917,3.0,60.0,2024,Imola,LEC,11,C6,slow
+mean_decel_ms2,2.903,3.0,60.0,2024,Imola,LEC,14,C6,slow
+mean_decel_ms2,2.82,3.0,60.0,2024,Imola,SAI,2,C1,medium
+mean_decel_ms2,1.447,3.0,60.0,2024,Monaco,LEC,2,C5,medium
+mean_decel_ms2,2.465,3.0,60.0,2024,Monaco,LEC,4,C5,medium
+mean_decel_ms2,2.481,3.0,60.0,2024,Monaco,LEC,19,C5,medium
+mean_decel_ms2,1.652,3.0,60.0,2024,Monaco,LEC,22,C5,medium
+mean_decel_ms2,1.957,3.0,60.0,2024,Monaco,OCO,2,C5,medium
+mean_decel_ms2,2.564,3.0,60.0,2024,Monaco,SAI,16,C5,medium
+mean_decel_ms2,2.934,3.0,60.0,2024,Monaco,SAI,19,C5,medium
+mean_decel_ms2,2.125,3.0,60.0,2024,Monaco,VER,6,C5,medium
+mean_decel_ms2,0.658,3.0,60.0,2024,Montréal,ALB,8,C1,medium
+mean_decel_ms2,2.358,3.0,60.0,2024,Montréal,HAM,8,C4,slow
+mean_decel_ms2,1.389,3.0,60.0,2024,Montréal,VER,2,C3,medium
+mean_decel_ms2,2.345,3.0,60.0,2024,Silverstone,OCO,4,C4,fast
+mean_decel_ms2,2.964,3.0,60.0,2024,Silverstone,SAI,17,C3,fast
+mean_decel_ms2,2.56,3.0,60.0,2024,Budapest,LEC,6,C3,medium
+mean_decel_ms2,1.832,3.0,60.0,2024,Budapest,SAI,9,C5,medium
+mean_decel_ms2,1.955,3.0,60.0,2024,Spa-Francorchamps,HAM,13,C2,medium
+mean_decel_ms2,1.473,3.0,60.0,2024,Spa-Francorchamps,LEC,2,C6,medium
+mean_decel_ms2,2.199,3.0,60.0,2024,Spa-Francorchamps,LEC,13,C5,medium
+mean_decel_ms2,2.965,3.0,60.0,2024,Spa-Francorchamps,OCO,3,C7,slow
+mean_decel_ms2,2.112,3.0,60.0,2024,Spa-Francorchamps,PER,2,C7,slow
+mean_decel_ms2,2.858,3.0,60.0,2024,Spa-Francorchamps,SAI,5,C7,slow
+mean_decel_ms2,2.441,3.0,60.0,2024,Spa-Francorchamps,SAI,14,C7,slow
+mean_decel_ms2,2.937,3.0,60.0,2024,Spa-Francorchamps,TSU,2,C7,slow
+mean_decel_ms2,2.372,3.0,60.0,2024,Spa-Francorchamps,TSU,4,C7,slow
+mean_decel_ms2,2.315,3.0,60.0,2024,Spa-Francorchamps,VER,17,C7,slow
+mean_decel_ms2,2.702,3.0,60.0,2024,Zandvoort,OCO,5,C5,slow
+mean_decel_ms2,2.163,3.0,60.0,2024,Zandvoort,OCO,5,C6,fast
+mean_decel_ms2,2.722,3.0,60.0,2024,Zandvoort,PER,16,C5,slow
+mean_decel_ms2,2.407,3.0,60.0,2024,Monza,ALB,17,C1,slow
+mean_decel_ms2,2.72,3.0,60.0,2024,Monza,ALO,2,C1,slow
+mean_decel_ms2,1.75,3.0,60.0,2024,Monza,BOT,2,C1,slow
+mean_decel_ms2,2.479,3.0,60.0,2024,Monza,HAM,11,C1,slow
+mean_decel_ms2,1.734,3.0,60.0,2024,Monza,HAM,17,C1,slow
+mean_decel_ms2,2.165,3.0,60.0,2024,Monza,LEC,2,C1,slow
+mean_decel_ms2,2.038,3.0,60.0,2024,Monza,LEC,5,C1,slow
+mean_decel_ms2,1.733,3.0,60.0,2024,Monza,LEC,14,C1,slow
+mean_decel_ms2,1.614,3.0,60.0,2024,Monza,LEC,20,C1,slow
+mean_decel_ms2,2.22,3.0,60.0,2024,Monza,NOR,11,C1,slow
+mean_decel_ms2,2.026,3.0,60.0,2024,Monza,OCO,15,C1,slow
+mean_decel_ms2,2.785,3.0,60.0,2024,Monza,PER,5,C1,slow
+mean_decel_ms2,2.636,3.0,60.0,2024,Monza,RUS,2,C1,slow
+mean_decel_ms2,2.957,3.0,60.0,2024,Monza,RUS,8,C1,slow
+mean_decel_ms2,2.825,3.0,60.0,2024,Monza,RUS,11,C1,slow
+mean_decel_ms2,2.893,3.0,60.0,2024,Monza,RUS,17,C1,slow
+mean_decel_ms2,2.496,3.0,60.0,2024,Monza,SAI,5,C1,slow
+mean_decel_ms2,1.802,3.0,60.0,2024,Monza,SAI,8,C1,slow
+mean_decel_ms2,2.576,3.0,60.0,2024,Monza,STR,2,C1,slow
+mean_decel_ms2,2.632,3.0,60.0,2024,Monza,VER,11,C1,slow
+mean_decel_ms2,2.497,3.0,60.0,2024,Monza,ZHO,5,C1,slow
+mean_decel_ms2,2.507,3.0,60.0,2024,Baku,BEA,2,C4,slow
+mean_decel_ms2,1.37,3.0,60.0,2024,Baku,BOT,2,C4,slow
+mean_decel_ms2,2.517,3.0,60.0,2024,Baku,NOR,4,C4,slow
+mean_decel_ms2,2.128,3.0,60.0,2024,Baku,OCO,2,C4,slow
+mean_decel_ms2,2.785,3.0,60.0,2024,Baku,OCO,5,C4,slow
+mean_decel_ms2,2.799,3.0,60.0,2024,Baku,VER,13,C4,slow
+mean_decel_ms2,2.798,3.0,60.0,2024,Baku,VER,19,C4,slow
+mean_decel_ms2,0.933,3.0,60.0,2024,Austin,BOT,2,C7,fast
+mean_decel_ms2,2.742,3.0,60.0,2024,Mexico City,MAG,17,C1,slow
+mean_decel_ms2,2.629,3.0,60.0,2024,Mexico City,OCO,5,C1,slow
+mean_decel_ms2,2.474,3.0,60.0,2024,São Paulo,ALB,9,C5,slow
+mean_decel_ms2,2.838,3.0,60.0,2024,São Paulo,ALB,11,C5,slow
+mean_decel_ms2,2.593,3.0,60.0,2024,São Paulo,ALB,19,C5,slow
+mean_decel_ms2,2.207,3.0,60.0,2024,São Paulo,ALB,24,C5,slow
+mean_decel_ms2,2.26,3.0,60.0,2024,São Paulo,ALO,9,C5,slow
+mean_decel_ms2,2.985,3.0,60.0,2024,São Paulo,ALO,17,C5,slow
+mean_decel_ms2,2.016,3.0,60.0,2024,São Paulo,BEA,4,C5,slow
+mean_decel_ms2,2.668,3.0,60.0,2024,São Paulo,BEA,10,C5,slow
+mean_decel_ms2,2.742,3.0,60.0,2024,São Paulo,BOT,7,C5,slow
+mean_decel_ms2,2.318,3.0,60.0,2024,São Paulo,BOT,8,C5,slow
+mean_decel_ms2,2.841,3.0,60.0,2024,São Paulo,BOT,10,C5,slow
+mean_decel_ms2,2.494,3.0,60.0,2024,São Paulo,BOT,14,C5,slow
+mean_decel_ms2,1.816,3.0,60.0,2024,São Paulo,COL,4,C5,slow
+mean_decel_ms2,1.6,3.0,60.0,2024,São Paulo,COL,4,C7,slow
+mean_decel_ms2,1.578,3.0,60.0,2024,São Paulo,GAS,5,C5,slow
+mean_decel_ms2,2.678,3.0,60.0,2024,São Paulo,GAS,8,C5,slow
+mean_decel_ms2,2.731,3.0,60.0,2024,São Paulo,GAS,12,C5,slow
+mean_decel_ms2,2.589,3.0,60.0,2024,São Paulo,GAS,15,C5,slow
+mean_decel_ms2,2.485,3.0,60.0,2024,São Paulo,GAS,20,C5,slow
+mean_decel_ms2,2.397,3.0,60.0,2024,São Paulo,HAM,7,C5,slow
+mean_decel_ms2,1.508,3.0,60.0,2024,São Paulo,HAM,8,C1,slow
+mean_decel_ms2,2.479,3.0,60.0,2024,São Paulo,HAM,10,C5,slow
+mean_decel_ms2,2.922,3.0,60.0,2024,São Paulo,HUL,4,C5,slow
+mean_decel_ms2,2.544,3.0,60.0,2024,São Paulo,HUL,7,C5,slow
+mean_decel_ms2,2.793,3.0,60.0,2024,São Paulo,HUL,11,C5,slow
+mean_decel_ms2,2.717,3.0,60.0,2024,São Paulo,LAW,7,C5,slow
+mean_decel_ms2,2.23,3.0,60.0,2024,São Paulo,LAW,11,C5,slow
+mean_decel_ms2,2.472,3.0,60.0,2024,São Paulo,LAW,14,C5,slow
+mean_decel_ms2,2.285,3.0,60.0,2024,São Paulo,LAW,20,C5,slow
+mean_decel_ms2,2.426,3.0,60.0,2024,São Paulo,LAW,29,C5,slow
+mean_decel_ms2,0.861,3.0,60.0,2024,São Paulo,LEC,8,C5,slow
+mean_decel_ms2,2.18,3.0,60.0,2024,São Paulo,LEC,13,C5,slow
+mean_decel_ms2,2.48,3.0,60.0,2024,São Paulo,LEC,22,C5,slow
+mean_decel_ms2,2.601,3.0,60.0,2024,São Paulo,NOR,5,C5,slow
+mean_decel_ms2,2.285,3.0,60.0,2024,São Paulo,NOR,8,C5,slow
+mean_decel_ms2,2.147,3.0,60.0,2024,São Paulo,NOR,12,C5,slow
+mean_decel_ms2,2.378,3.0,60.0,2024,São Paulo,NOR,15,C5,slow
+mean_decel_ms2,2.729,3.0,60.0,2024,São Paulo,NOR,20,C5,slow
+mean_decel_ms2,2.885,3.0,60.0,2024,São Paulo,NOR,24,C5,slow
+mean_decel_ms2,2.767,3.0,60.0,2024,São Paulo,NOR,25,C5,slow
+mean_decel_ms2,2.711,3.0,60.0,2024,São Paulo,NOR,32,C5,slow
+mean_decel_ms2,2.919,3.0,60.0,2024,São Paulo,OCO,8,C5,slow
+mean_decel_ms2,2.485,3.0,60.0,2024,São Paulo,OCO,12,C5,slow
+mean_decel_ms2,2.78,3.0,60.0,2024,São Paulo,OCO,20,C5,slow
+mean_decel_ms2,1.548,3.0,60.0,2024,São Paulo,OCO,23,C3,medium
+mean_decel_ms2,2.892,3.0,60.0,2024,São Paulo,OCO,23,C5,slow
+mean_decel_ms2,2.996,3.0,60.0,2024,São Paulo,OCO,30,C5,slow
+mean_decel_ms2,2.398,3.0,60.0,2024,São Paulo,PER,4,C5,slow
+mean_decel_ms2,2.171,3.0,60.0,2024,São Paulo,PER,7,C5,slow
+mean_decel_ms2,1.371,3.0,60.0,2024,São Paulo,PER,9,C1,slow
+mean_decel_ms2,2.982,3.0,60.0,2024,São Paulo,PER,9,C6,slow
+mean_decel_ms2,2.591,3.0,60.0,2024,São Paulo,PER,12,C5,slow
+mean_decel_ms2,2.239,3.0,60.0,2024,São Paulo,PIA,7,C5,slow
+mean_decel_ms2,1.915,3.0,60.0,2024,São Paulo,PIA,12,C5,slow
+mean_decel_ms2,1.486,3.0,60.0,2024,São Paulo,PIA,13,C5,slow
+mean_decel_ms2,1.532,3.0,60.0,2024,São Paulo,PIA,17,C5,slow
+mean_decel_ms2,2.517,3.0,60.0,2024,São Paulo,PIA,21,C5,slow
+mean_decel_ms2,2.298,3.0,60.0,2024,São Paulo,PIA,22,C5,slow
+mean_decel_ms2,2.63,3.0,60.0,2024,São Paulo,RUS,8,C5,slow
+mean_decel_ms2,2.873,3.0,60.0,2024,São Paulo,RUS,10,C5,slow
+mean_decel_ms2,2.125,3.0,60.0,2024,São Paulo,RUS,13,C5,slow
+mean_decel_ms2,2.746,3.0,60.0,2024,São Paulo,SAI,4,C5,slow
+mean_decel_ms2,2.234,3.0,60.0,2024,São Paulo,SAI,10,C5,slow
+mean_decel_ms2,2.732,3.0,60.0,2024,São Paulo,SAI,14,C5,slow
+mean_decel_ms2,2.778,3.0,60.0,2024,São Paulo,STR,9,C5,slow
+mean_decel_ms2,2.747,3.0,60.0,2024,São Paulo,STR,12,C5,slow
+mean_decel_ms2,1.939,3.0,60.0,2024,São Paulo,STR,18,C5,slow
+mean_decel_ms2,2.664,3.0,60.0,2024,São Paulo,TSU,5,C5,slow
+mean_decel_ms2,2.998,3.0,60.0,2024,São Paulo,TSU,11,C5,slow
+mean_decel_ms2,1.955,3.0,60.0,2024,São Paulo,TSU,17,C7,slow
+mean_decel_ms2,2.944,3.0,60.0,2024,São Paulo,TSU,20,C5,slow
+mean_decel_ms2,2.492,3.0,60.0,2024,São Paulo,TSU,29,C5,slow
+mean_decel_ms2,2.713,3.0,60.0,2024,São Paulo,VER,4,C5,slow
+mean_decel_ms2,2.297,3.0,60.0,2024,São Paulo,VER,13,C5,slow
+mean_decel_ms2,2.633,3.0,60.0,2024,São Paulo,VER,18,C5,slow
+mean_decel_ms2,1.882,3.0,60.0,2024,São Paulo,VER,18,C7,slow
+mean_decel_ms2,2.519,3.0,60.0,2024,São Paulo,ZHO,4,C5,slow
+mean_decel_ms2,2.721,3.0,60.0,2024,São Paulo,ZHO,7,C5,slow
+mean_decel_ms2,2.815,3.0,60.0,2024,Las Vegas,ALB,5,C3,slow
+mean_decel_ms2,2.442,3.0,60.0,2024,Las Vegas,NOR,15,C3,slow
+mean_decel_ms2,1.061,3.0,60.0,2024,Las Vegas,OCO,13,C3,slow
+mean_decel_ms2,1.906,3.0,60.0,2024,Las Vegas,RUS,15,C3,slow
+mean_decel_ms2,2.423,3.0,60.0,2024,Las Vegas,ZHO,2,C3,slow
+mean_decel_ms2,2.831,3.0,60.0,2024,Las Vegas,ZHO,16,C3,slow
+mean_decel_ms2,0.508,3.0,60.0,2024,Lusail,SAI,19,C3,fast
+mean_decel_ms2,-0.315,3.0,60.0,2024,Lusail,SAI,19,C4,fast
+mean_decel_ms2,0.612,3.0,60.0,2024,Yas Island,ALO,9,C6,medium
+mean_decel_ms2,1.834,3.0,60.0,2024,Yas Island,ALO,12,C6,medium
+mean_decel_ms2,2.842,3.0,60.0,2024,Yas Island,BOT,5,C6,medium
+mean_decel_ms2,1.598,3.0,60.0,2024,Yas Island,COL,5,C6,medium
+mean_decel_ms2,1.107,3.0,60.0,2024,Yas Island,GAS,2,C6,medium
+mean_decel_ms2,1.05,3.0,60.0,2024,Yas Island,GAS,11,C6,medium
+mean_decel_ms2,0.483,3.0,60.0,2024,Yas Island,GAS,14,C6,medium
+mean_decel_ms2,0.448,3.0,60.0,2024,Yas Island,HUL,7,C6,medium
+mean_decel_ms2,0.309,3.0,60.0,2024,Yas Island,HUL,10,C6,medium
+mean_decel_ms2,-10.417,3.0,60.0,2024,Yas Island,LAW,2,C6,medium
+mean_decel_ms2,-1.552,3.0,60.0,2024,Yas Island,LAW,5,C6,medium
+mean_decel_ms2,-0.63,3.0,60.0,2024,Yas Island,LAW,8,C6,medium
+mean_decel_ms2,0.786,3.0,60.0,2024,Yas Island,LEC,2,C6,medium
+mean_decel_ms2,-0.103,3.0,60.0,2024,Yas Island,LEC,5,C6,medium
+mean_decel_ms2,-0.428,3.0,60.0,2024,Yas Island,LEC,8,C6,medium
+mean_decel_ms2,0.404,3.0,60.0,2024,Yas Island,MAG,7,C6,medium
+mean_decel_ms2,-0.475,3.0,60.0,2024,Yas Island,MAG,10,C6,medium
+mean_decel_ms2,0.077,3.0,60.0,2024,Yas Island,NOR,2,C6,medium
+mean_decel_ms2,-0.951,3.0,60.0,2024,Yas Island,NOR,7,C6,medium
+mean_decel_ms2,1.362,3.0,60.0,2024,Yas Island,NOR,12,C6,medium
+mean_decel_ms2,-0.583,3.0,60.0,2024,Yas Island,NOR,15,C6,medium
+mean_decel_ms2,1.871,3.0,60.0,2024,Yas Island,PER,5,C6,medium
+mean_decel_ms2,0.013,3.0,60.0,2024,Yas Island,PER,14,C6,medium
+mean_decel_ms2,1.975,3.0,60.0,2024,Yas Island,PER,17,C6,medium
+mean_decel_ms2,-0.637,3.0,60.0,2024,Yas Island,PIA,7,C6,medium
+mean_decel_ms2,0.676,3.0,60.0,2024,Yas Island,PIA,12,C6,medium
+mean_decel_ms2,0.126,3.0,60.0,2024,Yas Island,PIA,15,C6,medium
+mean_decel_ms2,0.51,3.0,60.0,2024,Yas Island,RUS,3,C6,medium
+mean_decel_ms2,0.409,3.0,60.0,2024,Yas Island,RUS,9,C6,medium
+mean_decel_ms2,0.64,3.0,60.0,2024,Yas Island,RUS,12,C6,medium
+mean_decel_ms2,0.112,3.0,60.0,2024,Yas Island,RUS,15,C6,medium
+mean_decel_ms2,0.57,3.0,60.0,2024,Yas Island,RUS,18,C6,medium
+mean_decel_ms2,0.6,3.0,60.0,2024,Yas Island,SAI,2,C6,medium
+mean_decel_ms2,-0.449,3.0,60.0,2024,Yas Island,SAI,6,C6,medium
+mean_decel_ms2,-0.502,3.0,60.0,2024,Yas Island,SAI,12,C6,medium
+mean_decel_ms2,-0.174,3.0,60.0,2024,Yas Island,SAI,15,C6,medium
+mean_decel_ms2,1.16,3.0,60.0,2024,Yas Island,STR,10,C6,medium
+mean_decel_ms2,2.289,3.0,60.0,2024,Yas Island,TSU,11,C6,medium
+mean_decel_ms2,-0.019,3.0,60.0,2024,Yas Island,VER,5,C6,medium
+mean_decel_ms2,0.745,3.0,60.0,2024,Yas Island,VER,8,C6,medium
+mean_decel_ms2,0.265,3.0,60.0,2024,Yas Island,VER,11,C6,medium
+mean_decel_ms2,-0.462,3.0,60.0,2024,Yas Island,VER,14,C6,medium
+apex_m,-117.537,-80.0,80.0,2023,Melbourne,ALB,3,C4,fast
+apex_m,-107.753,-80.0,80.0,2023,Melbourne,ALB,7,C4,fast
+apex_m,-88.1,-80.0,80.0,2023,Melbourne,ALB,9,C4,fast
+apex_m,-98.725,-80.0,80.0,2023,Melbourne,ALB,11,C4,fast
+apex_m,-113.811,-80.0,80.0,2023,Melbourne,ALB,19,C4,fast
+apex_m,-101.969,-80.0,80.0,2023,Melbourne,ALB,24,C4,fast
+apex_m,-107.68,-80.0,80.0,2023,Melbourne,ALB,26,C4,fast
+apex_m,-118.957,-80.0,80.0,2023,Melbourne,ALO,17,C4,fast
+apex_m,-99.736,-80.0,80.0,2023,Melbourne,ALO,21,C4,fast
+apex_m,-102.902,-80.0,80.0,2023,Melbourne,ALO,25,C4,fast
+apex_m,-90.169,-80.0,80.0,2023,Melbourne,BOT,7,C4,fast
+apex_m,-100.142,-80.0,80.0,2023,Melbourne,BOT,9,C4,fast
+apex_m,-85.581,-80.0,80.0,2023,Melbourne,DEV,11,C4,fast
+apex_m,-94.129,-80.0,80.0,2023,Melbourne,DEV,17,C4,fast
+apex_m,-88.401,-80.0,80.0,2023,Melbourne,DEV,22,C4,fast
+apex_m,-115.743,-80.0,80.0,2023,Melbourne,GAS,8,C4,fast
+apex_m,-112.486,-80.0,80.0,2023,Melbourne,HAM,6,C4,fast
+apex_m,-112.508,-80.0,80.0,2023,Melbourne,HAM,8,C4,fast
+apex_m,-100.021,-80.0,80.0,2023,Melbourne,HAM,13,C4,fast
+apex_m,-85.358,-80.0,80.0,2023,Melbourne,HAM,15,C4,fast
+apex_m,-106.44,-80.0,80.0,2023,Melbourne,HAM,17,C4,fast
+apex_m,-112.043,-80.0,80.0,2023,Melbourne,HAM,19,C4,fast
+apex_m,-107.886,-80.0,80.0,2023,Melbourne,HAM,23,C4,fast
+apex_m,-82.577,-80.0,80.0,2023,Melbourne,HAM,27,C4,fast
+apex_m,-98.299,-80.0,80.0,2023,Melbourne,HUL,13,C4,fast
+apex_m,-101.534,-80.0,80.0,2023,Melbourne,HUL,25,C4,fast
+apex_m,-81.694,-80.0,80.0,2023,Melbourne,MAG,13,C4,fast
+apex_m,-100.259,-80.0,80.0,2023,Melbourne,OCO,17,C4,fast
+apex_m,-115.613,-80.0,80.0,2023,Melbourne,RUS,6,C4,fast
+apex_m,-106.317,-80.0,80.0,2023,Melbourne,RUS,10,C4,fast
+apex_m,-100.355,-80.0,80.0,2023,Melbourne,RUS,14,C4,fast
+apex_m,-99.839,-80.0,80.0,2023,Melbourne,RUS,16,C4,fast
+apex_m,-95.359,-80.0,80.0,2023,Melbourne,SAR,2,C4,fast
+apex_m,-95.755,-80.0,80.0,2023,Melbourne,STR,4,C4,fast
+apex_m,-111.888,-80.0,80.0,2023,Melbourne,STR,6,C4,fast
+apex_m,-109.746,-80.0,80.0,2023,Melbourne,STR,8,C4,fast
+apex_m,-91.11,-80.0,80.0,2023,Melbourne,STR,23,C4,fast
+apex_m,-95.538,-80.0,80.0,2023,Melbourne,TSU,2,C4,fast
+apex_m,-102.84,-80.0,80.0,2023,Melbourne,TSU,9,C4,fast
+apex_m,-83.237,-80.0,80.0,2023,Melbourne,TSU,15,C4,fast
+apex_m,-94.082,-80.0,80.0,2023,Melbourne,TSU,17,C4,fast
+apex_m,-83.404,-80.0,80.0,2023,Melbourne,TSU,21,C4,fast
+apex_m,-88.061,-80.0,80.0,2023,Melbourne,VER,15,C4,fast
+apex_m,-93.965,-80.0,80.0,2023,Melbourne,ZHO,2,C4,fast
+apex_m,-110.71,-80.0,80.0,2023,Melbourne,ZHO,11,C4,fast
+apex_m,-81.781,-80.0,80.0,2023,Monaco,ALB,7,C4,slow
+apex_m,-82.325,-80.0,80.0,2023,Monaco,ALO,2,C4,slow
+apex_m,-85.171,-80.0,80.0,2023,Monaco,ALO,5,C4,slow
+apex_m,-84.902,-80.0,80.0,2023,Monaco,ALO,18,C4,slow
+apex_m,-87.416,-80.0,80.0,2023,Monaco,BOT,15,C4,slow
+apex_m,-87.811,-80.0,80.0,2023,Monaco,GAS,2,C4,slow
+apex_m,-86.923,-80.0,80.0,2023,Monaco,GAS,11,C4,slow
+apex_m,-86.539,-80.0,80.0,2023,Monaco,GAS,14,C4,slow
+apex_m,-87.804,-80.0,80.0,2023,Monaco,GAS,21,C4,slow
+apex_m,-86.869,-80.0,80.0,2023,Monaco,HAM,26,C4,slow
+apex_m,-86.573,-80.0,80.0,2023,Monaco,LEC,2,C4,slow
+apex_m,-83.65,-80.0,80.0,2023,Monaco,LEC,8,C4,slow
+apex_m,-89.962,-80.0,80.0,2023,Monaco,LEC,13,C4,slow
+apex_m,-89.672,-80.0,80.0,2023,Monaco,LEC,15,C4,slow
+apex_m,-87.708,-80.0,80.0,2023,Monaco,LEC,22,C4,slow
+apex_m,-87.504,-80.0,80.0,2023,Monaco,LEC,25,C4,slow
+apex_m,-85.598,-80.0,80.0,2023,Monaco,MAG,2,C4,slow
+apex_m,-88.12,-80.0,80.0,2023,Monaco,MAG,6,C4,slow
+apex_m,-88.746,-80.0,80.0,2023,Monaco,NOR,7,C4,slow
+apex_m,-81.621,-80.0,80.0,2023,Monaco,NOR,16,C4,slow
+apex_m,-87.234,-80.0,80.0,2023,Monaco,PIA,14,C4,slow
+apex_m,-90.831,-80.0,80.0,2023,Monaco,RUS,19,C4,slow
+apex_m,-90.656,-80.0,80.0,2023,Monaco,RUS,28,C4,slow
+apex_m,-86.859,-80.0,80.0,2023,Monaco,SAI,24,C4,slow
+apex_m,-80.624,-80.0,80.0,2023,Monaco,TSU,10,C4,slow
+apex_m,93.809,-80.0,80.0,2023,Silverstone,ALB,4,C6,fast
+apex_m,95.646,-80.0,80.0,2023,Silverstone,ALB,21,C6,fast
+apex_m,90.334,-80.0,80.0,2023,Silverstone,NOR,5,C6,fast
+apex_m,-90.363,-80.0,80.0,2023,Budapest,BOT,7,C8,medium
+apex_m,87.659,-80.0,80.0,2023,Austin,ALO,2,C5,slow
+apex_m,-86.278,-80.0,80.0,2023,Austin,ALO,2,C6,slow
+apex_m,-83.591,-80.0,80.0,2023,Austin,ALO,2,C7,slow
+apex_m,86.899,-80.0,80.0,2023,Austin,ALO,7,C6,slow
+apex_m,-94.724,-80.0,80.0,2023,Austin,ALO,7,C7,slow
+apex_m,-82.391,-80.0,80.0,2024,Jeddah,GAS,8,C6,slow
+apex_m,-101.762,-80.0,80.0,2024,Melbourne,ALB,5,C5,fast
+apex_m,-95.851,-80.0,80.0,2024,Melbourne,ALB,8,C5,fast
+apex_m,-106.074,-80.0,80.0,2024,Melbourne,ALB,14,C5,fast
+apex_m,-91.411,-80.0,80.0,2024,Melbourne,BOT,11,C5,fast
+apex_m,-81.848,-80.0,80.0,2024,Melbourne,HAM,2,C5,fast
+apex_m,-106.957,-80.0,80.0,2024,Melbourne,HAM,11,C5,fast
+apex_m,92.232,-80.0,80.0,2024,Melbourne,HAM,14,C4,fast
+apex_m,-95.161,-80.0,80.0,2024,Melbourne,HUL,2,C5,fast
+apex_m,105.526,-80.0,80.0,2024,Melbourne,LEC,2,C4,fast
+apex_m,96.761,-80.0,80.0,2024,Melbourne,LEC,5,C4,fast
+apex_m,82.834,-80.0,80.0,2024,Melbourne,LEC,8,C4,fast
+apex_m,99.963,-80.0,80.0,2024,Melbourne,LEC,14,C4,fast
+apex_m,-87.159,-80.0,80.0,2024,Melbourne,NOR,18,C5,fast
+apex_m,115.806,-80.0,80.0,2024,Melbourne,OCO,7,C4,fast
+apex_m,117.033,-80.0,80.0,2024,Melbourne,OCO,10,C4,fast
+apex_m,92.507,-80.0,80.0,2024,Melbourne,PER,18,C4,fast
+apex_m,-96.312,-80.0,80.0,2024,Melbourne,RIC,2,C5,fast
+apex_m,-95.293,-80.0,80.0,2024,Melbourne,RUS,2,C5,fast
+apex_m,-109.487,-80.0,80.0,2024,Melbourne,RUS,5,C5,fast
+apex_m,-98.9,-80.0,80.0,2024,Melbourne,RUS,22,C5,fast
+apex_m,-122.135,-80.0,80.0,2024,Melbourne,SAI,2,C5,fast
+apex_m,83.025,-80.0,80.0,2024,Melbourne,SAI,14,C4,fast
+apex_m,99.513,-80.0,80.0,2024,Melbourne,SAI,17,C4,fast
+apex_m,-102.599,-80.0,80.0,2024,Melbourne,STR,15,C5,fast
+apex_m,-105.958,-80.0,80.0,2024,Melbourne,TSU,2,C5,fast
+apex_m,-86.485,-80.0,80.0,2024,Melbourne,TSU,11,C5,fast
+apex_m,88.613,-80.0,80.0,2024,Melbourne,TSU,14,C4,fast
+apex_m,84.541,-80.0,80.0,2024,Melbourne,VER,2,C4,fast
+apex_m,94.225,-80.0,80.0,2024,Melbourne,VER,5,C4,fast
+apex_m,94.165,-80.0,80.0,2024,Shanghai,BOT,11,C1,slow
+apex_m,92.561,-80.0,80.0,2024,Shanghai,HAM,2,C1,slow
+apex_m,89.33,-80.0,80.0,2024,Shanghai,LEC,4,C1,slow
+apex_m,89.934,-80.0,80.0,2024,Shanghai,LEC,7,C1,slow
+apex_m,95.905,-80.0,80.0,2024,Shanghai,LEC,19,C1,slow
+apex_m,93.05,-80.0,80.0,2024,Shanghai,ZHO,4,C1,slow
+apex_m,110.123,-80.0,80.0,2024,Miami,ALB,5,C2,fast
+apex_m,-81.497,-80.0,80.0,2024,Spa-Francorchamps,ALO,8,C2,medium
+apex_m,-81.06,-80.0,80.0,2024,Spa-Francorchamps,GAS,16,C2,medium
+apex_m,-81.211,-80.0,80.0,2024,Spa-Francorchamps,HAM,3,C2,medium
+apex_m,-84.667,-80.0,80.0,2024,Spa-Francorchamps,HUL,2,C2,medium
+apex_m,-82.713,-80.0,80.0,2024,Spa-Francorchamps,HUL,4,C2,medium
+apex_m,-86.392,-80.0,80.0,2024,Spa-Francorchamps,LEC,2,C2,medium
+apex_m,-80.143,-80.0,80.0,2024,Spa-Francorchamps,LEC,18,C2,medium
+apex_m,-82.541,-80.0,80.0,2024,Spa-Francorchamps,MAG,3,C2,medium
+apex_m,-81.157,-80.0,80.0,2024,Spa-Francorchamps,NOR,3,C2,medium
+apex_m,-91.856,-80.0,80.0,2024,Spa-Francorchamps,OCO,2,C2,medium
+apex_m,-81.428,-80.0,80.0,2024,Spa-Francorchamps,OCO,3,C2,medium
+apex_m,-80.139,-80.0,80.0,2024,Spa-Francorchamps,OCO,19,C2,medium
+apex_m,-80.633,-80.0,80.0,2024,Spa-Francorchamps,PIA,14,C2,medium
+apex_m,-84.142,-80.0,80.0,2024,Spa-Francorchamps,RIC,7,C2,medium
+apex_m,-94.132,-80.0,80.0,2024,Spa-Francorchamps,RIC,13,C2,medium
+apex_m,-89.643,-80.0,80.0,2024,Spa-Francorchamps,SAI,3,C2,medium
+apex_m,-80.769,-80.0,80.0,2024,Spa-Francorchamps,SAI,16,C2,medium
+apex_m,-84.489,-80.0,80.0,2024,Spa-Francorchamps,SAR,3,C2,medium
+apex_m,-84.985,-80.0,80.0,2024,Spa-Francorchamps,TSU,4,C2,medium
+apex_m,-92.18,-80.0,80.0,2024,Spa-Francorchamps,ZHO,2,C2,medium
+apex_m,81.665,-80.0,80.0,2024,Mexico City,HAM,2,C1,slow
+apex_m,80.841,-80.0,80.0,2024,Mexico City,MAG,8,C1,slow
+apex_m,84.569,-80.0,80.0,2024,Mexico City,MAG,11,C1,slow
+apex_m,86.76,-80.0,80.0,2024,Mexico City,MAG,14,C1,slow
+apex_m,81.654,-80.0,80.0,2024,Mexico City,MAG,17,C1,slow
+apex_m,82.95,-80.0,80.0,2024,Mexico City,NOR,5,C1,slow
+apex_m,82.697,-80.0,80.0,2024,Mexico City,PER,2,C1,slow
+apex_m,82.82,-80.0,80.0,2024,Mexico City,RUS,2,C1,slow
+apex_m,81.521,-80.0,80.0,2024,Mexico City,STR,2,C1,slow
+apex_m,80.363,-80.0,80.0,2024,Mexico City,STR,5,C1,slow
+apex_m,83.883,-80.0,80.0,2024,Mexico City,STR,8,C1,slow
+apex_m,84.465,-80.0,80.0,2024,Mexico City,STR,11,C1,slow
+apex_m,81.748,-80.0,80.0,2024,Mexico City,ZHO,2,C1,slow
+apex_m,-80.098,-80.0,80.0,2024,São Paulo,COL,4,C7,slow
+apex_m,-80.1,-80.0,80.0,2024,São Paulo,GAS,5,C3,medium
+apex_m,-90.364,-80.0,80.0,2024,Yas Island,LAW,2,C6,medium
+throttle_pickup_m,-275.795,-200.0,200.0,2023,Melbourne,ALO,13,C6,fast
+throttle_pickup_m,-279.873,-200.0,200.0,2023,Melbourne,ALO,15,C6,fast
+throttle_pickup_m,-278.356,-200.0,200.0,2023,Melbourne,ALO,17,C6,fast
+throttle_pickup_m,-279.927,-200.0,200.0,2023,Melbourne,ALO,25,C6,fast
+throttle_pickup_m,-264.993,-200.0,200.0,2023,Melbourne,BOT,7,C6,fast
+throttle_pickup_m,-273.969,-200.0,200.0,2023,Melbourne,BOT,11,C6,fast
+throttle_pickup_m,-257.704,-200.0,200.0,2023,Melbourne,GAS,4,C6,fast
+throttle_pickup_m,-266.008,-200.0,200.0,2023,Melbourne,GAS,6,C6,fast
+throttle_pickup_m,-266.158,-200.0,200.0,2023,Melbourne,GAS,8,C6,fast
+throttle_pickup_m,-263.217,-200.0,200.0,2023,Melbourne,GAS,14,C6,fast
+throttle_pickup_m,-261.882,-200.0,200.0,2023,Melbourne,GAS,16,C6,fast
+throttle_pickup_m,-266.407,-200.0,200.0,2023,Melbourne,GAS,20,C6,fast
+throttle_pickup_m,-270.427,-200.0,200.0,2023,Melbourne,GAS,22,C6,fast
+throttle_pickup_m,-267.274,-200.0,200.0,2023,Melbourne,GAS,24,C6,fast
+throttle_pickup_m,-269.374,-200.0,200.0,2023,Melbourne,HAM,8,C6,fast
+throttle_pickup_m,-277.534,-200.0,200.0,2023,Melbourne,HAM,17,C6,fast
+throttle_pickup_m,-279.155,-200.0,200.0,2023,Melbourne,HAM,23,C6,fast
+throttle_pickup_m,-274.203,-200.0,200.0,2023,Melbourne,HUL,7,C6,fast
+throttle_pickup_m,-272.53,-200.0,200.0,2023,Melbourne,HUL,21,C6,fast
+throttle_pickup_m,-276.772,-200.0,200.0,2023,Melbourne,HUL,25,C6,fast
+throttle_pickup_m,-279.948,-200.0,200.0,2023,Melbourne,LEC,7,C6,fast
+throttle_pickup_m,-279.438,-200.0,200.0,2023,Melbourne,LEC,17,C6,fast
+throttle_pickup_m,-272.175,-200.0,200.0,2023,Melbourne,MAG,2,C6,fast
+throttle_pickup_m,-282.767,-200.0,200.0,2023,Melbourne,MAG,13,C6,fast
+throttle_pickup_m,-269.803,-200.0,200.0,2023,Melbourne,NOR,2,C6,fast
+throttle_pickup_m,-264.833,-200.0,200.0,2023,Melbourne,NOR,7,C6,fast
+throttle_pickup_m,-270.282,-200.0,200.0,2023,Melbourne,NOR,10,C6,fast
+throttle_pickup_m,-271.975,-200.0,200.0,2023,Melbourne,NOR,12,C6,fast
+throttle_pickup_m,-272.254,-200.0,200.0,2023,Melbourne,PIA,9,C6,fast
+throttle_pickup_m,-273.945,-200.0,200.0,2023,Melbourne,PIA,11,C6,fast
+throttle_pickup_m,-285.923,-200.0,200.0,2023,Melbourne,RUS,6,C6,fast
+throttle_pickup_m,-271.042,-200.0,200.0,2023,Melbourne,RUS,8,C6,fast
+throttle_pickup_m,-275.436,-200.0,200.0,2023,Melbourne,RUS,14,C6,fast
+throttle_pickup_m,-270.266,-200.0,200.0,2023,Melbourne,RUS,16,C6,fast
+throttle_pickup_m,-271.539,-200.0,200.0,2023,Melbourne,RUS,24,C6,fast
+throttle_pickup_m,-284.377,-200.0,200.0,2023,Melbourne,RUS,28,C6,fast
+throttle_pickup_m,-270.629,-200.0,200.0,2023,Melbourne,TSU,7,C6,fast
+throttle_pickup_m,-269.084,-200.0,200.0,2023,Melbourne,TSU,17,C6,fast
+throttle_pickup_m,-271.991,-200.0,200.0,2023,Melbourne,TSU,21,C6,fast
+throttle_pickup_m,-260.67,-200.0,200.0,2023,Melbourne,VER,4,C6,fast
+throttle_pickup_m,-272.451,-200.0,200.0,2023,Melbourne,VER,6,C6,fast
+throttle_pickup_m,-269.948,-200.0,200.0,2023,Melbourne,VER,8,C6,fast
+throttle_pickup_m,-272.419,-200.0,200.0,2023,Melbourne,VER,12,C6,fast
+throttle_pickup_m,-268.334,-200.0,200.0,2023,Melbourne,VER,15,C6,fast
+throttle_pickup_m,-270.053,-200.0,200.0,2023,Melbourne,VER,23,C6,fast
+throttle_pickup_m,-279.352,-200.0,200.0,2023,Melbourne,ZHO,2,C6,fast
+throttle_pickup_m,-273.787,-200.0,200.0,2023,Melbourne,ZHO,7,C6,fast
+throttle_pickup_m,-202.129,-200.0,200.0,2023,Lusail,ALB,4,C4,fast
+throttle_pickup_m,-204.067,-200.0,200.0,2023,Lusail,ALB,12,C4,fast
+throttle_pickup_m,-207.592,-200.0,200.0,2023,Lusail,ALO,4,C4,fast
+throttle_pickup_m,-211.904,-200.0,200.0,2023,Lusail,ALO,7,C4,fast
+throttle_pickup_m,-213.168,-200.0,200.0,2023,Lusail,ALO,17,C4,fast
+throttle_pickup_m,-200.544,-200.0,200.0,2023,Lusail,GAS,7,C4,fast
+throttle_pickup_m,-224.296,-200.0,200.0,2023,Lusail,HAM,11,C4,fast
+throttle_pickup_m,-209.515,-200.0,200.0,2023,Lusail,HAM,17,C4,fast
+throttle_pickup_m,-217.759,-200.0,200.0,2023,Lusail,HUL,5,C4,fast
+throttle_pickup_m,-202.263,-200.0,200.0,2023,Lusail,LAW,2,C4,fast
+throttle_pickup_m,-203.424,-200.0,200.0,2023,Lusail,NOR,6,C4,fast
+throttle_pickup_m,-203.409,-200.0,200.0,2023,Lusail,PER,2,C4,fast
+throttle_pickup_m,-207.602,-200.0,200.0,2023,Lusail,PER,7,C4,fast
+throttle_pickup_m,-223.933,-200.0,200.0,2023,Lusail,PER,9,C4,fast
+throttle_pickup_m,-210.716,-200.0,200.0,2023,Lusail,PER,12,C4,fast
+throttle_pickup_m,-210.499,-200.0,200.0,2023,Lusail,PIA,14,C4,fast
+throttle_pickup_m,-201.69,-200.0,200.0,2023,Lusail,RUS,11,C4,fast
+throttle_pickup_m,-210.303,-200.0,200.0,2023,Lusail,SAI,2,C4,fast
+throttle_pickup_m,-206.387,-200.0,200.0,2023,Lusail,SAR,7,C4,fast
+throttle_pickup_m,-202.786,-200.0,200.0,2023,Lusail,SAR,9,C4,fast
+throttle_pickup_m,-202.406,-200.0,200.0,2023,Lusail,TSU,4,C4,fast
+throttle_pickup_m,-203.876,-200.0,200.0,2023,Lusail,TSU,12,C4,fast
+throttle_pickup_m,-200.249,-200.0,200.0,2023,Lusail,TSU,15,C4,fast
+throttle_pickup_m,-214.298,-200.0,200.0,2023,Lusail,VER,10,C4,fast
+throttle_pickup_m,-209.774,-200.0,200.0,2023,Lusail,VER,13,C4,fast
+throttle_pickup_m,-218.597,-200.0,200.0,2023,Lusail,VER,16,C4,fast
+throttle_pickup_m,-228.936,-200.0,200.0,2023,Austin,BOT,5,C2,fast
+throttle_pickup_m,-231.718,-200.0,200.0,2023,Austin,BOT,8,C2,fast
+throttle_pickup_m,-225.901,-200.0,200.0,2023,Austin,BOT,11,C2,fast
+throttle_pickup_m,-232.927,-200.0,200.0,2023,Austin,NOR,2,C2,fast
+throttle_pickup_m,-221.335,-200.0,200.0,2023,Austin,PIA,2,C2,fast
+throttle_pickup_m,-250.221,-200.0,200.0,2023,Austin,PIA,5,C2,fast
+throttle_pickup_m,-244.059,-200.0,200.0,2023,Austin,STR,2,C2,fast
+throttle_pickup_m,-236.497,-200.0,200.0,2023,Austin,STR,5,C2,fast
+throttle_pickup_m,-240.295,-200.0,200.0,2023,Austin,ZHO,2,C2,fast
+throttle_pickup_m,-221.96,-200.0,200.0,2023,Austin,ZHO,8,C2,fast
+throttle_pickup_m,-231.694,-200.0,200.0,2023,Austin,ZHO,11,C2,fast
+throttle_pickup_m,-224.679,-200.0,200.0,2023,Austin,ZHO,14,C2,fast
+throttle_pickup_m,-200.171,-200.0,200.0,2024,Lusail,ALB,8,C4,fast
+throttle_pickup_m,-201.961,-200.0,200.0,2024,Lusail,ALO,12,C4,fast
+throttle_pickup_m,-200.014,-200.0,200.0,2024,Lusail,NOR,21,C4,fast
+throttle_pickup_m,-243.419,-200.0,200.0,2024,Yas Island,ALO,12,C6,medium
+throttle_pickup_m,-232.638,-200.0,200.0,2024,Yas Island,COL,5,C6,medium
+throttle_pickup_m,-235.925,-200.0,200.0,2024,Yas Island,GAS,2,C6,medium
+throttle_pickup_m,-245.281,-200.0,200.0,2024,Yas Island,GAS,11,C6,medium
+throttle_pickup_m,-242.072,-200.0,200.0,2024,Yas Island,GAS,14,C6,medium
+throttle_pickup_m,-228.18,-200.0,200.0,2024,Yas Island,HUL,7,C6,medium
+throttle_pickup_m,-243.422,-200.0,200.0,2024,Yas Island,LAW,2,C6,medium
+throttle_pickup_m,-240.354,-200.0,200.0,2024,Yas Island,LAW,5,C6,medium
+throttle_pickup_m,-243.697,-200.0,200.0,2024,Yas Island,LAW,8,C6,medium
+throttle_pickup_m,-245.413,-200.0,200.0,2024,Yas Island,LEC,2,C6,medium
+throttle_pickup_m,-255.784,-200.0,200.0,2024,Yas Island,LEC,5,C6,medium
+throttle_pickup_m,-255.598,-200.0,200.0,2024,Yas Island,LEC,8,C6,medium
+throttle_pickup_m,-242.501,-200.0,200.0,2024,Yas Island,MAG,7,C6,medium
+throttle_pickup_m,-238.254,-200.0,200.0,2024,Yas Island,MAG,10,C6,medium
+throttle_pickup_m,-238.994,-200.0,200.0,2024,Yas Island,NOR,2,C6,medium
+throttle_pickup_m,-237.961,-200.0,200.0,2024,Yas Island,NOR,7,C6,medium
+throttle_pickup_m,-241.426,-200.0,200.0,2024,Yas Island,NOR,12,C6,medium
+throttle_pickup_m,-243.109,-200.0,200.0,2024,Yas Island,NOR,15,C6,medium
+throttle_pickup_m,-237.851,-200.0,200.0,2024,Yas Island,PER,5,C6,medium
+throttle_pickup_m,-238.919,-200.0,200.0,2024,Yas Island,PER,14,C6,medium
+throttle_pickup_m,-233.335,-200.0,200.0,2024,Yas Island,PER,17,C6,medium
+throttle_pickup_m,-232.154,-200.0,200.0,2024,Yas Island,PIA,7,C6,medium
+throttle_pickup_m,-240.591,-200.0,200.0,2024,Yas Island,PIA,12,C6,medium
+throttle_pickup_m,-234.633,-200.0,200.0,2024,Yas Island,PIA,15,C6,medium
+throttle_pickup_m,-234.936,-200.0,200.0,2024,Yas Island,RUS,3,C6,medium
+throttle_pickup_m,-232.96,-200.0,200.0,2024,Yas Island,RUS,9,C6,medium
+throttle_pickup_m,-235.865,-200.0,200.0,2024,Yas Island,RUS,12,C6,medium
+throttle_pickup_m,-240.843,-200.0,200.0,2024,Yas Island,RUS,15,C6,medium
+throttle_pickup_m,-239.891,-200.0,200.0,2024,Yas Island,RUS,18,C6,medium
+throttle_pickup_m,-249.153,-200.0,200.0,2024,Yas Island,SAI,2,C6,medium
+throttle_pickup_m,-241.382,-200.0,200.0,2024,Yas Island,SAI,6,C6,medium
+throttle_pickup_m,-241.457,-200.0,200.0,2024,Yas Island,SAI,12,C6,medium
+throttle_pickup_m,-242.132,-200.0,200.0,2024,Yas Island,SAI,15,C6,medium
+throttle_pickup_m,-235.198,-200.0,200.0,2024,Yas Island,STR,10,C6,medium
+throttle_pickup_m,-230.333,-200.0,200.0,2024,Yas Island,VER,5,C6,medium
+throttle_pickup_m,-232.157,-200.0,200.0,2024,Yas Island,VER,8,C6,medium
+throttle_pickup_m,-235.376,-200.0,200.0,2024,Yas Island,VER,11,C6,medium
+throttle_pickup_m,-235.488,-200.0,200.0,2024,Yas Island,VER,14,C6,medium

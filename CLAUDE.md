@@ -23,7 +23,8 @@ proposal — check before relying on it.
 | 2026-10-16 (later) | Sadman in exams: Claude builds autonomously, documents everything in `learn/`. **M1** (data report, corners T6/T5/T9), **Phase 2 / M2** (synthetic + Monte Carlo error table), **Phase 3 / M3** (alignment: X/Y projection + complementary fusion, 1.15 m), **Phase 4** (features, output A draft), **Phase 5 prepared** (stats.py, preregistration Part A). F1 archive now returns 401 → Phase 6 via OpenF1 (identical feed, checked). |
 | 2026-10-17 | **Phase 5 done (M5):** preregistered pilot tests run after commit `ab2510c`: 0 of 27 discoveries (as predicted); NOR brakes ~7 m later at T5/T9 (g ≈ 2, p = 0.057), not confirmed. `min_permutation_p` corrected (deviations file). Sadman commits part by part. |
 | 2026-10-17 | **Phase 6, part 1:** OpenF1 adapter (`openf1.py`), `track.py` split into a source-independent core; validated on Abu Dhabi: kept laps identical for 20/20 drivers, features within 0.23 m. |
-| next | Phase 6, part 2: download 2023–2024 qualifying via OpenF1, automatic corner detection, the multi-session dataset. |
+| 2026-10-17 (later) | **Phase 6, part 2:** OpenF1 download (47 sessions, 4,499 laps), automatic corner detection, braking-event rule, dataset (24,496 usable rows), raw-sample Parquet, EDA + cleaning rules → 21,493 clean dry rows, 44 sessions. |
+| next | Phase 6, part 3: H1 with all drivers (ICC), H3 identification on held-out sessions vs baselines, ablation. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -167,6 +168,7 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── track.py            # lap samples -> track coordinate (core + FastF1 wrappers)
 │   ├── openf1.py           # OpenF1 data source: lap table, streams (FastF1 archive now 401)
 │   ├── features.py         # feature vectors per (driver, lap, corner)
+│   ├── dataset.py          # load + clean (rules from the EDA) + field-relative features
 │   ├── stats.py            # ICC, bootstrap, permutation tests
 │   ├── identification.py   # splits, baselines, models, metrics
 │   └── plots.py

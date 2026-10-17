@@ -22,8 +22,11 @@ data is downloaded only once. The 2025 season is refused unless FINAL_TEST=1.
 """
 
 import hashlib
+import gzip
 import json
+import os
 import re
+import threading
 import time
 from pathlib import Path
 
@@ -36,35 +39,63 @@ from apextrace.data_loading import check_not_frozen
 BASE_URL = "https://api.openf1.org/v1/"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = REPO_ROOT / "cache" / "openf1"
-PAUSE_AFTER_REQUEST_S = 0.35   # be polite to a free service
+# OpenF1's free tier allows ~30 requests per minute; sending them at most
+# every 2.1 s (~28 per minute) avoids "429 Too Many Requests" altogether.
+MIN_SECONDS_BETWEEN_REQUESTS = 2.1
+_last_request_time = 0.0
+# Several downloads may run at once (threads, see 08_download_openf1.py). The
+# lock makes them take turns at the pacing check, so request STARTS stay at
+# least 2.1 s apart however many are in flight.
+_rate_lock = threading.Lock()
 
 
 # ---------------------------------------------------------------- downloading with a cache
 
 def cache_file(endpoint, params, cache_dir):
-    """A file name that is unique for (endpoint, params)."""
+    """A file name that is unique for (endpoint, params), gzip-compressed (JSON shrinks ~10x)."""
     text = endpoint + "?" + "&".join(f"{key}={params[key]}" for key in sorted(params))
     digest = hashlib.md5(text.encode("utf-8")).hexdigest()[:16]
-    return Path(cache_dir) / endpoint / f"{digest}.json"
+    return Path(cache_dir) / endpoint / f"{digest}.json.gz"
+
+
+def wait_for_rate_limit():
+    """Sleep until at least MIN_SECONDS_BETWEEN_REQUESTS have passed since the last request started."""
+    global _last_request_time
+    with _rate_lock:
+        elapsed = time.monotonic() - _last_request_time
+        if elapsed < MIN_SECONDS_BETWEEN_REQUESTS:
+            time.sleep(MIN_SECONDS_BETWEEN_REQUESTS - elapsed)
+        _last_request_time = time.monotonic()
 
 
 def fetch(endpoint, params, cache_dir=CACHE_DIR, retries=6):
     """GET an OpenF1 endpoint, using the local cache when possible. Returns a list of dicts.
 
-    On "too many requests" (429) or a server error, waits and retries, each
-    time twice as long (1, 2, 4, ... s: "exponential backoff").
+    Requests are paced (wait_for_rate_limit). If the server still answers
+    "too many requests" (429) or a server error, wait and retry, each time
+    twice as long (10, 20, 40, ... s: "exponential backoff").
+    Older cache files saved as plain .json are still read.
     """
     path = cache_file(endpoint, params, cache_dir)
     if path.exists():
-        return json.loads(path.read_text(encoding="utf-8"))
-    wait = 1.0
+        with gzip.open(path, "rt", encoding="utf-8") as file:
+            return json.load(file)
+    plain = path.with_suffix("")  # the same name without .gz (the first cache format)
+    if plain.exists():
+        return json.loads(plain.read_text(encoding="utf-8"))
+    wait = 10.0
     for attempt in range(retries):
-        response = requests.get(BASE_URL + endpoint, params=params, timeout=120)
+        wait_for_rate_limit()
+        response = requests.get(BASE_URL + endpoint, params=params, timeout=180)
         if response.status_code == 200:
             data = response.json()
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(data), encoding="utf-8")
-            time.sleep(PAUSE_AFTER_REQUEST_S)
+            # write to a temporary file, then rename: if the program is stopped
+            # mid-write, no half-written cache file is left behind
+            temporary = path.with_name(path.name + f".{threading.get_ident()}.tmp")
+            with gzip.open(temporary, "wt", encoding="utf-8") as file:
+                json.dump(data, file)
+            os.replace(temporary, path)
             return data
         if response.status_code == 404:
             return []  # OpenF1 answers 404 for "no rows match"
@@ -279,26 +310,57 @@ def lap_table(session_key, session_end, cache_dir=CACHE_DIR):
     return pd.DataFrame(rows)
 
 
-# ---------------------------------------------------------------- one lap's samples
+# ---------------------------------------------------------------- car and position data
 
-def lap_streams(session_key, driver_number, lap_start, lap_end, pad_s=2.0, cache_dir=CACHE_DIR):
-    """Car data and position data of one lap (plus pad_s on each side), as arrays.
+def driver_streams(session_key, driver_number, span_start, span_end, cache_dir=CACHE_DIR, whole_seconds=True):
+    """All car and position samples of one driver between span_start and span_end (2 requests, cached).
 
-    Times are seconds from lap_start, the same reference for both streams.
-    Brake comes as 0/100 in OpenF1; it becomes True/False here. X, Y are
-    converted from decimetres to metres.
+    Asking once per driver per session (covering all their kept laps) and
+    cutting the laps out locally needs ~40 requests per session instead of
+    ~160 (one per lap and stream), which matters with a ~30 requests/minute
+    limit. With whole_seconds=True the span is widened to whole seconds, so
+    the same span always gives the same cache file.
+    Returns {"car": DataFrame, "pos": DataFrame} or None if there's no data.
     """
+    if whole_seconds:
+        span_start = span_start.floor("s")
+        span_end = span_end.ceil("s")
     params = {"session_key": session_key, "driver_number": driver_number,
-              "date>": (lap_start - pd.Timedelta(pad_s, unit="s")).isoformat(),
-              "date<": (lap_end + pd.Timedelta(pad_s, unit="s")).isoformat()}
+              "date>": span_start.isoformat(), "date<": span_end.isoformat()}
     car = pd.DataFrame(fetch("car_data", params, cache_dir))
     pos = pd.DataFrame(fetch("location", params, cache_dir))
     if car.empty or pos.empty:
         return None
     car["date"] = to_utc_naive(car["date"])
     pos["date"] = to_utc_naive(pos["date"])
-    car = car.sort_values("date").drop_duplicates("date")
-    pos = pos.sort_values("date").drop_duplicates("date")
+    car = car.sort_values("date").drop_duplicates("date").reset_index(drop=True)
+    pos = pos.sort_values("date").drop_duplicates("date").reset_index(drop=True)
+    return {"car": car, "pos": pos}
+
+
+def kept_laps_span(kept, margin_s=5.0):
+    """(start, end) covering all of a driver's kept laps, with a margin: one download per driver."""
+    starts = kept["LapStartDate"]
+    ends = kept["LapStartDate"] + kept["LapTime"]
+    return starts.min() - pd.Timedelta(margin_s, unit="s"), ends.max() + pd.Timedelta(margin_s, unit="s")
+
+
+def slice_lap(streams, lap_start, lap_end, pad_s=2.0):
+    """One lap (plus pad_s on each side) cut out of a driver's streams, as arrays.
+
+    Times are seconds from lap_start, the same reference for both streams.
+    Brake comes as 0/100 in OpenF1; it becomes True/False here. X, Y are
+    converted from decimetres to metres. Returns None if the lap isn't covered.
+    """
+    pad = pd.Timedelta(pad_s, unit="s")
+    car = streams["car"]
+    pos = streams["pos"]
+    car = car[(car["date"] >= lap_start - pad) & (car["date"] <= lap_end + pad)]
+    pos = pos[(pos["date"] >= lap_start - pad) & (pos["date"] <= lap_end + pad)]
+    if len(car) < 10 or len(pos) < 10:
+        return None
+    if car["date"].iloc[0] > lap_start or car["date"].iloc[-1] < lap_end:
+        return None  # the lap edges must be bracketed by samples
     return {
         "car_time_s": (car["date"] - lap_start).dt.total_seconds().to_numpy(),
         "speed_kmh": car["speed"].to_numpy(dtype=float),
@@ -312,19 +374,38 @@ def lap_streams(session_key, driver_number, lap_start, lap_end, pad_s=2.0, cache
     }
 
 
+def lap_streams(session_key, driver_number, lap_start, lap_end, pad_s=2.0, cache_dir=CACHE_DIR, streams=None):
+    """Car and position data of one lap, as arrays (see slice_lap).
+
+    streams: a driver's streams from driver_streams() (one download for all
+    their laps). Without it, just this lap is downloaded (used by the
+    validation of 2024 Abu Dhabi, whose cache files are per lap).
+    """
+    if streams is None:
+        pad = pd.Timedelta(pad_s, unit="s")
+        streams = driver_streams(session_key, driver_number, lap_start - pad, lap_end + pad,
+                                 cache_dir, whole_seconds=False)
+        if streams is None:
+            return None
+    return slice_lap(streams, lap_start, lap_end, pad_s)
+
+
 # ---------------------------------------------------------------- one lap on the track coordinate
 
-def reference_from_lap(session_key, driver_number, lap_start, lap_time, cache_dir=CACHE_DIR):
+def reference_from_lap(session_key, driver_number, lap_start, lap_time, cache_dir=CACHE_DIR, streams=None):
     """Reference path (track.reference_path_from_xy) from one OpenF1 lap's positions, with exact edges."""
     from apextrace.track import clip_to_lap, reference_path_from_xy
 
-    streams = lap_streams(session_key, driver_number, lap_start, lap_start + lap_time, cache_dir=cache_dir)
-    duration = streams["lap_duration_s"]
-    _, pos, _ = clip_to_lap(streams["pos_time_s"], {"x": streams["x_m"], "y": streams["y_m"]}, 0.0, duration)
+    lap = lap_streams(session_key, driver_number, lap_start, lap_start + lap_time, cache_dir=cache_dir,
+                      streams=streams)
+    if lap is None:
+        return None
+    _, pos, _ = clip_to_lap(lap["pos_time_s"], {"x": lap["x_m"], "y": lap["y_m"]}, 0.0, lap["lap_duration_s"])
     return reference_path_from_xy(pos["x"], pos["y"])
 
 
-def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, reference, cache_dir=CACHE_DIR):
+def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, reference, cache_dir=CACHE_DIR,
+                         streams=None):
     """One OpenF1 lap -> measured car samples on the track coordinate (track.samples_on_track).
 
     Times are seconds from the lap start. Returns None if OpenF1 has no data
@@ -332,15 +413,15 @@ def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, refere
     """
     from apextrace.track import clip_to_lap, samples_on_track
 
-    streams = lap_streams(session_key, driver_number, lap_start, lap_start + lap_time, cache_dir=cache_dir)
-    if streams is None:
+    lap = lap_streams(session_key, driver_number, lap_start, lap_start + lap_time, cache_dir=cache_dir,
+                      streams=streams)
+    if lap is None:
         return None
-    duration = streams["lap_duration_s"]
+    duration = lap["lap_duration_s"]
     car_times, car, measured = clip_to_lap(
-        streams["car_time_s"],
-        {"speed": streams["speed_kmh"], "throttle": streams["throttle_pct"],
-         "brake": streams["brake"], "gear": streams["gear"]},
+        lap["car_time_s"],
+        {"speed": lap["speed_kmh"], "throttle": lap["throttle_pct"], "brake": lap["brake"], "gear": lap["gear"]},
         0.0, duration, step_channels=("brake", "gear"))
-    pos_times, pos, _ = clip_to_lap(streams["pos_time_s"], {"x": streams["x_m"], "y": streams["y_m"]}, 0.0, duration)
+    pos_times, pos, _ = clip_to_lap(lap["pos_time_s"], {"x": lap["x_m"], "y": lap["y_m"]}, 0.0, duration)
     return samples_on_track(car_times, car["speed"], car["throttle"], car["brake"], car["gear"], measured,
                             pos_times, pos["x"], pos["y"], reference)

@@ -100,7 +100,9 @@ def samples_on_track(car_times, speed_kmh, throttle_pct, brake, gear, car_measur
 
     pos_times = np.asarray(pos_times, dtype=float)
     pos_d = np.interp(pos_times, car_times, d)
-    expected_s = pos_d * reference["length"] / d[-1]
+    # the hint needs a lap distance; if speed integrates to nothing (a broken
+    # lap), search the whole path instead of dividing by zero
+    expected_s = pos_d * reference["length"] / d[-1] if d[-1] > 0 else None
     pos_s, pos_side = project_onto_path(pos_x_m, pos_y_m, reference["x"], reference["y"], reference["s"],
                                         expected_s=expected_s, search_m=search_m)
     car_s = track_coordinate_at_times(car_times, pos_times, pos_s)
@@ -117,6 +119,8 @@ def samples_on_track(car_times, speed_kmh, throttle_pct, brake, gear, car_measur
         "pos_time_s": pos_times,
         "pos_s_m": pos_s,
         "pos_side_m": pos_side,
+        "pos_x_m": np.asarray(pos_x_m, dtype=float),
+        "pos_y_m": np.asarray(pos_y_m, dtype=float),
         "pos_d_m": pos_d,
         "lap_start_s": float(car_times[0]),
         "lap_end_s": float(car_times[-1]),

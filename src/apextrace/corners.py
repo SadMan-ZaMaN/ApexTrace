@@ -30,6 +30,66 @@ def corner_positions(corner_x_dm, corner_y_dm, corner_distance_m, reference):
     return s
 
 
+MIN_SPEED_DROP_KMH = 50.0     # a real braking zone (Phase 1, check 10)
+DIP_HALF_WIDTH_M = 100.0      # a dip must be the slowest point within +-100 m
+ENTRY_LOOKBACK_M = 500.0      # entry speed = fastest point in the 500 m before
+SLOW_BELOW_KMH = 120.0        # corner types by minimum speed
+FAST_FROM_KMH = 200.0
+
+
+def corner_type(min_speed_kmh):
+    """'slow' below 120 km/h, 'fast' from 200 km/h, 'medium' in between."""
+    if min_speed_kmh < SLOW_BELOW_KMH:
+        return "slow"
+    if min_speed_kmh >= FAST_FROM_KMH:
+        return "fast"
+    return "medium"
+
+
+def detect_braking_corners(s_m, speed_kmh, lap_length_m, before_m=WINDOW_BEFORE_M, after_m=WINDOW_AFTER_M):
+    """Find the braking corners of a lap from its speed trace (used where no corner list exists).
+
+    A sample is a corner's slowest point (its apex on this lap) if:
+      1. it is the slowest sample within +-100 m (so a chicane's two dips
+         closer than 100 m count as one corner);
+      2. the speed dropped by at least 50 km/h from the fastest point in the
+         500 m before it (a real braking zone, not a lift);
+      3. its window [-before_m, +after_m] fits inside the lap.
+    Equal speeds next to each other (a flat bottom) give one corner, not several.
+
+    Returns a list of dicts in track order: corner ("C1", "C2", ...), s_m (the
+    apex position, used as the corner reference), min_speed_kmh,
+    entry_speed_kmh, speed_drop_kmh, type ("slow" / "medium" / "fast").
+    Example (2024 Abu Dhabi): the Turn 6 dip, 324 -> 68 km/h, is a "slow"
+    corner with a 256 km/h drop.
+    """
+    s_m = np.asarray(s_m, dtype=float)
+    speed_kmh = np.asarray(speed_kmh, dtype=float)
+    corners = []
+    last_s = -np.inf
+    for i in range(len(s_m)):
+        near = np.abs(s_m - s_m[i]) <= DIP_HALF_WIDTH_M
+        if speed_kmh[i] > np.min(speed_kmh[near]):
+            continue
+        if s_m[i] - last_s <= DIP_HALF_WIDTH_M:
+            continue  # same dip as the corner just found (flat bottom)
+        before = (s_m >= s_m[i] - ENTRY_LOOKBACK_M) & (s_m < s_m[i])
+        if not before.any():
+            continue
+        entry = float(np.max(speed_kmh[before]))
+        drop = entry - speed_kmh[i]
+        if drop < MIN_SPEED_DROP_KMH:
+            continue
+        if s_m[i] - before_m < 0 or s_m[i] + after_m > lap_length_m:
+            continue
+        corners.append({"s_m": float(s_m[i]), "min_speed_kmh": float(speed_kmh[i]), "entry_speed_kmh": entry,
+                        "speed_drop_kmh": float(drop), "type": corner_type(float(speed_kmh[i]))})
+        last_s = s_m[i]
+    for number, corner in enumerate(corners, start=1):
+        corner["corner"] = f"C{number}"
+    return corners
+
+
 def window_bounds(corner_s, before_m=WINDOW_BEFORE_M, after_m=WINDOW_AFTER_M):
     """(start, end) of a corner window in track coordinate, e.g. T6 at 2,617 m -> (2,317, 2,817)."""
     return corner_s - before_m, corner_s + after_m

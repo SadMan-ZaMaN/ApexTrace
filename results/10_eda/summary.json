@@ -1,0 +1,54 @@
+{
+  "overview": {
+    "rows": 30441,
+    "usable_rows": 24496,
+    "usable_share": 0.8047041818599915,
+    "sessions_with_usable_rows": 46,
+    "drivers": 25,
+    "teams": 12,
+    "laps": 4497,
+    "laps_per_driver_session_median": 5.0,
+    "laps_per_driver_session_min": 1,
+    "laps_per_driver_session_max": 14,
+    "usable_rows_by_corner_type": {
+      "slow": 12315,
+      "medium": 9565,
+      "fast": 2616
+    },
+    "exclusions": {
+      "feed gap in window": 5938,
+      "no car/position data": 7
+    }
+  },
+  "cleaning": {
+    "usable_rows": 24496,
+    "dropped_not_dry": 2997,
+    "dropped_min_speed_below_40": 6,
+    "set_missing_brake_onset_m": 111,
+    "set_missing_mean_decel_ms2": 232,
+    "set_missing_apex_m": 130,
+    "set_missing_throttle_pickup_m": 126,
+    "clean_rows": 21493
+  },
+  "missing": {
+    "brake_onset_m": 0.0088,
+    "entry_speed_kmh": 0.0,
+    "min_speed_kmh": 0.0,
+    "apex_m": 0.006,
+    "braking_distance_m": 0.0089,
+    "mean_decel_ms2": 0.0197,
+    "throttle_pickup_m": 0.0541,
+    "full_throttle_m": 0.0817,
+    "exit_speed_kmh": 0.0,
+    "corner_time_s": 0.0
+  },
+  "outliers": 798,
+  "outliers_by_feature": {
+    "mean_decel_ms2": 385,
+    "apex_m": 152,
+    "brake_onset_m": 127,
+    "throttle_pickup_m": 126,
+    "min_speed_kmh": 8
+  },
+  "raw_sample_rows": 1443744
+}

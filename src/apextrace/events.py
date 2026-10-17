@@ -25,25 +25,45 @@ from apextrace.resampling import to_uniform_grid
 
 # ---------------------------------------------------------------- brake onset
 
-def first_brake_index(brake):
-    """Index of the first "on" sample that follows an "off" sample (the start of braking)."""
-    for i in range(1, len(brake)):
+def first_brake_index(brake, before_index=None):
+    """Index of the start of braking: an "on" sample that follows an "off" sample.
+
+    Without before_index: the first such transition in the samples.
+    With before_index: the LAST transition at or before that index, i.e. the
+    braking that leads into a given apex. This matters when a corner window
+    contains two braking zones (a chicane, or the previous corner).
+    """
+    end = len(brake) if before_index is None else min(before_index + 1, len(brake))
+    last = None
+    for i in range(1, end):
         if brake[i] and not brake[i - 1]:
-            return i
-    raise ValueError("no off -> on transition of the brake channel in these samples")
+            if before_index is None:
+                return i
+            last = i
+    if last is None:
+        raise ValueError("no off -> on transition of the brake channel in these samples")
+    return last
 
 
-def brake_onset_first_on(times_s, brake):
+def index_at_or_before(times_s, time_s):
+    """Index of the last sample at or before time_s (None = no limit)."""
+    if time_s is None:
+        return None
+    return int(np.searchsorted(np.asarray(times_s, dtype=float), time_s, side="right")) - 1
+
+
+def brake_onset_first_on(times_s, brake, before_time_s=None):
     """NAIVE: the time of the first sample where the brake is on.
 
     Always late: the real onset was somewhere in the interval before this
     sample. Expected bias: about half an interval, weighted towards long
     intervals (~0.15 s = ~13 m at 300 km/h).
+    before_time_s: use the last braking that starts at or before this time.
     """
-    return float(times_s[first_brake_index(brake)])
+    return float(times_s[first_brake_index(brake, index_at_or_before(times_s, before_time_s))])
 
 
-def brake_onset_midpoint(times_s, brake):
+def brake_onset_midpoint(times_s, brake, before_time_s=None):
     """The middle of the interval between the last "off" sample and the first "on" sample.
 
     If the true onset is equally likely anywhere in that interval, the middle
@@ -51,12 +71,75 @@ def brake_onset_midpoint(times_s, brake):
     quality.event_timing_error_s).
     Example: off at 10.00 s, on at 10.32 s -> 10.16 s, error std 0.092 s.
     """
-    i = first_brake_index(brake)
+    i = first_brake_index(brake, index_at_or_before(times_s, before_time_s))
     return float(0.5 * (times_s[i - 1] + times_s[i]))
 
 
+def brake_release_index(brake, onset_index):
+    """Index of the last "on" sample of the braking run that starts at onset_index."""
+    i = onset_index
+    while i + 1 < len(brake) and brake[i + 1]:
+        i += 1
+    return i
+
+
+def braking_event(brake, throttle_pct, apex_index, throttle_threshold=10.0):
+    """(onset index, release index) of the braking event that leads into the apex.
+
+    One braking event can show up as several "on" runs: a driver may ease off
+    the brake for a moment (1-4 samples, 0.4-1.3 s, in Norris's 2024 Abu Dhabi
+    FP2 long runs) and press again. Physically it is still one braking event
+    as long as the throttle isn't opened in between. So:
+      - start from the last "on" sample at or before the apex;
+      - walk back to the start of its run; if the "off" gap before it never
+        reaches throttle_threshold, the previous run belongs to the same event:
+        keep walking back;
+      - the same forwards for the release (the end of the event).
+    Two different braking zones always have the throttle opened between them
+    (even the two halves of a chicane), so they are never merged.
+    Raises ValueError if the brake is never on before the apex.
+    """
+    brake = np.asarray(brake, dtype=bool)
+    throttle_pct = np.asarray(throttle_pct, dtype=float)
+    on_before_apex = np.where(brake[:apex_index + 1])[0]
+    if len(on_before_apex) == 0:
+        raise ValueError("the brake is never on before the apex")
+
+    # backwards: the onset
+    i = int(on_before_apex[-1])
+    while True:
+        while i - 1 >= 0 and brake[i - 1]:
+            i -= 1
+        previous_on = i - 1
+        while previous_on >= 0 and not brake[previous_on]:
+            previous_on -= 1
+        if previous_on < 0:
+            break
+        gap = throttle_pct[previous_on + 1:i]
+        if np.max(gap) >= throttle_threshold:
+            break
+        i = previous_on
+    onset = i
+
+    # forwards: the release
+    j = onset
+    while True:
+        while j + 1 < len(brake) and brake[j + 1]:
+            j += 1
+        next_on = j + 1
+        while next_on < len(brake) and not brake[next_on]:
+            next_on += 1
+        if next_on >= len(brake):
+            break
+        gap = throttle_pct[j + 1:next_on]
+        if np.max(gap) >= throttle_threshold:
+            break
+        j = next_on
+    return onset, j
+
+
 def brake_onset_breakpoint(times_s, speed_kmh, brake, before_s=1.5, after_s=0.5,
-                           step_s=0.002, within_brake_interval=False):
+                           step_s=0.002, within_brake_interval=False, before_time_s=None, onset_index=None):
     """REFINED: where the speed curve bends from "flat" to "falling fast".
 
     Model, on the samples from before_s before to after_s after the first
@@ -77,7 +160,7 @@ def brake_onset_breakpoint(times_s, speed_kmh, brake, before_s=1.5, after_s=0.5,
     """
     times_s = np.asarray(times_s, dtype=float)
     speed_kmh = np.asarray(speed_kmh, dtype=float)
-    i_on = first_brake_index(brake)
+    i_on = onset_index if onset_index is not None else first_brake_index(brake, index_at_or_before(times_s, before_time_s))
     t_on = times_s[i_on]
     window = (times_s >= t_on - before_s) & (times_s <= t_on + after_s)
     t = times_s[window]
@@ -100,7 +183,7 @@ def brake_onset_breakpoint(times_s, speed_kmh, brake, before_s=1.5, after_s=0.5,
             best_error = error
             best_tb = tb
     if best_tb is None:
-        return brake_onset_midpoint(times_s, brake)
+        return float(0.5 * (times_s[i_on - 1] + times_s[i_on]))  # middle of the off->on interval
     return float(best_tb)
 
 
@@ -150,21 +233,27 @@ def apex_parabola(times_s, speed_kmh, points=3):
 
 # ---------------------------------------------------------------- threshold crossings (throttle)
 
-def crossing_first_sample(times_s, values, threshold, start_s):
-    """NAIVE: time of the first sample at or above threshold, after start_s."""
+def crossing_first_sample(times_s, values, threshold, start_s, end_s=float("inf")):
+    """NAIVE: time of the first sample at or above threshold, between start_s and end_s."""
     for i in range(len(times_s)):
+        if times_s[i] > end_s:
+            break
         if times_s[i] >= start_s and values[i] >= threshold:
             return float(times_s[i])
     return float("nan")
 
 
-def crossing_interpolated(times_s, values, threshold, start_s):
+def crossing_interpolated(times_s, values, threshold, start_s, end_s=float("inf")):
     """REFINED: where a straight line between the last sample below and the first at/above crosses.
 
+    Only crossings between start_s and end_s count (end_s: e.g. the next
+    braking, so a crossing after the NEXT corner is never taken).
     Example: throttle 4 % at 20.00 s and 34 % at 20.30 s, threshold 10 % ->
     20.00 + 0.30 * (10 - 4) / (34 - 4) = 20.06 s.
     """
     for i in range(1, len(times_s)):
+        if times_s[i] > end_s:
+            break
         if times_s[i] < start_s:
             continue
         if values[i] >= threshold and values[i - 1] < threshold:

@@ -190,3 +190,52 @@ comparing them with the FastF1-based ones.
 Known small difference: tyre age agrees on 97.7 % of qualifying laps but only
 61 % of FP2 laps (FastF1 seems to count used tyres differently). Lap
 selection doesn't use tyre age.
+
+## 2026-10-17 — Which braking event, apex and throttle belong to a corner (for any track)
+On other tracks a corner window [−300 m, +200 m] can contain two braking zones
+(chicanes, a previous corner). `features.corner_features` now chooses:
+- **Apex:** the slowest sample within ±80 m of the corner reference, refined
+  with a parabola.
+- **Brake onset:** the braking *event* that leads into that apex
+  (`events.braking_event`). Brake-on runs separated by a gap in which the
+  throttle never reaches 10 % count as one event. Why: in Norris's 2024 Abu
+  Dhabi FP2 long runs the brake channel switches off for 1–4 samples
+  (0.44–1.32 s) in the middle of braking zones; a plain "last brake-on before
+  the apex" rule then moved the onset by up to 153 m. Two different braking
+  zones always have the throttle opened between them.
+- **Throttle pickup / full throttle:** searched from the end of that braking
+  event to the start of the next one.
+Regression check: the 90 pilot feature rows are identical to before the change.
+
+## 2026-10-17 — Corners for multi-track data: detected automatically
+OpenF1 has no corner list. `corners.detect_braking_corners` finds them on each
+session's reference lap (its fastest kept lap): the slowest point within
+±100 m, a speed drop of at least 50 km/h from the fastest point in the 500 m
+before, and a window [−300, +200] m that fits inside the lap. The corner's
+reference point is the dip itself (the apex on the reference lap), unlike the
+pilot, which used FastF1's corner markers. Corner type by minimum speed:
+**slow < 120 km/h, medium 120–200 km/h, fast ≥ 200 km/h**. Corner identities
+(C1, C2, …) are per track; only the types are comparable across tracks.
+
+## 2026-10-17 — OpenF1 downloads: one request per driver per session, paced
+OpenF1 allows ~30 requests per minute. Per-lap requests (~160 per session)
+ran into 429 "Too Many Requests". Now: one car-data and one position request
+per driver, covering all of their kept laps (~44 requests per session), sent
+at most every 2.1 s, cached gzip-compressed.
+
+## 2026-10-17 — Cleaning rules for the multi-season dataset (decided in the EDA, before any modelling)
+`apextrace.dataset.clean`, used by every later analysis:
+1. **Dry laps only** (SOFT/MEDIUM/HARD): 2,997 intermediate/wet rows dropped
+   (two sessions were wet throughout). Wet driving is a different regime.
+2. **Minimum speed < 40 km/h = broken data:** 6 rows dropped (e.g. a lap whose
+   speed integrated to zero distance, 2023 Jeddah).
+3. **Other values outside physical limits become missing** for that row only:
+   brake onset outside [−400, 0] m (111 rows; braking "after the apex
+   reference" means the wrong braking event was matched in a corner
+   sequence), mean deceleration outside [3, 60] m/s² (232), apex beyond
+   ±80 m (130, flat-bottomed fast corners), throttle pickup outside
+   [−200, 200] m (126, corners taken without closing the throttle).
+   Braking distance and mean deceleration follow the brake onset.
+Result: **21,493 clean rows, 44 sessions**. The rules were fixed on the
+evidence of `results/10_eda/outliers.csv`, before looking at any driver
+comparison or model.

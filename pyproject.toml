@@ -24,6 +24,8 @@ dependencies = [
     "scipy",
     "pandas",
     "matplotlib",
+    "pyarrow",       # Parquet files (compressed tables) for the raw-sample export
+    "requests",      # OpenF1 downloads (openf1.py)
 ]
 
 [project.optional-dependencies]

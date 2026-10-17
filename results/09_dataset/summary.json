@@ -1,0 +1,31 @@
+{
+  "sessions": 47,
+  "sessions_with_data": 46,
+  "rows": 30441,
+  "usable_rows": 24496,
+  "drivers": 25,
+  "laps": 4497,
+  "corners": 314,
+  "usable_by_corner_type": {
+    "slow": 12315,
+    "medium": 9565,
+    "fast": 2616
+  },
+  "exclusion_reasons": {
+    "feed gap in window": 5938,
+    "no car/position data": 7
+  },
+  "features": [
+    "brake_onset_m",
+    "entry_speed_kmh",
+    "min_speed_kmh",
+    "apex_m",
+    "braking_distance_m",
+    "mean_decel_ms2",
+    "throttle_pickup_m",
+    "full_throttle_m",
+    "exit_speed_kmh",
+    "corner_time_s",
+    "min_gear"
+  ]
+}

@@ -7,6 +7,7 @@ from apextrace.events import (
     apex_lowest_sample,
     apex_parabola,
     brake_onset_breakpoint,
+    braking_event,
     brake_onset_first_on,
     brake_onset_midpoint,
     crossing_first_sample,
@@ -117,3 +118,24 @@ def test_full_path_refined_estimators_beat_naive_ones():
     assert rms(errors["thr_interp"]) < rms(errors["thr_first"])
     # the naive brake estimate is late on average (positive error)
     assert np.mean(errors["first_on"]) > 5.0
+
+
+def test_braking_event_merges_a_brief_release_without_throttle():
+    # brake on, off for one sample (throttle stays 0), on again, apex at index 8
+    brake = np.array([0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0], dtype=bool)
+    throttle = np.array([100, 100, 0, 0, 0, 0, 0, 0, 0, 30, 80], dtype=float)
+    onset, release = braking_event(brake, throttle, apex_index=8)
+    assert (onset, release) == (2, 7)
+
+
+def test_braking_event_keeps_two_braking_zones_apart():
+    # a chicane: brake, throttle opened (40 %), brake again, apex at index 10
+    brake = np.array([0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0], dtype=bool)
+    throttle = np.array([100, 0, 0, 20, 40, 10, 0, 0, 0, 0, 30, 90], dtype=float)
+    onset, release = braking_event(brake, throttle, apex_index=10)
+    assert (onset, release) == (6, 8)
+
+
+def test_braking_event_without_brake_raises():
+    with pytest.raises(ValueError):
+        braking_event(np.zeros(5, dtype=bool), np.full(5, 100.0), apex_index=3)

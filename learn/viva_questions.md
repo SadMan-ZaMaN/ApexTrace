@@ -197,3 +197,26 @@ the lap time is unambiguous.
 **Q: What is a regression check?**
 Re-running an existing result after changing code, to show it didn't change
 (the pilot features were identical, 90 of 90 rows, after splitting track.py).
+
+## Chapter 9: the multi-season dataset
+
+**Q: Why not download a ready-made F1 CSV?**
+Public F1 datasets have results and lap times, not within-corner telemetry.
+Lap-time data only supports the "lap time only" baseline; the research question
+needs features from raw ~4 Hz signals, so the dataset is built from them.
+
+**Q: How do you find corners on a track you've never seen?**
+On the session's fastest lap: speed dips that are the slowest point within
+±100 m, at least 50 km/h below the fastest point in the 500 m before, and whose
+analysis window fits inside the lap. Types by minimum speed (< 120, 120–200,
+≥ 200 km/h).
+
+**Q: What are field-relative features and why use them?**
+Value minus the median of all drivers at the same corner and session. Raw values
+mostly encode the track; field-relative values compare the lap with everyone
+else at the same place on the same day.
+
+**Q: What did you do with outliers?**
+Listed them, found the causes (wet laps, broken data, corner sequences,
+flat-bottomed corners), and wrote cleaning rules before any modelling:
+dry only, broken rows dropped, impossible values set to missing per feature.

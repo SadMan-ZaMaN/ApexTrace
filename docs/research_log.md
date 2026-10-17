@@ -342,3 +342,36 @@ longer works: every 2023 session failed with 401 on 2026-10-16).
 the kept laps' car and position data), automatic corner detection (braking
 corners from the reference lap's speed dips), and the dataset: one row per
 (session, driver, lap, corner).
+
+---
+
+## 2026-10-17 (later) — Phase 6, part 2: 2023–2024 dataset and EDA
+
+**Download** (`08_download_openf1.py`): 47 sessions, 4,500 kept laps, 4,499
+with data (2023 Imola: cancelled, no data). 156 MB compressed cache. The first
+per-lap version ran into OpenF1's ~30 requests/min limit (429). Fix: one
+request per driver per session, starts paced 2.1 s apart, 3 in flight → ~92 s
+per session.
+
+**Corner detection and robustness** (`corners.detect_braking_corners`,
+`events.braking_event`): see decisions.md. The pilot is unchanged (90/90 rows).
+A first version moved some FP2 brake onsets by 153 m (brief brake releases);
+fixed by merging brake runs without throttle opening in between.
+
+**Dataset** (`09_build_dataset.py`): 30,441 (lap, corner) rows, 24,496 usable
+(80 %; exclusions: 5,938 feed gaps, 7 without data); 4,497 laps, 25 drivers,
+314 detected corners (5–11 per track), 46 sessions. Raw samples: 1,443,744
+rows in `raw_samples.parquet` (36.9 MB, local only).
+
+**EDA** (`10_eda.py`): laps per driver and session: median 5 (1–14).
+Missing: full throttle 8 %, throttle pickup 5 % (clean rows). 798 values
+outside physical limits before cleaning. Causes: wet sessions, flat-bottomed
+fast corners, corner sequences, corners without throttle closing, and a few
+broken laps → cleaning rules (decisions.md) → **21,493 clean rows, 44 dry
+sessions**. Correlations of field-relative features are physically sensible:
+min speed ↔ corner time −0.62, apex ↔ throttle pickup +0.57.
+
+**Next (Phase 6, part 3):** H1 with all drivers (ICC per feature and corner
+type), then H3: identification on held-out sessions with baselines
+(majority, lap time only, raw stats) and our features; ablation; shuffled
+labels.

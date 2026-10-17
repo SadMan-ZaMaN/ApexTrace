@@ -99,3 +99,29 @@ def test_cross_correlation_recovers_a_7_3_m_shift():
     assert peak > 0.99
     shift_back, _ = lag_metres(reference, resample_by_distance(d - 4.6, v, 1.0, 100, 700)[1], 1.0, 30)
     assert shift_back == pytest.approx(-4.6, abs=0.1)
+
+
+def test_detect_braking_corners_on_a_made_up_lap():
+    """A 3 km lap with three dips: 300 -> 80 km/h, 290 -> 180 km/h, and a 30 km/h lift (not a corner)."""
+    from apextrace.corners import detect_braking_corners
+
+    s = np.arange(0.0, 3000.0, 20.0)
+    speed = np.full(len(s), 300.0)
+    speed -= 220 * np.exp(-((s - 800) / 60) ** 2)    # heavy braking corner at 800 m
+    speed -= 110 * np.exp(-((s - 1800) / 60) ** 2)   # medium corner at 1800 m
+    speed -= 30 * np.exp(-((s - 2400) / 40) ** 2)    # a lift: drop < 50 km/h
+    speed[(s >= 1780) & (s <= 1820)] = np.round(speed[(s >= 1780) & (s <= 1820)].min())  # a flat bottom
+    corners = detect_braking_corners(s, speed, lap_length_m=3000.0)
+    assert [c["corner"] for c in corners] == ["C1", "C2"]
+    assert corners[0]["s_m"] == pytest.approx(800.0)
+    assert corners[0]["type"] == "slow"
+    assert abs(corners[1]["s_m"] - 1800.0) <= 20.0
+    assert corners[1]["type"] == "medium"
+
+
+def test_detect_braking_corners_skips_a_corner_whose_window_leaves_the_lap():
+    from apextrace.corners import detect_braking_corners
+
+    s = np.arange(0.0, 2000.0, 20.0)
+    speed = 300.0 - 200 * np.exp(-((s - 1900) / 50) ** 2)   # window would end at 2100 m > 2000 m
+    assert detect_braking_corners(s, speed, lap_length_m=2000.0) == []
