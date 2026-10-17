@@ -263,3 +263,22 @@ developed on "same driver, same car, new year" (is a driver's 2024 signature
 closest to their own 2023 one?), and the real team-change test (Hamilton,
 Sainz, Ocon, Hülkenberg, Lawson ↔ Tsunoda) runs once on 2025, after
 preregistration Part B is committed.
+
+## 2026-10-18 — Shared code for the final run; H4 design
+- The pieces used by both development and the final 2025 run were moved into
+  the package so that the final run uses exactly the development code:
+  `session_build.py` (from `09_build_dataset.py`), `openf1.download_session`
+  (from `08_download_openf1.py`), `protocol.py` (from `12_identification.py`),
+  `identification.build_lap_table`. Regression checks: the identification
+  summary and the lap table are identical; the 2023–24 dataset rebuild is
+  compared below.
+- **H4 primary comparison:** a changer's 2025 signature vs (a) their own 2024
+  signature (another car) and (b) their new teammate's 2025 signature (the same
+  car, the same season); one-sided sign test over the five changers (Hamilton,
+  Sainz, Ocon, Hülkenberg, Tsunoda). Details and power: `docs/preregistration.md`,
+  Part B. **Why the new teammate:** the cleanest "car" reference is the other
+  driver of the same car in the same season; the development analogue (own
+  2023 vs the 2023 teammate, same car) gave 17 of 20.
+- `experiments/14_final_2025.py` was dry-run on development data (2024 as the
+  "final" year, 2023 as reference) to exercise every code path before the
+  one-time run.

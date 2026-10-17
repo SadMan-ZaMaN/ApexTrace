@@ -25,7 +25,8 @@ proposal — check before relying on it.
 | 2026-10-17 | **Phase 6, part 1:** OpenF1 adapter (`openf1.py`), `track.py` split into a source-independent core; validated on Abu Dhabi: kept laps identical for 20/20 drivers, features within 0.23 m. |
 | 2026-10-17 (later) | **Phase 6, part 2:** OpenF1 download (47 sessions, 4,499 laps), automatic corner detection, braking-event rule, dataset (24,496 usable rows), raw-sample Parquet, EDA + cleaning rules → 21,493 clean dry rows, 44 sessions. |
 | 2026-10-17 (later) | **Phase 6, part 3:** H1 with all drivers (lap ICC 0.15–0.58, weekend ICC 0.04–0.40; braking doesn't persist, min speed/throttle do); H3 dev: teammates 0.685 vs lap time 0.565 (p = 0.0001), not better than raw lap stats (0.729); shuffled 0.500. |
-| next | Phase 7: H4 dev (same driver 2023 → 2024), preregistration Part B (Sadman commits), one-time 2025 run. |
+| 2026-10-18 | **Phase 7, part 1:** H4 dev 2023→2024: own signature closer than teammate's (same car) for 17/20 (p = 0.0013); shared code moved into the package (regression-checked); `14_final_2025.py` (guards, dry-run on dev data); preregistration Part B written. |
+| next | Sadman commits Part B → run `14_final_2025.py` once with `FINAL_TEST=1` → report; then Phase 8 (report, README, frontend, CI). |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -171,7 +172,10 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── features.py         # feature vectors per (driver, lap, corner)
 │   ├── dataset.py          # load + clean (rules from the EDA) + field-relative features
 │   ├── stats.py            # ICC, bootstrap, permutation tests
-│   ├── identification.py   # splits, baselines, models, metrics
+│   ├── identification.py   # lap vectors, leave-one-session-out, baselines, metrics
+│   ├── protocol.py         # the identification protocol shared by dev and final runs
+│   ├── signatures.py       # season signatures, distances, own-rank, sign test (H4)
+│   ├── session_build.py    # one session -> dataset rows (shared by dev and final runs)
 │   └── plots.py
 ├── experiments/            # numbered scripts: 00_hello_lap.py, 01_data_pilot.py, ...
 ├── notebooks/              # exploration only — final numbers come from experiments/

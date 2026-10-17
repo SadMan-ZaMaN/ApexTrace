@@ -19,13 +19,11 @@ Output:
 """
 
 import time
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pandas as pd
 
-from apextrace.data_loading import select_laps
-from apextrace.openf1 import driver_streams, kept_laps_span, lap_table, qualifying_sessions, slice_lap
+from apextrace.openf1 import download_session, qualifying_sessions
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO_ROOT / "results" / "08_download"
@@ -44,34 +42,8 @@ def main():
                    "session_key": int(session["session_key"]), "laps": 0, "kept_laps": 0,
                    "kept_laps_with_data": 0, "error": ""}
             try:
-                laps = lap_table(row["session_key"], session["date_end"])
-                row["laps"] = len(laps)
-                jobs = []
-                for driver in sorted(laps["Driver"].unique()) if len(laps) else []:
-                    kept, _ = select_laps(laps[laps["Driver"] == driver])
-                    if not kept.empty:
-                        jobs.append(kept)
-                        row["kept_laps"] += len(kept)
-
-                def download(kept):
-                    """One driver: both streams over the span of their kept laps; laps with data."""
-                    span_start, span_end = kept_laps_span(kept)
-                    streams = driver_streams(row["session_key"], int(kept["DriverNumber"].iloc[0]),
-                                             span_start, span_end)
-                    if streams is None:
-                        return 0
-                    count = 0
-                    for _, lap in kept.iterrows():
-                        if slice_lap(streams, lap["LapStartDate"], lap["LapStartDate"] + lap["LapTime"]) is not None:
-                            count += 1
-                    return count
-
-                # 3 drivers at a time: OpenF1 answers slowly (3-5 s), so a few requests
-                # in flight keep the pace at ~28 per minute (the shared limiter in
-                # openf1.fetch still spaces request starts 2.1 s apart)
-                with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-                    for count in pool.map(download, jobs):
-                        row["kept_laps_with_data"] += count
+                counts = download_session(row["session_key"], session["date_end"], workers=WORKERS)
+                row.update(counts)
             except Exception as exc:  # log and continue with the next session
                 row["error"] = f"{type(exc).__name__}: {exc}"
             row["seconds"] = round(time.perf_counter() - start, 1)

@@ -1,0 +1,62 @@
+{
+  "drivers_in_both_seasons": 20,
+  "drivers": [
+    "ALB",
+    "ALO",
+    "BOT",
+    "GAS",
+    "HAM",
+    "HUL",
+    "LEC",
+    "MAG",
+    "NOR",
+    "OCO",
+    "PER",
+    "PIA",
+    "RIC",
+    "RUS",
+    "SAI",
+    "SAR",
+    "STR",
+    "TSU",
+    "VER",
+    "ZHO"
+  ],
+  "corner_features": {
+    "own_ranks": {
+      "ALB": 2,
+      "ALO": 5,
+      "BOT": 1,
+      "GAS": 1,
+      "HAM": 1,
+      "HUL": 4,
+      "LEC": 1,
+      "MAG": 3,
+      "NOR": 2,
+      "OCO": 1,
+      "PER": 1,
+      "PIA": 1,
+      "RIC": 8,
+      "RUS": 1,
+      "SAI": 1,
+      "SAR": 21,
+      "STR": 1,
+      "TSU": 1,
+      "VER": 1,
+      "ZHO": 4
+    },
+    "mean_own_rank": 3.05,
+    "chance_mean_rank": 11.0,
+    "rank_1_count": 12,
+    "permutation_p": 9.999000099990002e-05,
+    "own_closer_than_teammate": 17,
+    "pairs": 20,
+    "sign_test_p": 0.0012884140014648438
+  },
+  "share_braking": {
+    "correlation_old_new": 0.9503948361233321,
+    "own_closer_than_teammate": 15,
+    "pairs": 20,
+    "sign_test_p": 0.020694732666015625
+  }
+}

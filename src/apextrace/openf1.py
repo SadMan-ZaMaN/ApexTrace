@@ -425,3 +425,45 @@ def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, refere
     pos_times, pos, _ = clip_to_lap(lap["pos_time_s"], {"x": lap["x_m"], "y": lap["y_m"]}, 0.0, duration)
     return samples_on_track(car_times, car["speed"], car["throttle"], car["brake"], car["gear"], measured,
                             pos_times, pos["x"], pos["y"], reference)
+
+
+# ---------------------------------------------------------------- downloading a whole session
+
+def download_session(session_key, session_end, workers=3, cache_dir=CACHE_DIR):
+    """Download (into the cache) everything one qualifying session needs; returns counts.
+
+    The lap table (laps, stints, race control, drivers), the lap selection,
+    then each driver's car and position data over the span of their kept laps
+    (2 requests per driver). `workers` drivers at a time: OpenF1 answers in
+    3-5 s, so a few requests in flight keep the pace near the allowed ~28 per
+    minute (the shared limiter in fetch() still spaces request starts 2.1 s apart).
+    Returns {"laps", "kept_laps", "kept_laps_with_data"}.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    from apextrace.data_loading import select_laps
+
+    laps = lap_table(session_key, session_end, cache_dir)
+    counts = {"laps": len(laps), "kept_laps": 0, "kept_laps_with_data": 0}
+    jobs = []
+    for driver in sorted(laps["Driver"].unique()) if len(laps) else []:
+        kept, _ = select_laps(laps[laps["Driver"] == driver])
+        if not kept.empty:
+            jobs.append(kept)
+            counts["kept_laps"] += len(kept)
+
+    def download(kept):
+        span_start, span_end = kept_laps_span(kept)
+        streams = driver_streams(session_key, int(kept["DriverNumber"].iloc[0]), span_start, span_end, cache_dir)
+        if streams is None:
+            return 0
+        with_data = 0
+        for _, lap in kept.iterrows():
+            if slice_lap(streams, lap["LapStartDate"], lap["LapStartDate"] + lap["LapTime"]) is not None:
+                with_data += 1
+        return with_data
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for with_data in pool.map(download, jobs):
+            counts["kept_laps_with_data"] += with_data
+    return counts

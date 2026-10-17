@@ -1,0 +1,21 @@
+driver,team,old_teammates,distance_own,distance_teammate,own_closer
+ALB,Williams,SAR,0.7891,1.8194,True
+ALO,Aston Martin,STR,0.7925,0.8904,True
+BOT,Kick Sauber,ZHO,0.3775,0.6027,True
+GAS,Alpine,OCO,0.7791,1.1264,True
+HAM,Mercedes,RUS,0.5375,0.8302,True
+HUL,Haas F1 Team,MAG,0.8180,1.0681,True
+LEC,Ferrari,SAI,0.3298,0.9953,True
+MAG,Haas F1 Team,HUL,0.7937,0.7998,True
+NOR,McLaren,PIA,0.7564,0.7047,False
+OCO,Alpine,GAS,0.7101,1.2555,True
+PER,Red Bull Racing,VER,0.3242,0.9762,True
+PIA,McLaren,NOR,0.6383,0.9145,True
+RIC,RB,DEV TSU,1.1249,1.1336,True
+RUS,Mercedes,HAM,0.5319,0.8177,True
+SAI,Ferrari,LEC,0.5349,0.8526,True
+SAR,Williams,ALB,1.6125,1.1497,False
+STR,Aston Martin,ALO,0.7506,0.9000,True
+TSU,RB,DEV RIC,0.7233,1.2687,True
+VER,Red Bull Racing,PER,0.5038,0.9282,True
+ZHO,Kick Sauber,BOT,0.8508,0.6323,False

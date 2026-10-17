@@ -138,3 +138,38 @@ def shuffle_within_groups(y, groups, rng):
         where = np.where(groups == group)[0]
         y[where] = rng.permutation(y[where])
     return y
+
+
+# ---------------------------------------------------------------- the per-lap table used by the models
+
+RAW_STATS = ["mean_speed", "max_speed", "mean_throttle", "share_full_throttle", "share_braking"]
+
+
+def raw_lap_statistics(raw_samples):
+    """Simple whole-lap telemetry summaries per lap (the "raw summary statistics" baseline).
+
+    raw_samples: the table saved by 09_build_dataset.py (raw_samples.parquet).
+    mean/max speed, mean throttle, share of samples at >= 99 % throttle,
+    share of samples with the brake flag on.
+    """
+    grouped = raw_samples.groupby(LAP_KEYS)
+    return pd.DataFrame({
+        "mean_speed": grouped["speed_kmh"].mean(),
+        "max_speed": grouped["speed_kmh"].max(),
+        "mean_throttle": grouped["throttle_pct"].mean(),
+        "share_full_throttle": grouped["throttle_pct"].apply(lambda v: float(np.mean(v >= 99))),
+        "share_braking": grouped["brake"].mean(),
+    }).reset_index()
+
+
+def build_lap_table(clean_rows_with_rel, raw_samples):
+    """One row per lap: corner features per type (lap_vectors), raw lap statistics, and
+    field-relative versions of lap time and the raw statistics (minus the session median)."""
+    from apextrace.dataset import team_season
+
+    laps = lap_vectors(clean_rows_with_rel)
+    laps = laps.merge(raw_lap_statistics(raw_samples), on=LAP_KEYS, how="left")
+    laps["team_season"] = team_season(laps)
+    for column in ["lap_time_s"] + RAW_STATS:
+        laps[f"{column}_rel"] = laps[column] - laps.groupby("session_key")[column].transform("median")
+    return laps

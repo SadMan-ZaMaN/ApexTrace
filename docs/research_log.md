@@ -417,3 +417,34 @@ beat simple whole-lap telemetry statistics. Part of any signature may be the car
 **Next (Phase 7):** H4 development on "same driver, same car, new year"
 (2023 → 2024); write preregistration Part B (final H3 + H4 on 2025); Sadman
 commits it; then the one-time 2025 run.
+
+---
+
+## 2026-10-18 — Phase 7, part 1: H4 development, preregistration Part B
+
+**H4 development (`13_signature_stability.py`, 2023 → 2024, 20 drivers):**
+season signatures (30 corner features, each weekend once) are stable: own 2023
+signature ranks 3.05 of 21 on average (chance 11.0), first for 12 of 20,
+permutation p = 0.0001. **Own 2023 closer than the 2023 teammate (same car)
+for 17 of 20 drivers, sign test p = 0.0013**: the signature is more than the
+car. Brake-flag share: correlation 0.95 between years; own closer than
+teammate 15 of 20 (p = 0.021).
+Correction during the run: the first version didn't match renamed teams
+(AlphaTauri 2023 = RB 2024, Alfa Romeo = Kick Sauber), so BOT, ZHO, TSU and RIC
+had no teammate (14 of 16, p = 0.0021; brake share 11 of 16, p = 0.105).
+After mapping the renames (a factual correction, not a choice after seeing
+results): 17 of 20 and 15 of 20.
+
+**Built for the final run:** `signatures.py` (+ 5 tests, including a realistic
+20-driver check and a no-signature control; a first 5-driver test was too
+small: with 5 random drivers one feature's spread was tiny and noise got
+magnified), `protocol.py`, `session_build.py`, `openf1.download_session`,
+`experiments/14_final_2025.py` (guards: FINAL_TEST=1, preregistration committed,
+run once). Dry-run on development data: all code paths work.
+
+**Preregistration Part B written:** H3 replication (Wilcoxon, ours vs lap time,
+p < 0.05) and H4 (5 changers, sign test, needs 5/5 for p = 0.031), with
+secondary analyses and what can and can't be concluded.
+
+**Next:** Sadman commits; then `$env:FINAL_TEST = "1"` and run
+`14_final_2025.py` once (~45–70 min: download of ~24 sessions + analysis).

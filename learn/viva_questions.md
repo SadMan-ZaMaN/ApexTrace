@@ -250,3 +250,20 @@ habit or the car's brake-sensor threshold; H4 is needed to tell.
 **Q: Which features carry the signature?**
 Throttle features (removing them drops accuracy most, 0.685 → 0.633), and
 minimum speed and throttle persist best across weekends (H1).
+
+## Chapter 11: driver vs car
+
+**Q: How can you tell a driver's signature from the car's?**
+Compare a driver's signature with their own from another season and with their
+teammate's (same car). In 2023 → 2024 the own signature was closer for 17 of 20
+drivers (sign test p = 0.0013). The strongest test is drivers who changed teams
+(2025): own previous signature (different car) vs new teammate (same car).
+
+**Q: Why can H4 only succeed with all five changers?**
+A one-sided sign test with 5 drivers has a smallest p of 1/32 = 0.031; 4 of 5
+gives 0.19. Stated in the preregistration before the test.
+
+**Q: How did you make sure the final test used the same method as development?**
+Shared code moved into the package with regression checks (identical results),
+a dry run of the final script on development data, and guards that refuse to run
+without the committed preregistration, FINAL_TEST=1, or if it has run before.
