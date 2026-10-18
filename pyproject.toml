@@ -27,6 +27,7 @@ dependencies = [
     "pyarrow",       # Parquet files (compressed tables) for the raw-sample export
     "requests",      # OpenF1 downloads (openf1.py)
     "scikit-learn",  # identification models and metrics (Phase 6)
+    "flask",         # the web app in app/ (Phase 8)
 ]
 
 [project.optional-dependencies]
@@ -39,3 +40,4 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]   # so tests can `import app` (the web app folder at the repo root)

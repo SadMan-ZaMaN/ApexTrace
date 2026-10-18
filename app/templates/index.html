@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% set d = headline.data %}
+
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Student research project <span class="dot">/</span> signals &amp; systems <span class="dot">/</span> Formula 1</p>
+      <h1>Can you recognise a driver from <em>public</em> telemetry?</h1>
+      <p class="lede">
+        ApexTrace measures where each driver brakes, how much speed they carry to the apex and when they get back on the
+        throttle, corner by corner, in every qualifying session from 2023 to 2025. It uses only the public timing feed, at
+        <span class="num">{{ d.sample_rate_hz }}</span> samples per second. Then it asks how much of that style belongs to
+        the driver, and how much to the car.
+      </p>
+      <dl class="facts">
+        <div><dt>Qualifying sessions</dt><dd>{{ d.sessions_built }}</dd></div>
+        <div><dt>Raw samples</dt><dd>{{ "%.2f"|format(d.raw_samples / 1000000) }}M</dd></div>
+        <div><dt>Corner passes</dt><dd>{{ "{:,}".format(d.clean_corner_passes) }}</dd></div>
+        <div><dt>Held-out season</dt><dd>2025</dd></div>
+      </dl>
+      <div class="hero-actions">
+        <a class="btn btn-primary cut" href="{{ url_for('pages.telemetry') }}">Compare two laps <span class="arrow">&rarr;</span></a>
+        <a class="btn cut" href="#results">See the results</a>
+      </div>
+    </div>
+
+    <figure class="track-panel" id="hero">
+      <div class="track-panel-head">
+        <span id="hero-title">Loading lap…</span>
+        <span class="clock num" id="hero-clock">0:00.000</span>
+      </div>
+      <svg class="hero-svg" id="hero-svg" viewBox="0 0 800 450" role="img" aria-labelledby="hero-title"></svg>
+      <div class="readout" id="hero-readout"></div>
+      <figcaption>Both fastest laps, replayed in real time from the timing feed's car positions. The line is drawn
+        from the same data; it is not an official track map.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Results</h2>
+      <p class="section-note">Tests written down and committed before they were run:<br>
+        pilot <code>{{ headline.preregistration.part_a }}</code> · final 2025 test <code>{{ headline.preregistration.part_b }}</code></p>
+    </div>
+    <table class="board">
+      <thead>
+        <tr><th class="pos">#</th><th>Question</th><th>Result</th><th>Verdict</th><th class="data">Data</th></tr>
+      </thead>
+      <tbody>
+        {% for h in headline.hypotheses %}
+        <tr>
+          <td class="pos"><span class="pos-box cut">{{ h.id }}</span></td>
+          <td><p class="q">{{ h.question }}</p><p class="detail">{{ h.detail }}</p></td>
+          <td class="result num">{{ h.result }}</td>
+          <td><span class="chip cut chip-{{ h.verdict|replace(' ', '-') }}">{{ h.verdict }}</span></td>
+          <td class="data">{{ h.data }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="board-foot">
+      <b>ICC</b> (intraclass correlation): the share of the spread that is between drivers rather than lap to lap;
+      0 = none, 1 = all. <b>p</b>: how often a result at least this strong would appear if there were no real effect.
+      <b>Balanced accuracy</b>: how often the right teammate is named for a lap, 0.5 = guessing. A "not supported" is a
+      result too: it is reported as it came out.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><h2>How it works</h2></div>
+    <div class="stages">
+      <div class="stage"><span class="n">01</span><h3>Sample</h3>
+        <p>Speed, throttle, brake and gear arrive {{ d.sample_rate_hz }} times a second on a 40 ms clock, with gaps. Nothing faster than {{ "%.1f"|format(d.sample_rate_hz / 2) }} Hz (half the sample rate) can be seen.</p></div>
+      <div class="stage"><span class="n">02</span><h3>Align</h3>
+        <p>Every lap is placed on one track coordinate by fusing car position with integrated speed: {{ d.alignment_error_m }} m along-track error.</p></div>
+      <div class="stage"><span class="n">03</span><h3>Find corners</h3>
+        <p>Braking zones are detected automatically on each session's fastest lap and typed slow, medium or fast.</p></div>
+      <div class="stage"><span class="n">04</span><h3>Measure</h3>
+        <p>{{ d.features }} features per corner: brake onset, apex, minimum speed, throttle pickup, exit speed and more, each with a known error.</p></div>
+      <div class="stage"><span class="n">05</span><h3>Test</h3>
+        <p>Leave-one-weekend-out identification against baselines, and preregistered tests on a season kept locked until the end.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hero.js') }}"></script>
+{% endblock %}

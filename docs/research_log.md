@@ -501,3 +501,48 @@ with 5 changers the test was weak. Both readings remain open.
 
 **Next:** Phase 8 — report, README with results, frontend (Flask + vanilla JS
 or Streamlit, to decide with Sadman), CI.
+
+---
+
+## 2026-10-19 — Phase 8, part 1: web app foundation, overview, lap compare
+
+**Built:** a local web app (Sadman chose Flask + vanilla JS + any library):
+`app/` (application factory, blueprints, JSON API), D3 7.9.0 and Barlow fonts
+stored in the repo with their licences, `experiments/16_app_data.py` (exports
+sessions, team colours from the OpenF1 driver list, corners, track outlines,
+the hero laps and the H1-H4 headline numbers into `results/app/`).
+Pages: **Overview** (hero replaying 2024 Abu Dhabi NOR vs PIA pole laps in real
+time on a track drawn from the feed's own X/Y; results board; pipeline) and
+**Lap compare** (any two kept qualifying laps 2023-2025: speed, gap, throttle,
+brake, gear on one distance axis, braking-zone zoom, hover readout, track map
+coloured by mini-sector winner). Checked by screenshots (Playwright + Edge) at
+1440 px and 390 px.
+
+**Found and fixed while building: the gap curve was noise.** The first version
+interpolated time over the projected position `s_m`: a ±0.1 s sawtooth. Measured
+on 2024 Abu Dhabi NOR vs PIA (official gap +0.209 s): with `s_m` jitter 0.041 s
+and +0.290 s at the line; with integrated speed `d_m` jitter 0.007 s and +0.198 s;
+fused coordinate 0.005 s but +0.281 s. Projected position carries a
+lap-specific offset of a few metres (likely position-vs-car timing), which a
+difference of two laps doesn't cancel; the drift of integrated speed is
+common to both laps and does cancel. Fix: gap on `d_m`, charts on the fused
+coordinate `d + moving_average(s − d)` (400 m). The page now prints the check
+(curve at the line vs official lap-time gap). With the fix, 12 of 24
+mini-sectors are within 0.02 s ("even").
+
+**Open question (not checked yet):** if projected position carries a
+lap-specific offset of a few metres, the fused window coordinate used for the
+corner features (Phase 3) inherits it: that coordinate is d plus an offset
+estimated from the window's position samples, and the half-split check
+(1.15 m) can't see an offset shared by the whole lap. It would add lap-to-lap
+noise to the position features (brake onset, apex, throttle pickup), which
+makes the H1 repeatability numbers conservative, but would bias drivers only if
+the offset depended on the car or driver. Evidence so far is one lap pair; a
+check over many lap pairs (end-of-lap gap from s vs the official lap-time gap)
+belongs to future work. The frozen results are not affected by this note.
+
+**Tests:** 9 new (synthetic laps with a known 1.0 s gap, the Flask API on a fake
+results folder; the gap test fails on the old `s_m` version). All 101 pass.
+
+**Next (Phase 8, part 2):** corner lab (per-corner features, repeatability)
+and signatures page (H3/H4 visual), then README, report, CI.

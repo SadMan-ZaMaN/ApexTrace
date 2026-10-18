@@ -300,3 +300,19 @@ preregistration Part B is committed.
   "teammate, same season and same weekends", which is not symmetric. The
   control shows how often the own signature wins when the car stays the same
   (8 of 10), so the changers' 2 of 5 can be read against it.
+
+## 2026-10-19 — Web app (Phase 8)
+- **Stack:** Flask + vanilla JavaScript + D3 (Sadman's choice; he knows Flask and
+  vanilla JS from Consonance). D3 7.9.0 and the Barlow fonts are stored in
+  `app/static/` (with licences), so the app runs offline.
+- **Data:** the app shows only exported results (`experiments/16_app_data.py` →
+  `results/app/*.json`, committed, ~1 MB) plus raw laps read on demand from the
+  gitignored Parquet files (~40 ms per lap, no cache needed).
+- **Design rules:** timing-screen look (dark, condensed capitals, hairlines),
+  one red interface accent, team colours only for drivers, purple = session best,
+  second driver of the same team = lighter shade + dashed, chamfered corners,
+  imagery only from telemetry; no logos, photos or official fonts; head-shot
+  URLs from OpenF1 are not exported.
+- **Gap curve on integrated distance, charts on the fused coordinate** (measured;
+  see the research log). Mini-sectors with |gain| < 0.02 s are "even"
+  (alignment error 1.15 m ≈ 0.017 s at 250 km/h).

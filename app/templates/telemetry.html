@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Lap compare · ApexTrace{% endblock %}
+
+{% block content %}
+<div class="wrap" id="telemetry-page"
+     data-default-session="{{ default_session }}"
+     data-default-a="{{ default_a }}" data-default-b="{{ default_b }}"
+     data-alignment-error="{{ alignment_error_m }}">
+  <header class="page-head">
+    <p class="eyebrow">Telemetry <span class="dot">/</span> any two qualifying laps, 2023–2025</p>
+    <h1>Lap compare</h1>
+    <p>Speed, throttle, brake and gear on one track coordinate, with the gap between the two laps at every point.
+      Drag across a chart to zoom, double-click to zoom out, or jump to a braking zone.</p>
+  </header>
+
+  <form class="controls" id="controls" onsubmit="return false">
+    <label class="field"><span>Season</span><select id="season"></select></label>
+    <label class="field"><span>Qualifying</span><select id="event"></select></label>
+    <label class="field"><span>Driver A</span><select id="driver-a"></select></label>
+    <label class="field"><span>Lap</span><select id="lap-a"></select></label>
+    <label class="field"><span>Driver B</span><select id="driver-b"></select></label>
+    <label class="field"><span>Lap</span><select id="lap-b"></select></label>
+    <button type="button" class="btn btn-quiet cut vs" id="swap" title="Swap A and B">Swap A/B</button>
+  </form>
+
+  <section class="cards" id="cards" aria-live="polite"></section>
+
+  <div class="corner-strip" id="corner-strip" role="toolbar" aria-label="Zoom to a braking zone"></div>
+
+  <div class="telemetry">
+    <div class="charts" id="charts">
+      <div class="lights" id="lights" hidden><div class="lights-row" aria-label="Loading">
+        <span></span><span></span><span></span><span></span><span></span></div></div>
+    </div>
+    <aside class="side">
+      <div class="map-panel">
+        <div class="panel-title"><span>Who is faster where</span><span id="map-caption"></span></div>
+        <svg class="map-svg" id="map" viewBox="0 0 400 300" role="img" aria-label="Track map coloured by the faster driver in each mini-sector"></svg>
+        <div class="legend" id="map-legend"></div>
+      </div>
+      <div class="notes" id="notes"></div>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/telemetry.js') }}"></script>
+{% endblock %}

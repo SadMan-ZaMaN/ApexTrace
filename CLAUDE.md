@@ -27,7 +27,8 @@ proposal — check before relying on it.
 | 2026-10-17 (later) | **Phase 6, part 3:** H1 with all drivers (lap ICC 0.15–0.58, weekend ICC 0.04–0.40; braking doesn't persist, min speed/throttle do); H3 dev: teammates 0.685 vs lap time 0.565 (p = 0.0001), not better than raw lap stats (0.729); shuffled 0.500. |
 | 2026-10-18 | **Phase 7, part 1:** H4 dev 2023→2024: own signature closer than teammate's (same car) for 17/20 (p = 0.0013); shared code moved into the package (regression-checked); `14_final_2025.py` (guards, dry-run on dev data); preregistration Part B written. |
 | 2026-10-18 (later) | **Phase 7 done (M7): final 2025 test run once** (after `225385c`; attempt 1 crashed on Baku with no laps before any result, fix logged, attempt 2). **H3 replicated:** ours 0.662 vs lap time 0.575, 8/10 teams, p = 0.027 (still ≈ raw stats 0.680). **H4 not supported:** 2 of 5 changers closer to own 2024 than to new teammate (p = 0.81); stayers 10/11. COL missed from the changer list (deviation; 3/6 with him). Exploratory control: stayers 8/10 in the H4 comparison. Numbers frozen. |
-| next | Phase 8: report, README with results, frontend (discuss framework with Sadman first), CI. |
+| 2026-10-19 | **Phase 8, part 1:** web app (`app/`, Flask + vanilla JS + D3; Barlow fonts; timing-screen design, no logos): Overview (hero replays 2024 Abu Dhabi pole laps, results board) + Lap compare (any two 2023–2025 laps, gap curve, braking-zone zoom, mini-sector map). `16_app_data.py` exports `results/app/`. Gap curve fixed to integrated distance (projected position gave ±0.1 s noise). 101 tests. |
+| next | Phase 8, part 2: corner lab + signatures pages; then README with results, report, CI (GitHub Actions). Open question in research log: lap-specific position offset. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -178,8 +179,11 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── signatures.py       # season signatures, distances, own-rank, sign test (H4)
 │   ├── session_build.py    # one session -> dataset rows (shared by dev and final runs)
 │   └── plots.py
+├── app/                    # web app: Flask (routes.py, data.py) + templates/ + static/ (CSS, JS, D3, fonts)
+│                           # run: .venv\Scripts\python.exe -m app  -> http://127.0.0.1:5000
 ├── experiments/            # numbered scripts: 00_hello_lap.py, 01_data_pilot.py, ...
 │                           # 14_final_2025.py = the one-time final test (done; results/final/ frozen)
+│                           # 16_app_data.py = exports results/app/*.json for the web app
 ├── notebooks/              # exploration only — final numbers come from experiments/
 ├── tests/                  # pytest; never downloads F1 data
 ├── docs/                   # PROJECT_CONTEXT, research_log, decisions, related_work,
@@ -189,9 +193,9 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 ```
 
 ### Tech stack
-Python 3.13, NumPy, SciPy, pandas, Matplotlib, FastF1. Later: scikit-learn
-(Phase 6), statsmodels (Phase 7), PyTorch (Phase 9 only). App (Phase 8):
-Flask + vanilla JS with a JS charting library, or Streamlit — decide then.
+Python 3.13, NumPy, SciPy, pandas, Matplotlib, FastF1, scikit-learn, pyarrow.
+App (Phase 8, decided 2026-10-19): Flask + vanilla JS + D3 7.9.0 (vendored),
+Barlow / Barlow Condensed fonts (OFL, vendored). PyTorch only for Phase 9.
 Tests: pytest. CI: GitHub Actions — tests must **not** download F1 data; use
 synthetic signals and tiny derived fixtures.
 
@@ -284,3 +288,10 @@ before "simplifying" code.
   table; `build_session` skips it ("no laps"). Guarded by
   `test_session_without_laps_is_skipped_not_crashed`. Lesson: before a
   one-time run, download everything first, then analyse.
+- **2026-10-19 — Don't compute the lap-to-lap time gap from projected position
+  `s_m`.** It gave a ±0.1 s sawtooth and ended 0.08 s off the official gap
+  (position scatter ~3 m + a lap-specific offset). Use integrated distance
+  `d_m` (smooth; drift common to both laps cancels): ends within ~0.01 s.
+  Charts use the fused coordinate `d + moving_average(s − d)`. Guarded by
+  `test_gap_from_integrated_distance_beats_projected_position` and
+  `test_compare_returns_both_laps_and_a_correct_gap` (fails on the `s_m` version).

@@ -302,3 +302,27 @@ A test for a 2 × 2 table of counts (here: changers/stayers × own closer/teamma
 closer). It asks: if both groups had the same success rate, how likely is a
 split at least this uneven? It is exact (no large-sample approximation), which
 suits small counts like 5 and 10.
+
+## Chapter 13: the web app
+
+**Q: How is the web app built?**
+Flask serves HTML pages and a small JSON API; plain JavaScript with D3 draws the
+charts in the browser. Every number shown comes from results files, gathered by
+an export script (`experiments/16_app_data.py`), so the app never computes a
+research result itself.
+
+**Q: Your lap-gap chart: why integrate speed instead of using track position?**
+Projected position scatters by about 3 m per sample and has a lap-specific
+offset of a few metres, so the gap came out as a 0.04 s sawtooth and ended 0.08 s
+off at the line. Integrated speed is smooth (integration is a low-pass filter),
+and its slow drift is almost the same on both laps, so it cancels in the
+difference (common-mode rejection). It ended within about 0.01 s of the official
+lap-time gap, and the page shows that check.
+
+**Q: What is the complementary filter doing on the charts' x axis?**
+fused = d + moving_average(s - d): integrated speed for the fast detail,
+position for the slow correction of its drift. Same idea as Phase 3, over a whole lap.
+
+**Q: Why do 12 of 24 mini-sectors say "even"?**
+A gain smaller than 0.02 s can't be told from the measurement error (1.15 m
+alignment at 250 km/h is 0.017 s), so it is shown as even rather than invented.

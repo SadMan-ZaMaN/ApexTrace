@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ApexTrace{% endblock %}</title>
+  <meta name="description" content="Driver signatures and cornering analysis from public F1 telemetry: a student research project.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230b0c0e'/%3E%3Cpath d='M4 20V13C4 8 7 5 12 5H20' fill='none' stroke='%23f2f1ed' stroke-width='2.6'/%3E%3Ccircle cx='6.6' cy='7.6' r='2.4' fill='%23ff3b1f'/%3E%3C/svg%3E">
+  <link rel="preload" href="{{ url_for('static', filename='fonts/barlow-condensed-latin-700-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="{{ url_for('pages.home') }}" aria-label="ApexTrace home">
+        {# The mark: a racing line through a corner, with its apex in red. Drawn for this project. #}
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 20V13C4 8 7 5 12 5H20" fill="none" stroke="#f2f1ed" stroke-width="2.6"/>
+          <circle cx="6.6" cy="7.6" r="2.4" fill="#ff3b1f"/>
+        </svg>
+        <span class="brand-word">Apex<b>Trace</b></span>
+      </a>
+      <nav aria-label="Main">
+        {% for endpoint, label in nav %}
+          <a href="{{ url_for(endpoint) }}" {% if active == endpoint %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+      </nav>
+      <div class="topbar-meta"><span class="live-dot" aria-hidden="true"></span>OpenF1 timing data · qualifying 2023–2025</div>
+    </div>
+  </header>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>
+        <p>ApexTrace is an independent student research project (BUET, CSE). It is unofficial and is not associated in any
+          way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1 and related marks are trade marks of Formula One
+          Licensing B.V.</p>
+        <p>Timing data: <a href="https://openf1.org">OpenF1</a> and <a href="https://github.com/theOehrly/Fast-F1">FastF1</a>.
+          Charts are drawn from that data; no team logos, photos or broadcast material are used.</p>
+      </div>
+      <p>Flask · D3 · Barlow (SIL OFL)</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='vendor/d3.v7.9.0.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
