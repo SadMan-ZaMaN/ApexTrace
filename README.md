@@ -11,6 +11,7 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m pip install -e .
 .venv\Scripts\python.exe -m app          # then open http://127.0.0.1:5000
+# or, the same thing:  .venv\Scripts\python.exe run.py
 ```
 
 The overview page works from the committed results. The lap-compare page also needs the raw lap
