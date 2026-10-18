@@ -1,0 +1,50 @@
+﻿preregistration commit: 225385c471ea7206e6b3a4d5ccf1ab2b3d93f276 2026-10-18 01:41:50 +0600
+
+2025 R01 Melbourne            kept  78 corners  7 usable  412/ 546 
+2025 R02 Shanghai             kept  90 corners  7 usable  409/ 630 
+2025 R03 Suzuka               kept  94 corners  7 usable  443/ 658 
+2025 R04 Sakhir               kept  76 corners  8 usable  432/ 608 
+2025 R05 Jeddah               kept  78 corners  6 usable  316/ 468 
+2025 R06 Miami Gardens        kept  99 corners  7 usable  421/ 693 
+2025 R07 Imola                kept  80 corners  7 usable  402/ 560 
+2025 R08 Monaco               kept 135 corners  6 usable  441/ 810 
+2025 R09 Barcelona            kept  78 corners  6 usable  331/ 468 
+2025 R10 Montréal             kept 115 corners  6 usable  465/ 690 
+2025 R11 Spielberg            kept  91 corners  6 usable  413/ 546 
+2025 R12 Silverstone          kept  89 corners  6 usable  309/ 534 
+2025 R13 Spa-Francorchamps    kept  83 corners  6 usable  320/ 498 
+2025 R14 Budapest             kept  85 corners  8 usable  441/ 680 
+2025 R15 Zandvoort            kept  94 corners  7 usable  432/ 658 
+2025 R16 Monza                kept  99 corners  6 usable  412/ 594 
+2025 R17 Baku                 kept   0 corners  0 usable    0/   0 no laps
+2025 R18 Marina Bay           kept  78 corners  9 usable  425/ 702 
+2025 R19 Austin               kept  72 corners  8 usable  384/ 576 
+2025 R20 Mexico City          kept  98 corners  8 usable  472/ 784 
+2025 R21 São Paulo            kept  96 corners  6 usable  418/ 576 
+2025 R22 Las Vegas            kept  90 corners  7 usable  363/ 630 
+2025 R23 Lusail               kept 107 corners  7 usable  512/ 749 
+2025 R24 Yas Island           kept  87 corners  5 usable  299/ 435 
+
+--- H3 replication on 2025: teammates ---
+Alpine 2025                  COL vs GAS 16 sessions 110 laps | lap time 0.61  raw 0.77  ours 0.71  +time 0.71  vote 0.81  shuffled 0.53
+Aston Martin 2025            ALO vs STR 21 sessions 173 laps | lap time 0.68  raw 0.64  ours 0.62  +time 0.62  vote 0.71  shuffled 0.47
+Ferrari 2025                 HAM vs LEC 22 sessions 243 laps | lap time 0.54  raw 0.87  ours 0.62  +time 0.63  vote 0.75  shuffled 0.48
+Haas F1 Team 2025            BEA vs OCO 21 sessions 167 laps | lap time 0.58  raw 0.61  ours 0.63  +time 0.61  vote 0.67  shuffled 0.51
+Kick Sauber 2025             BOR vs HUL 21 sessions 157 laps | lap time 0.51  raw 0.56  ours 0.62  +time 0.60  vote 0.71  shuffled 0.50
+McLaren 2025                 NOR vs PIA 22 sessions 251 laps | lap time 0.45  raw 0.63  ours 0.69  +time 0.70  vote 0.80  shuffled 0.51
+Mercedes 2025                ANT vs RUS 21 sessions 213 laps | lap time 0.60  raw 0.59  ours 0.64  +time 0.64  vote 0.64  shuffled 0.50
+Racing Bulls 2025            HAD vs LAW 19 sessions 169 laps | lap time 0.57  raw 0.60  ours 0.64  +time 0.65  vote 0.71  shuffled 0.53
+Red Bull Racing 2025         TSU vs VER 19 sessions 180 laps | lap time 0.73  raw 0.75  ours 0.70  +time 0.74  vote 0.79  shuffled 0.52
+Williams 2025                ALB vs SAI 22 sessions 215 laps | lap time 0.48  raw 0.79  ours 0.76  +time 0.76  vote 0.86  shuffled 0.51
+
+--- H4: team changers ---
+driver  included reason       team_2025  weekends_2025 teammate_2025    team_2024  distance_own_2024  distance_new_teammate_2025  own_closer  share_braking_own_gap  share_braking_teammate_gap  share_braking_own_closer  own_rank_among_2024  drivers_2024
+   HAM      True                Ferrari             22           LEC     Mercedes           1.041969                    0.985228       False               0.019872                    0.016160                     False                    4            22
+   SAI      True               Williams             22           ALB      Ferrari           1.256046                    0.733678       False               0.004336                    0.009130                      True                   15            22
+   OCO      True           Haas F1 Team             22           BEA       Alpine           1.350984                    0.956175       False               0.000431                    0.014410                      True                   12            22
+   HUL      True            Kick Sauber             22           BOR Haas F1 Team           0.687882                    1.399927        True               0.000376                    0.007950                      True                    1            22
+   TSU      True        Red Bull Racing             19           VER           RB           0.842245                    1.013807        True               0.003415                    0.007603                      True                    2            22
+
+H3 (primary): ours minus lap time +0.087, better in 8 of 10, Wilcoxon p = 0.0273 -> supported: True
+H4 (primary): own 2024 closer than new 2025 teammate for 2 of 5, sign test p = 0.8125 -> supported: False
+Saved results to results\final

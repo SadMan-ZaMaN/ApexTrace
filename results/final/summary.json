@@ -1,0 +1,181 @@
+{
+  "preregistration_commit": "225385c471ea7206e6b3a4d5ccf1ab2b3d93f276 2026-10-18 01:41:50 +0600",
+  "cleaning_2025": {
+    "usable_rows": 9272,
+    "dropped_not_dry": 400,
+    "dropped_min_speed_below_40": 1,
+    "set_missing_brake_onset_m": 55,
+    "set_missing_mean_decel_ms2": 62,
+    "set_missing_apex_m": 36,
+    "set_missing_throttle_pickup_m": 0,
+    "clean_rows": 8871
+  },
+  "laps_2025": 1984,
+  "h3": {
+    "majority | balanced_accuracy": {
+      "mean": 0.49844444444444447,
+      "ci95_low": 0.4953333333333333,
+      "ci95_high": 0.5,
+      "team_seasons": 10
+    },
+    "lap time only | balanced_accuracy": {
+      "mean": 0.5754062422188844,
+      "ci95_low": 0.5273303336874717,
+      "ci95_high": 0.62559593180558,
+      "team_seasons": 10
+    },
+    "raw lap statistics | balanced_accuracy": {
+      "mean": 0.679974760496699,
+      "ci95_low": 0.621132015186628,
+      "ci95_high": 0.7451760519884145,
+      "team_seasons": 10
+    },
+    "our features (nearest centroid) | balanced_accuracy": {
+      "mean": 0.6504716157355337,
+      "ci95_low": 0.6240311134531424,
+      "ci95_high": 0.6772646178996511,
+      "team_seasons": 10
+    },
+    "our features | balanced_accuracy": {
+      "mean": 0.662316087275481,
+      "ci95_low": 0.6341790792265796,
+      "ci95_high": 0.6940306672148321,
+      "team_seasons": 10
+    },
+    "our features | weekend vote": {
+      "mean": 0.7459686147186148,
+      "ci95_low": 0.7065469426406926,
+      "ci95_high": 0.7858467190704033,
+      "team_seasons": 10
+    },
+    "our features + lap time | balanced_accuracy": {
+      "mean": 0.6666890629603542,
+      "ci95_low": 0.634488446583396,
+      "ci95_high": 0.700621281832267,
+      "team_seasons": 10
+    },
+    "shuffled labels | balanced_accuracy": {
+      "mean": 0.5069320816348349,
+      "ci95_low": 0.4952532156788872,
+      "ci95_high": 0.5176197635070137,
+      "team_seasons": 10
+    },
+    "without braking | balanced_accuracy": {
+      "mean": 0.6590806985208653,
+      "ci95_low": 0.6178854159744266,
+      "ci95_high": 0.6974923948309888,
+      "team_seasons": 10
+    },
+    "without apex | balanced_accuracy": {
+      "mean": 0.642919109782631,
+      "ci95_low": 0.6135348169435639,
+      "ci95_high": 0.6766925357512192,
+      "team_seasons": 10
+    },
+    "without throttle | balanced_accuracy": {
+      "mean": 0.591629978774947,
+      "ci95_low": 0.5617085751175124,
+      "ci95_high": 0.6221915216499058,
+      "team_seasons": 10
+    },
+    "without speeds | balanced_accuracy": {
+      "mean": 0.6725928276178786,
+      "ci95_low": 0.640770241546752,
+      "ci95_high": 0.7072201278107814,
+      "team_seasons": 10
+    },
+    "without time | balanced_accuracy": {
+      "mean": 0.652689269243817,
+      "ci95_low": 0.621421031235067,
+      "ci95_high": 0.6859675134428838,
+      "team_seasons": 10
+    },
+    "raw mean_speed alone | balanced_accuracy": {
+      "mean": 0.5323882328870801,
+      "ci95_low": 0.4841953129240404,
+      "ci95_high": 0.5786259079109349,
+      "team_seasons": 10
+    },
+    "raw mean_speed | same sign share": {
+      "mean": 0.6587206652996127,
+      "ci95_low": 0.5853497379813168,
+      "ci95_high": 0.7411441957165641,
+      "team_seasons": 10
+    },
+    "raw max_speed alone | balanced_accuracy": {
+      "mean": 0.5062603968015804,
+      "ci95_low": 0.4812145485142376,
+      "ci95_high": 0.5264299233923847,
+      "team_seasons": 10
+    },
+    "raw max_speed | same sign share": {
+      "mean": 0.5447667464114833,
+      "ci95_low": 0.5160514923672819,
+      "ci95_high": 0.5739236229778992,
+      "team_seasons": 10
+    },
+    "raw mean_throttle alone | balanced_accuracy": {
+      "mean": 0.5334593110462271,
+      "ci95_low": 0.4964560169939586,
+      "ci95_high": 0.5672477910714776,
+      "team_seasons": 10
+    },
+    "raw mean_throttle | same sign share": {
+      "mean": 0.6435235816814764,
+      "ci95_low": 0.5861004784688995,
+      "ci95_high": 0.7092672020961494,
+      "team_seasons": 10
+    },
+    "raw share_full_throttle alone | balanced_accuracy": {
+      "mean": 0.5924037341686738,
+      "ci95_low": 0.5265774689163174,
+      "ci95_high": 0.6514617840474406,
+      "team_seasons": 10
+    },
+    "raw share_full_throttle | same sign share": {
+      "mean": 0.717130895420369,
+      "ci95_low": 0.642001879699248,
+      "ci95_high": 0.7931818181818182,
+      "team_seasons": 10
+    },
+    "raw share_braking alone | balanced_accuracy": {
+      "mean": 0.6100845482772363,
+      "ci95_low": 0.5615672392844671,
+      "ci95_high": 0.6600992686091838,
+      "team_seasons": 10
+    },
+    "raw share_braking | same sign share": {
+      "mean": 0.7465709728867622,
+      "ci95_low": 0.65740003417635,
+      "ci95_high": 0.8385395306447938,
+      "team_seasons": 10
+    },
+    "ours minus lap time only": {
+      "mean_difference": 0.08690984505659667,
+      "wins": 8,
+      "team_seasons": 10,
+      "wilcoxon_p": 0.02734375
+    },
+    "ours minus raw lap statistics": {
+      "mean_difference": -0.017658673221218002,
+      "wins": 5,
+      "team_seasons": 10,
+      "wilcoxon_p": 1.0
+    }
+  },
+  "h4": {
+    "changers_included": 5,
+    "own_closer": 2,
+    "sign_test_p": 0.8125,
+    "share_braking_own_closer": 4,
+    "share_braking_sign_test_p": 0.1875,
+    "min_possible_p": 0.03125
+  },
+  "non_changer_check": {
+    "drivers": 11,
+    "own_closer": 10,
+    "sign_test_p": 0.005859375
+  },
+  "h3_supported": true,
+  "h4_supported": false
+}

@@ -108,3 +108,19 @@ def test_overlapping_stints_give_the_shared_lap_to_the_new_stint(monkeypatch):
     assert list(table["Stint"]) == [1, 2, 2]
     assert list(table["Compound"]) == ["SOFT", "MEDIUM", "MEDIUM"]
     assert list(table["TyreLife"]) == [1.0, 4.0, 5.0]
+
+
+def test_session_without_laps_is_skipped_not_crashed(monkeypatch):
+    # 2025 Baku qualifying: OpenF1 answers 404 for laps (fetch -> []), but has stints,
+    # race control and drivers. The first final run crashed here (KeyError 'driver_number').
+    from apextrace.session_build import build_session
+    data = {"laps": [], "stints": [{"driver_number": 4, "stint_number": 1, "lap_start": 1, "lap_end": 4,
+                                    "compound": "SOFT", "tyre_age_at_start": 0}],
+            "race_control": [], "drivers": [{"driver_number": 4, "name_acronym": "NOR", "team_name": "McLaren"}]}
+    monkeypatch.setattr(openf1, "fetch", lambda endpoint, params, cache_dir=None: data[endpoint])
+    end = pd.Timestamp("2025-09-20T13:00:00")
+    assert lap_table(9900, end).empty
+    assert openf1.download_session(9900, end) == {"laps": 0, "kept_laps": 0, "kept_laps_with_data": 0}
+    rows, corners, summary, raw = build_session(2025, 17, {"session_key": 9900, "date_end": end, "location": "Baku"})
+    assert rows == [] and corners == [] and raw.empty
+    assert summary["note"] == "no laps"

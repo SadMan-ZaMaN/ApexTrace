@@ -20,7 +20,7 @@ your exams and then explain any part to a faculty member or an interviewer.
 | 9 | [09_multi_season_dataset.md](09_multi_season_dataset.md) | Phase 6 part 2: rate limits, corner detection, braking events, the dataset, classic EDA and cleaning | 1.5 h |
 | 10 | [10_repeatability_and_identification.md](10_repeatability_and_identification.md) | Phase 6 part 3: ICC at lap and weekend level, cluster bootstrap, leave-one-session-out identification, baselines, leakage checks, ablation | 2 h |
 | 11 | [11_driver_vs_car.md](11_driver_vs_car.md) | Phase 7: season signatures, own vs teammate, sign tests, how a one-time final test is protected | 1 h |
-| 12 | Final results and write-up | Added after the one-time 2025 run | |
+| 12 | [12_final_results.md](12_final_results.md) | The one-time 2025 test: a crash and how it was handled, H3 replicated, H4 not supported, a missed changer, reading a "no" with a control, what the project can claim | 1 h |
 | — | [viva_questions.md](viva_questions.md) | Practice questions with answers, per chapter | |
 | — | [exercises.md](exercises.md) | Hands-on: change a number, predict, run, check | |
 

@@ -448,3 +448,56 @@ secondary analyses and what can and can't be concluded.
 
 **Next:** Sadman commits; then `$env:FINAL_TEST = "1"` and run
 `14_final_2025.py` once (~45–70 min: download of ~24 sessions + analysis).
+
+---
+
+## 2026-10-18 — Phase 7, part 2: the one-time final test on 2025
+
+**How it ran:** after Sadman committed Part B (`225385c`), `14_final_2025.py`
+ran with `FINAL_TEST=1`. Attempt 1 crashed in the download step at session 17
+(2025 Baku: OpenF1 has no lap rows, 404); no result had been produced. Fix:
+`lap_table` returns an empty table, and the session is skipped (+ a test that
+fails on the old code). Recorded in `docs/preregistration_deviations.md`
+**before** the rerun. Attempt 2 completed. Data: 23 of 24 sessions built, Las
+Vegas wet (dropped by the dry rule), so 22 dry sessions; 9,272 usable rows →
+8,871 clean; 1,984 laps; 10 teams.
+
+**H3 (primary) — replicated.** Teammate identification, leave-one-session-out:
+our corner features 0.662 [0.634, 0.694] vs lap time only 0.575 [0.527, 0.626];
+better in 8 of 10 teams, Wilcoxon p = 0.027. Secondary, as in development:
+raw lap statistics 0.680 [0.621, 0.745], ours not better (5 of 10, p = 1.0);
+weekend vote 0.746; shuffled labels 0.507 (pipeline OK); dropping throttle
+features costs the most (0.592); brake-flag share alone 0.610 (development:
+0.610). Ferrari (HAM vs LEC): raw statistics 0.87, ours 0.62.
+
+**H4 (primary) — not supported.** For the 5 preregistered team changers, the
+2025 signature was closer to their own 2024 signature than to the new
+teammate's for **2 of 5** (Hülkenberg 0.69 vs 1.40, Tsunoda 0.84 vs 1.01);
+closer to the new teammate for Sainz (1.26 vs 0.73), Ocon (1.35 vs 0.96) and
+Hamilton (1.04 vs 0.99, nearly equal). Sign test p = 0.81. Secondary: the
+brake-flag share stayed closer to the driver's own for 4 of 5 (p = 0.19); own
+2024 signature ranked 1st (HUL), 2nd (TSU), 4th (HAM), 12th (OCO), 15th (SAI)
+of 22. Drivers who stayed: own 2024 closer than old teammate for 10 of 11
+(p = 0.006), replicating development (17 of 20).
+
+**Found after the run:** Colapinto (Williams 2024 → Alpine 2025) changed teams
+but was missing from the preregistered list (he showed up in the non-changer
+check). Primary left as preregistered; deviation recorded.
+
+**Exploratory (`15_final_exploratory.py`, not preregistered):** changers
+derived from the data = the 5 + COL; with COL 3 of 6 (p = 0.66). **Control:**
+the exact H4 comparison for the 10 drivers who stayed (own 2024 vs current
+teammate, same weekends): own closer for 8 of 10 (p = 0.055; exceptions ALB,
+whose new teammate is Sainz, and LAW, only 6 weekends in 2024). Changers 2 of
+5 vs stayers 8 of 10: Fisher's exact p = 0.25, too few changers to tell.
+Non-changer check without COL: 9 of 10 (p = 0.011).
+
+**Verdict:** within a team, drivers have a measurable signature that
+generalises to an unseen season (H3) and persists from year to year (10 of 11).
+Whether it **follows the driver into another car** was not shown: 3 of 5
+changers moved closer to their new teammate. The preregistered caveat applies:
+this doesn't prove the signature is the car (drivers adapt to a new car), and
+with 5 changers the test was weak. Both readings remain open.
+
+**Next:** Phase 8 — report, README with results, frontend (Flask + vanilla JS
+or Streamlit, to decide with Sadman), CI.

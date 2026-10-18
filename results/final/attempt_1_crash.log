@@ -1,0 +1,57 @@
+﻿preregistration commit: 225385c471ea7206e6b3a4d5ccf1ab2b3d93f276 2026-10-18 01:41:50 +0600
+
+2025 R01 Melbourne            kept  78 corners  7 usable  412/ 546 
+2025 R02 Shanghai             kept  90 corners  7 usable  409/ 630 
+2025 R03 Suzuka               kept  94 corners  7 usable  443/ 658 
+2025 R04 Sakhir               kept  76 corners  8 usable  432/ 608 
+2025 R05 Jeddah               kept  78 corners  6 usable  316/ 468 
+2025 R06 Miami Gardens        kept  99 corners  7 usable  421/ 693 
+2025 R07 Imola                kept  80 corners  7 usable  402/ 560 
+2025 R08 Monaco               kept 135 corners  6 usable  441/ 810 
+2025 R09 Barcelona            kept  78 corners  6 usable  331/ 468 
+2025 R10 Montréal             kept 115 corners  6 usable  465/ 690 
+2025 R11 Spielberg            kept  91 corners  6 usable  413/ 546 
+2025 R12 Silverstone          kept  89 corners  6 usable  309/ 534 
+2025 R13 Spa-Francorchamps    kept  83 corners  6 usable  320/ 498 
+2025 R14 Budapest             kept  85 corners  8 usable  441/ 680 
+2025 R15 Zandvoort            kept  94 corners  7 usable  432/ 658 
+2025 R16 Monza                kept  99 corners  6 usable  412/ 594 
+.venv\Scripts\python.exe : Traceback (most recent call last):
+At line:1 char:354
++ ... ERED = "1"; .venv\Scripts\python.exe experiments\14_final_2025.py *>  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "E:\Formula1-Project\experiments\14_final_2025.py", line 229, in <module>
+    main()
+    ~~~~^^
+  File "E:\Formula1-Project\experiments\14_final_2025.py", line 194, in main
+    dataset, corners, sessions, raw = build_2025()
+                                      ~~~~~~~~~~^^
+  File "E:\Formula1-Project\experiments\14_final_2025.py", line 84, in build_2025
+    counts = download_session(int(session["session_key"]), session["date_end"])
+  File "E:\Formula1-Project\src\apextrace\openf1.py", line 446, in download_session
+    laps = lap_table(session_key, session_end, cache_dir)
+  File "E:\Formula1-Project\src\apextrace\openf1.py", line 267, in lap_table
+    for driver_number, driver_laps in laps.groupby("driver_number"):
+                                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "E:\Formula1-Project\.venv\Lib\site-packages\pandas\core\frame.py", line 9210, in groupby
+    return DataFrameGroupBy(
+        obj=self,
+    ...<7 lines>...
+        dropna=dropna,
+    )
+  File "E:\Formula1-Project\.venv\Lib\site-packages\pandas\core\groupby\groupby.py", line 1331, in __init__
+    grouper, exclusions, obj = get_grouper(
+                               ~~~~~~~~~~~^
+        obj,
+        ^^^^
+    ...<5 lines>...
+        dropna=self.dropna,
+        ^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\Formula1-Project\.venv\Lib\site-packages\pandas\core\groupby\grouper.py", line 1043, in get_grouper
+    raise KeyError(gpr)
+KeyError: 'driver_number'

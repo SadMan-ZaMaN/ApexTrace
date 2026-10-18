@@ -1,0 +1,11 @@
+driver,included,reason,team_2025,weekends_2025,teammate_2025,team_2024,distance_own_2024,distance_new_teammate_2025,own_closer,share_braking_own_gap,share_braking_teammate_gap,share_braking_own_closer,own_rank_among_2024,drivers_2024,changed,preregistered_changer
+ALB,True,,Williams,22,SAI,Williams,0.7799,0.7337,False,0.0005,0.0091,True,1,22,False,False
+ALO,True,,Aston Martin,22,STR,Aston Martin,0.5771,0.9356,True,0.0037,0.0026,False,1,22,False,False
+GAS,True,,Alpine,22,COL,Alpine,0.7541,1.4241,True,0.0043,0.0124,True,1,22,False,False
+LAW,True,,Racing Bulls,20,HAD,RB,1.0884,0.6396,False,0.0106,0.0053,False,10,22,False,False
+LEC,True,,Ferrari,22,HAM,Ferrari,0.7165,0.9852,True,0.0031,0.0162,True,1,22,False,False
+NOR,True,,McLaren,22,PIA,McLaren,0.8223,0.9541,True,0.0023,0.0010,False,1,22,False,False
+PIA,True,,McLaren,22,NOR,McLaren,0.7972,0.9541,True,0.0004,0.0010,True,1,22,False,False
+RUS,True,,Mercedes,21,ANT,Mercedes,0.5242,0.7013,True,0.0024,0.0013,False,1,22,False,False
+STR,True,,Aston Martin,21,ALO,Aston Martin,0.7539,0.9104,True,0.0009,0.0030,True,1,22,False,False
+VER,True,,Red Bull Racing,22,TSU,Red Bull Racing,0.4733,0.9805,True,0.0017,0.0079,True,1,22,False,False

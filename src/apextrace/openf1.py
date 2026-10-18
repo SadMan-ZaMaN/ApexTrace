@@ -257,6 +257,11 @@ def accuracy_checks(lap, previous):
 def lap_table(session_key, session_end, cache_dir=CACHE_DIR):
     """All laps of one session as a table with the columns select_laps() needs (and a few more)."""
     laps = pd.DataFrame(fetch("laps", {"session_key": session_key}, cache_dir))
+    if laps.empty:
+        # OpenF1 has no lap rows for a few sessions (2025 Baku qualifying answers
+        # 404 "No results found"): return an empty table, and build_session()
+        # skips the session with the note "no laps".
+        return pd.DataFrame()
     stints = pd.DataFrame(fetch("stints", {"session_key": session_key}, cache_dir))
     race_control = fetch("race_control", {"session_key": session_key}, cache_dir)
     names = drivers_of(session_key, cache_dir)

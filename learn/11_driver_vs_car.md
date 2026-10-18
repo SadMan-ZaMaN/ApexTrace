@@ -68,3 +68,7 @@ That's a demanding test, and its weakness is written down in advance.
 
 If a bug is found after the run: fix it, rerun into a new folder, and report
 **both** results. Never quietly replace a result.
+
+**The outcome** (run on 2026-10-18): H3 replicated, H4 not supported (2 of 5).
+The full story, including a crash on the first attempt and a changer missing
+from the list, is in [chapter 12](12_final_results.md).

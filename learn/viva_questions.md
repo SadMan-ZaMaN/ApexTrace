@@ -267,3 +267,38 @@ gives 0.19. Stated in the preregistration before the test.
 Shared code moved into the package with regression checks (identical results),
 a dry run of the final script on development data, and guards that refuse to run
 without the committed preregistration, FINAL_TEST=1, or if it has run before.
+
+## Chapter 12: the final test on 2025
+
+**Q: What happened in the final test?**
+H3 replicated: corner features identified which teammate drove a lap better
+than lap time (0.662 vs 0.575, 8 of 10 teams, Wilcoxon p = 0.027), but still not
+better than whole-lap statistics (0.680). H4 was not supported: only 2 of 5 team
+changers stayed closer to their own 2024 signature than to their new teammate
+(sign test p = 0.81).
+
+**Q: The final run crashed the first time. Isn't rerunning cheating?**
+Not here, because no result had been produced: it crashed while downloading
+(OpenF1 has no laps for 2025 Baku). The fix was the smallest possible (skip a
+session without laps), a test was added, and the deviation was written down
+before the rerun. Both logs are kept. A rerun after seeing results would need
+to be reported as a second result next to the first.
+
+**Q: You forgot a team changer in your preregistration. What did you do?**
+Kept the primary test exactly as preregistered (5 drivers), recorded the
+mistake as a deviation, and showed its effect separately: with Colapinto 3 of 6,
+and with 2 of 5 already known it could only have been 2 or 3 of 6, so the
+conclusion couldn't change. Lesson: derive such lists from the data with a rule.
+
+**Q: Does "H4 not supported" mean the signature is the car?**
+No, and that was written in the preregistration. Drivers can adapt to a new
+car. Also, the comparison isn't symmetric (own signature one year apart vs
+teammate on the same weekends). A control on drivers who stayed shows their own
+signature still wins 8 of 10 times; changers 2 of 5; Fisher's exact p = 0.25,
+too few changers to tell.
+
+**Q: What is Fisher's exact test?**
+A test for a 2 × 2 table of counts (here: changers/stayers × own closer/teammate
+closer). It asks: if both groups had the same success rate, how likely is a
+split at least this uneven? It is exact (no large-sample approximation), which
+suits small counts like 5 and 10.

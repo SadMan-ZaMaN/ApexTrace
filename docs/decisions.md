@@ -282,3 +282,21 @@ preregistration Part B is committed.
 - `experiments/14_final_2025.py` was dry-run on development data (2024 as the
   "final" year, 2023 as reference) to exercise every code path before the
   one-time run.
+
+## 2026-10-18 — Final run: rerun after a crash, exploratory follow-ups
+- **Rerun after a crash before any result.** Attempt 1 stopped in the download
+  step (2025 Baku has no laps on OpenF1). The fix was forced (skip a session
+  without laps; `build_session` already had that branch) and was recorded in
+  the deviations file before the rerun. The empty `results/final/` folder was
+  removed to pass the run-once guard; the guard itself was not changed.
+- **Download first, then run.** Before attempt 2 the remaining sessions were
+  downloaded into the cache (download step only, no analysis), so that any
+  other data-source problem would show up there and not as a third attempt.
+- **Primary results are never touched afterwards.** Everything added after the
+  run is in `experiments/15_final_exploratory.py` /
+  `results/15_final_exploratory/`, labelled exploratory: the missed changer
+  (COL), and a control that runs the H4 comparison on drivers who stayed.
+  **Why the control:** H4 compares "own signature one year apart" with
+  "teammate, same season and same weekends", which is not symmetric. The
+  control shows how often the own signature wins when the car stays the same
+  (8 of 10), so the changers' 2 of 5 can be read against it.

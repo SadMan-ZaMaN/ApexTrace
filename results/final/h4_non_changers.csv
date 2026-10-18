@@ -1,0 +1,12 @@
+driver,distance_own,distance_old_teammate,own_closer
+ALB,0.7799,0.9277,True
+ALO,0.5771,0.6238,True
+COL,1.1241,1.1445,True
+GAS,0.7542,1.5780,True
+LAW,1.1348,0.9931,False
+LEC,0.7165,1.2719,True
+NOR,0.8223,0.8960,True
+PIA,0.7972,0.8579,True
+RUS,0.5242,1.0074,True
+STR,0.7539,1.1338,True
+VER,0.4733,0.9965,True

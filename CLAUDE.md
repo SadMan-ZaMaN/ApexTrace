@@ -26,7 +26,8 @@ proposal — check before relying on it.
 | 2026-10-17 (later) | **Phase 6, part 2:** OpenF1 download (47 sessions, 4,499 laps), automatic corner detection, braking-event rule, dataset (24,496 usable rows), raw-sample Parquet, EDA + cleaning rules → 21,493 clean dry rows, 44 sessions. |
 | 2026-10-17 (later) | **Phase 6, part 3:** H1 with all drivers (lap ICC 0.15–0.58, weekend ICC 0.04–0.40; braking doesn't persist, min speed/throttle do); H3 dev: teammates 0.685 vs lap time 0.565 (p = 0.0001), not better than raw lap stats (0.729); shuffled 0.500. |
 | 2026-10-18 | **Phase 7, part 1:** H4 dev 2023→2024: own signature closer than teammate's (same car) for 17/20 (p = 0.0013); shared code moved into the package (regression-checked); `14_final_2025.py` (guards, dry-run on dev data); preregistration Part B written. |
-| next | Sadman commits Part B → run `14_final_2025.py` once with `FINAL_TEST=1` → report; then Phase 8 (report, README, frontend, CI). |
+| 2026-10-18 (later) | **Phase 7 done (M7): final 2025 test run once** (after `225385c`; attempt 1 crashed on Baku with no laps before any result, fix logged, attempt 2). **H3 replicated:** ours 0.662 vs lap time 0.575, 8/10 teams, p = 0.027 (still ≈ raw stats 0.680). **H4 not supported:** 2 of 5 changers closer to own 2024 than to new teammate (p = 0.81); stayers 10/11. COL missed from the changer list (deviation; 3/6 with him). Exploratory control: stayers 8/10 in the H4 comparison. Numbers frozen. |
+| next | Phase 8: report, README with results, frontend (discuss framework with Sadman first), CI. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -178,6 +179,7 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 │   ├── session_build.py    # one session -> dataset rows (shared by dev and final runs)
 │   └── plots.py
 ├── experiments/            # numbered scripts: 00_hello_lap.py, 01_data_pilot.py, ...
+│                           # 14_final_2025.py = the one-time final test (done; results/final/ frozen)
 ├── notebooks/              # exploration only — final numbers come from experiments/
 ├── tests/                  # pytest; never downloads F1 data
 ├── docs/                   # PROJECT_CONTEXT, research_log, decisions, related_work,
@@ -275,3 +277,10 @@ before "simplifying" code.
   OpenF1 lap starts are only accurate to ~0.1 s; with the check, ~3 of 4 push
   laps per driver were dropped. Guarded by the validation experiment (kept laps
   identical for 20/20 drivers) and `test_overlapping_stints_give_the_shared_lap_to_the_new_stint`.
+- **2026-10-18 — OpenF1 can have NO laps for a whole session** (2025 Baku
+  qualifying: `laps` → 404, while stints/race control/drivers exist).
+  `lap_table` did `groupby("driver_number")` on an empty table → KeyError, and
+  the one-time final run crashed (before any result). Fix: return an empty
+  table; `build_session` skips it ("no laps"). Guarded by
+  `test_session_without_laps_is_skipped_not_crashed`. Lesson: before a
+  one-time run, download everything first, then analyse.

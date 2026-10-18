@@ -1,0 +1,40 @@
+{
+  "note": "EXPLORATORY, not preregistered. The preregistered decisions are in results/final/summary.json.",
+  "changers_in_data": [
+    "COL",
+    "HAM",
+    "HUL",
+    "OCO",
+    "SAI",
+    "TSU"
+  ],
+  "changers_missed_by_preregistration": [
+    "COL"
+  ],
+  "h4_with_all_changers": {
+    "changers_included": 6,
+    "own_closer": 3,
+    "sign_test_p": 0.65625,
+    "share_braking_own_closer": 5,
+    "share_braking_sign_test_p": 0.109375,
+    "min_possible_p": 0.015625
+  },
+  "h4_shape_control_non_changers": {
+    "changers_included": 10,
+    "own_closer": 8,
+    "sign_test_p": 0.0546875,
+    "share_braking_own_closer": 6,
+    "share_braking_sign_test_p": 0.376953125,
+    "min_possible_p": 0.0009765625
+  },
+  "non_changer_check_without_changers": {
+    "drivers": 10,
+    "own_closer": 9,
+    "sign_test_p": 0.0107421875
+  },
+  "changers_vs_stayers": {
+    "changers_own_closer": "2 of 5",
+    "stayers_own_closer": "8 of 10",
+    "fisher_exact_two_sided_p": 0.25074925074925075
+  }
+}
