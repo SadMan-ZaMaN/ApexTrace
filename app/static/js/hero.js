@@ -131,27 +131,49 @@
   }
 
   const duration = Math.max(...cars.map((c) => c.lap_time_s));
-  if (AT.reducedMotion) {          // no animation: show the finished laps
-    draw(duration);
-    return;
+
+  // ---------------------------------------------------------------- playback (play/pause, paused off screen)
+  // If the viewer's system asks for reduced motion (Windows: Settings > Accessibility >
+  // Visual effects > Animation effects off), nothing moves on its own: the finished laps
+  // are shown and the button offers a replay. Motion the viewer starts is fine.
+  const button = document.getElementById("hero-play");
+  let t = AT.reducedMotion ? duration : 0;     // replay time in seconds
+  let playing = !AT.reducedMotion;
+  let visible = true, last = null, raf = null;
+
+  function frame(now) {
+    raf = null;
+    if (!playing || !visible) { last = null; return; }
+    if (last !== null) t += (now - last) / 1000;  // advance by real elapsed time
+    last = now;
+    if (t > duration + HOLD_S) t = 0;             // loop after a short hold at the finish
+    draw(Math.min(t, duration));
+    raf = requestAnimationFrame(frame);
+  }
+  function run() {
+    if (raf === null) { last = null; raf = requestAnimationFrame(frame); }
+  }
+  function label() {
+    button.textContent = playing ? "Pause" : t >= duration ? "Replay" : "Play";
+    button.setAttribute("aria-label", playing ? "Pause the lap replay" : "Play the lap replay");
   }
 
-  // ---------------------------------------------------------------- playback loop (paused when off screen)
-  let visible = true, start = null, raf = null;
-  function frame(now) {
-    if (start === null) start = now;
-    let t = (now - start) / 1000;
-    if (t > duration + HOLD_S) { start = now; t = 0; }
-    draw(Math.min(t, duration));
-    raf = visible ? requestAnimationFrame(frame) : null;
-  }
+  button.hidden = false;
+  button.addEventListener("click", () => {
+    playing = !playing;
+    if (playing && t >= duration) t = 0;
+    label();
+    if (playing) run();
+  });
   new IntersectionObserver((entries) => {
     visible = entries[0].isIntersecting && !document.hidden;
-    if (visible && raf === null) { start = null; raf = requestAnimationFrame(frame); }
+    if (visible) run();
   }).observe(document.getElementById("hero"));
   document.addEventListener("visibilitychange", () => {
     visible = !document.hidden;
-    if (visible && raf === null) { start = null; raf = requestAnimationFrame(frame); }
+    if (visible) run();
   });
-  raf = requestAnimationFrame(frame);
+  draw(Math.min(t, duration));
+  label();
+  run();
 })();

@@ -28,7 +28,10 @@
     <figure class="track-panel" id="hero">
       <div class="track-panel-head">
         <span id="hero-title">Loading lap…</span>
-        <span class="clock num" id="hero-clock">0:00.000</span>
+        <span class="hero-controls">
+          <button type="button" class="hero-play" id="hero-play" hidden>Pause</button>
+          <span class="clock num" id="hero-clock">0:00.000</span>
+        </span>
       </div>
       <svg class="hero-svg" id="hero-svg" viewBox="0 0 800 450" role="img" aria-labelledby="hero-title"></svg>
       <div class="readout" id="hero-readout"></div>
