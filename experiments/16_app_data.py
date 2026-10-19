@@ -10,6 +10,12 @@ them into three small JSON files (committed, unlike the raw-sample Parquet):
   hero.json      two laps for the animated track on the home page
                  (2024 Abu Dhabi qualifying, Norris vs Piastri: the pilot)
   headline.json  the hypothesis results (H1-H4) with the file each number came from
+  features.json  the 10 corner features: meaning, unit, per-lap measurement error
+                 (Phase 2) and repeatability (H1 ICC) per corner type
+  identification.json  per team-season teammate identification (H3), 2023-2025
+  signatures.json      the H4 season signatures (z-scores, 30 features) for every
+                 driver in both 2024 and 2025, built with the exact H4 steps and
+                 CHECKED to reproduce the frozen H4 distances
 
 Team colours come from the OpenF1 driver list (cached, no download).
 Driver head-shot URLs in that list are deliberately NOT exported (no photos).
@@ -18,6 +24,7 @@ Run from the repo root (reads only local files):
     .venv\\Scripts\\python.exe experiments\\16_app_data.py
 """
 
+import importlib.util
 import json
 from pathlib import Path
 
@@ -25,7 +32,9 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
+from apextrace.identification import ALL_FEATURES, CORNER_TYPES, FEATURE_GROUPS
 from apextrace.openf1 import fetch
+from apextrace.signatures import distance, season_signatures, standardise
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO_ROOT / "results" / "app"
@@ -260,12 +269,195 @@ def build_headline(sessions):
     }
 
 
+# ---------------------------------------------------------------- features.json
+
+FEATURE_TEXT = {   # label, unit, what it measures (definitions: src/apextrace/features.py)
+    "brake_onset_m": ("Brake onset", "m", "Where braking starts, in metres from the corner marker (negative = before it)."),
+    "braking_distance_m": ("Braking distance", "m", "From brake onset to the slowest point."),
+    "mean_decel_ms2": ("Mean deceleration", "m/s²", "Average deceleration from brake onset to the slowest point."),
+    "min_speed_kmh": ("Minimum speed", "km/h", "The slowest speed in the corner (a parabola through the three slowest samples)."),
+    "apex_m": ("Slowest point", "m", "Where the slowest speed is reached, in metres from the corner marker."),
+    "throttle_pickup_m": ("Throttle pickup", "m", "Where the throttle first passes 10 % after braking."),
+    "full_throttle_m": ("Full throttle", "m", "Where the throttle first reaches 99 % after the corner."),
+    "entry_speed_kmh": ("Entry speed", "km/h", "Speed 200 m before the corner marker."),
+    "exit_speed_kmh": ("Exit speed", "km/h", "Speed 150 m after the corner marker."),
+    "corner_time_s": ("Corner time", "s", "Time from 200 m before to 150 m after the corner marker."),
+}
+
+
+def number_or_none(value, digits):
+    return None if value is None or not np.isfinite(value) else round(float(value), digits)
+
+
+def build_features():
+    """The 10 features of the lap vectors, with their error and repeatability per corner type."""
+    rows = load("11_repeatability/summary.json")["rows"]
+    by_key = {(r["feature"], r["corner_type"]): r for r in rows}
+    group_of = {f: g for g, features in FEATURE_GROUPS.items() for f in features}
+    out = []
+    for feature in ALL_FEATURES:
+        label, unit, meaning = FEATURE_TEXT[feature]
+        per_type = {}
+        for corner_type in CORNER_TYPES:
+            r = by_key[(feature, corner_type)]
+            per_type[corner_type] = {
+                "measurement_error_per_lap": number_or_none(r["measurement_error_per_lap"], 3),
+                "lap_to_lap_sd": number_or_none(r["lap_to_lap_sd"], 3),
+                "icc_lap": number_or_none(r["icc_lap"], 3), "icc_lap_ci": [number_or_none(r["icc_lap_low"], 3),
+                                                                          number_or_none(r["icc_lap_high"], 3)],
+                "icc_weekend": number_or_none(r["icc_weekend"], 3),
+                "icc_weekend_ci": [number_or_none(r["icc_weekend_low"], 3), number_or_none(r["icc_weekend_high"], 3)],
+            }
+        out.append({"key": feature, "label": label, "unit": unit, "meaning": meaning, "group": group_of[feature],
+                    "by_corner_type": per_type})
+    return {"features": out, "source": "results/11_repeatability/summary.json (ICC, H1) and "
+                                       "results/03_synthetic_errors (per-lap measurement error, Phase 2)"}
+
+
+# ---------------------------------------------------------------- identification.json
+
+def build_identification():
+    """Per team-season teammate identification (H3): development 2023-2024 and the frozen 2025 test."""
+    columns = {"lap_time": "lap time only | balanced_accuracy", "raw": "raw lap statistics | balanced_accuracy",
+               "ours": "our features | balanced_accuracy", "vote": "our features | weekend vote",
+               "shuffled": "shuffled labels | balanced_accuracy"}
+    teams = []
+    for path in [RESULTS / "12_identification" / "teammates.csv", RESULTS / "final" / "h3_teammates_2025.csv"]:
+        for _, r in pd.read_csv(path).iterrows():
+            team, year = r["team_season"].rsplit(" ", 1)
+            row = {"team": team, "year": int(year), "drivers": r["drivers"], "sessions": int(r["sessions"]),
+                   "laps": int(r["laps"])}
+            for key, column in columns.items():
+                row[key] = round(float(r[column]), 4)
+            teams.append(row)
+    dev = load("12_identification/summary.json")["teammates"]
+    final = load("final/summary.json")["h3"]
+
+    def summary(block):
+        out = {key: {"mean": round(block[c]["mean"], 4), "ci95": [round(block[c]["ci95_low"], 4),
+                                                                round(block[c]["ci95_high"], 4)]}
+               for key, c in columns.items()}
+        test = block["ours minus lap time only"]
+        out["ours_vs_lap_time"] = {"wins": test["wins"], "teams": test["team_seasons"], "p": test["wilcoxon_p"]}
+        test = block["ours minus raw lap statistics"]
+        out["ours_vs_raw"] = {"wins": test["wins"], "teams": test["team_seasons"], "p": test["wilcoxon_p"]}
+        return out
+
+    return {"teams": teams, "development_2023_2024": summary(dev), "final_2025": summary(final),
+            "source": "results/12_identification/, results/final/"}
+
+
+# ---------------------------------------------------------------- signatures.json
+
+def load_module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def team_colours(sessions):
+    """{(year, team): '#rrggbb'}, the colour the timing feed used most often for that team that year."""
+    counts = {}
+    for session in sessions:
+        for driver in session["drivers"]:
+            key = (session["year"], driver["team"])
+            counts.setdefault(key, {}).setdefault(driver["colour"], 0)
+            counts[key][driver["colour"]] += 1
+    return {key: max(colours, key=colours.get) for key, colours in counts.items()}
+
+
+def build_signatures(sessions):
+    """The H4 signatures behind every point of the H4 chart, rebuilt with the exact H4 steps.
+
+    For each driver with a 2024 signature who raced in 2025: their 2024 season
+    signature, their 2025 signature on the weekends with their main 2025 team,
+    and that team's other driver on the same weekends (14_final_2025.h4). All are
+    z-scored with the 2024 spread. The distances are then checked against the
+    frozen results files, so the picture can't drift from the numbers.
+    """
+    exploratory = load_module("exploratory", REPO_ROOT / "experiments" / "15_final_exploratory.py")
+    final = exploratory.final
+    laps_2025, laps_2024 = exploratory.load_lap_tables()
+    changes = exploratory.team_changes(laps_2025, laps_2024)
+    corner_columns = [c for c in laps_2024.columns if "__" in c]
+    reference_raw = season_signatures(laps_2024, corner_columns, min_sessions=final.MIN_WEEKENDS).xs(2024, level="year")
+    reference = standardise(reference_raw, corner_columns, reference_raw)
+
+    def z_list(series):
+        return [number_or_none(v, 3) for v in series[corner_columns]]
+
+    colours = team_colours(sessions)
+    drivers = []
+    for _, change in changes.iterrows():
+        driver = change["driver"]
+        if driver not in reference.index:
+            continue
+        team, weekends = final.most_weekends_team(laps_2025, driver)
+        team_laps = laps_2025[laps_2025["team"] == team]
+        sessions = set(team_laps.loc[team_laps["driver"] == driver, "session_key"])
+        others = team_laps[(team_laps["driver"] != driver) & team_laps["session_key"].isin(sessions)]
+        if weekends < final.MIN_WEEKENDS or others.empty:
+            continue
+        mate = others.groupby("driver")["session_key"].nunique().idxmax()
+        pair = team_laps[team_laps["driver"].isin([driver, mate]) & team_laps["session_key"].isin(sessions)]
+        new_raw = season_signatures(pair, corner_columns, min_sessions=final.MIN_WEEKENDS).xs(2025, level="year")
+        if driver not in new_raw.index or mate not in new_raw.index:
+            continue
+        new = standardise(new_raw, corner_columns, reference_raw)
+        drivers.append({
+            "driver": driver, "team_2024": reference_raw.loc[driver, "team"], "team_2025": team, "teammate_2025": mate,
+            "colour_2024": colours.get((2024, reference_raw.loc[driver, "team"]), "#888888"),
+            "colour_2025": colours.get((2025, team), "#888888"),
+            "weekends_2025": int(weekends), "changed": bool(change["changed"]),
+            "preregistered_changer": bool(change["preregistered_changer"]),
+            "own_2024": z_list(reference.loc[driver]), "own_2025": z_list(new.loc[driver]),
+            "teammate_2025_signature": z_list(new.loc[mate]),
+            "distance_own_2024": round(distance(new.loc[driver, corner_columns], reference.loc[driver, corner_columns]), 4),
+            "distance_teammate_2025": round(distance(new.loc[driver, corner_columns], new.loc[mate, corner_columns]), 4),
+        })
+
+    # the check: every distance must equal the frozen / exploratory results
+    expected = {}
+    for path in [RESULTS / "15_final_exploratory" / "h4_all_changers.csv",
+                 RESULTS / "15_final_exploratory" / "h4_shape_control_non_changers.csv"]:
+        for _, r in pd.read_csv(path).iterrows():
+            if r["included"]:
+                expected[r["driver"]] = (r["distance_own_2024"], r["distance_new_teammate_2025"])
+    for _, r in pd.read_csv(RESULTS / "final" / "h4_changers.csv").iterrows():
+        if r["included"]:
+            assert np.isclose(expected[r["driver"]][0], r["distance_own_2024"], atol=1e-3)
+    for d in drivers:
+        own, mate = expected[d["driver"]]
+        assert abs(d["distance_own_2024"] - own) < 1e-3 and abs(d["distance_teammate_2025"] - mate) < 1e-3, d["driver"]
+    assert len(drivers) == len(expected), (len(drivers), len(expected))
+
+    columns = []
+    for column in corner_columns:
+        feature_rel, corner_type = column.split("__")
+        columns.append({"key": column, "feature": feature_rel.removesuffix("_rel"), "corner_type": corner_type})
+    h4 = load("final/summary.json")["h4"]
+    explore = load("15_final_exploratory/summary.json")
+    control = explore["h4_shape_control_non_changers"]
+    summary = {"changers_own_closer": h4["own_closer"], "changers": h4["changers_included"], "p": h4["sign_test_p"],
+               "stayers_own_closer": control["own_closer"], "stayers": control["changers_included"],
+               "stayers_p": control["sign_test_p"],
+               "fisher_p": explore["changers_vs_stayers"]["fisher_exact_two_sided_p"]}
+    return {"columns": columns, "drivers": drivers, "summary": summary,
+            "note": "z-scores: 0 = the average 2024 driver, 1 = one 2024 standard deviation; field-relative features",
+            "checked_against": ["results/final/h4_changers.csv", "results/15_final_exploratory/h4_all_changers.csv",
+                                "results/15_final_exploratory/h4_shape_control_non_changers.csv"]}
+
+
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     sessions = build_sessions()
     hero = build_hero(sessions)
     headline = build_headline(sessions)
-    for name, content in [("sessions.json", sessions), ("hero.json", hero), ("headline.json", headline)]:
+    outputs = [("sessions.json", sessions), ("hero.json", hero), ("headline.json", headline),
+               ("features.json", build_features()), ("identification.json", build_identification()),
+               ("signatures.json", build_signatures(sessions))]
+    for name, content in outputs:
         with open(OUT_DIR / name, "w", encoding="utf-8") as file:
             json.dump(content, file, ensure_ascii=False, separators=(",", ":"))
         print(f"{name:14s} {(OUT_DIR / name).stat().st_size / 1024:7.1f} KB")

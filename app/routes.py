@@ -15,7 +15,8 @@ pages = Blueprint("pages", __name__)
 api = Blueprint("api", __name__)
 
 DRIVER_CODE = re.compile(r"^[A-Z]{3}$")
-NAV = [("pages.home", "Overview"), ("pages.telemetry", "Lap compare")]
+NAV = [("pages.home", "Overview"), ("pages.telemetry", "Lap compare"), ("pages.corners", "Corner lab"),
+       ("pages.signatures", "Driver vs car")]
 
 
 def data():
@@ -44,6 +45,17 @@ def telemetry():
                            default_session=hero["session_key"],
                            default_a=f"{a['code']}:{a['lap']}", default_b=f"{b['code']}:{b['lap']}",
                            alignment_error_m=data().headline["data"]["alignment_error_m"])
+
+
+@pages.route("/corners")
+def corners():
+    hero = data().hero
+    return render_template("corners.html", active="pages.corners", default_session=hero["session_key"])
+
+
+@pages.route("/signatures")
+def signatures():
+    return render_template("signatures.html", active="pages.signatures")
 
 
 # ---------------------------------------------------------------- JSON API
@@ -89,6 +101,40 @@ def compare(key):
     if result is None:
         abort(404, description="no samples for that lap")
     return jsonify(result)
+
+
+def export_or_503(content, name):
+    """An optional export file, or a 503 telling how to create it."""
+    if content is None:
+        return jsonify({"error": f"results/app/{name} is missing",
+                        "hint": "run experiments/16_app_data.py"}), 503
+    return jsonify(content)
+
+
+@api.route("/features")
+def features():
+    return export_or_503(data().features, "features.json")
+
+
+@api.route("/identification")
+def identification():
+    return export_or_503(data().identification, "identification.json")
+
+
+@api.route("/signatures")
+def signature_data():
+    return export_or_503(data().signatures, "signatures.json")
+
+
+@api.route("/corners/<int:key>")
+def corner_rows(key):
+    if key not in data().sessions:
+        abort(404)
+    rows = data().corner_rows(key)
+    if rows is None:
+        return jsonify({"error": "dataset files missing",
+                        "hint": "results/09_dataset/dataset.csv.gz is committed; pull the repository again"}), 503
+    return jsonify({"session_key": key, "rows": rows})
 
 
 @api.errorhandler(400)

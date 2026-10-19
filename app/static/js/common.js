@@ -92,5 +92,9 @@ const AT = (() => {
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // On a phone the nav scrolls sideways: make sure the current page's tab is visible.
+  const current = document.querySelector('.topbar nav a[aria-current="page"]');
+  if (current) current.scrollIntoView({ inline: "nearest", block: "nearest" });
+
   return { lapTime, signed, mix, colourDistance, getJSON, el, interp, stepValue, fitTrack, reducedMotion };
 })();

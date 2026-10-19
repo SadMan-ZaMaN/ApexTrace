@@ -546,3 +546,32 @@ results folder; the gap test fails on the old `s_m` version). All 101 pass.
 
 **Next (Phase 8, part 2):** corner lab (per-corner features, repeatability)
 and signatures page (H3/H4 visual), then README, report, CI.
+
+---
+
+## 2026-10-19 (later) — Phase 8, part 2: Corner lab and Driver vs car pages
+
+**Built:**
+- **Corner lab:** a dot plot per braking zone and feature, with the per-lap
+  measurement error drawn on the axis and H1 repeatability in words. It uses
+  the committed datasets through `dataset.clean`, tested so the exact analysed
+  rows are shown.
+- **Driver vs car:** H3 per team for each season, with the lap-time baseline,
+  raw statistics and corner features; the H4 scatter of changers plus the
+  exploratory control; and a 30-cell signature "fingerprint" heat strip per
+  driver.
+- **Export** (`16_app_data.py`): `features.json`, `identification.json` and
+  `signatures.json`. The signatures are rebuilt with the exact H4 steps, and
+  the script asserts that all 16 drivers' distances match the frozen and
+  exploratory results to 0.001 (they do).
+- **Checks:** the chart colours (blue/orange) passed the dataviz palette
+  validator on the dark surface; screenshots at 1440 px and 390 px, all four
+  pages without horizontal overflow; 3 new tests (cleaning rules on the corner
+  rows, optional exports, feature list in sync). All tests pass.
+
+**Reading aids, not new results:** the pages only display exported numbers. One
+check made while writing the guide: lap-to-lap spread is 2.9–28 times the
+per-lap measurement error for all 21 measured (feature, corner type) cases
+(`results/11_repeatability/summary.json`).
+
+**Next (Phase 8, part 3):** README with results, a short report, CI (GitHub Actions).

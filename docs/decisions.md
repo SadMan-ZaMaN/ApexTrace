@@ -316,3 +316,11 @@ preregistration Part B is committed.
 - **Gap curve on integrated distance, charts on the fused coordinate** (measured;
   see the research log). Mini-sectors with |gain| < 0.02 s are "even"
   (alignment error 1.15 m ≈ 0.017 s at 250 km/h).
+- **Corner lab and Driver vs car (2026-10-19):** dot plots ("timing tower") rather
+  than box plots, so every lap stays visible (4–6 laps per driver is too few for
+  a box). The per-lap measurement error is drawn on the axis, so differences can
+  be judged against it. Driver vs car chart colours: blue `#3987e5` = corner
+  features / drivers who stayed, orange `#d95926` = raw statistics / team
+  changers, grey ring = lap-time baseline; shapes differ too. Heat strip:
+  blue–grey–red diverging, clamped at ±2 SD. Signatures are exported only if
+  they reproduce the frozen H4 distances.

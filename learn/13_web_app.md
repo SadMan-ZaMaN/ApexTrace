@@ -152,3 +152,60 @@ used track position and drew a ±0.1 s sawtooth of noise. Integrating speed is a
 low-pass filter, and its drift is common to both laps, so it cancels. That
 version matches the official gap within about 0.01 s, and the page shows that
 check next to the chart."
+
+---
+
+# Part 2 (2026-10-19): Corner lab and Driver vs car
+
+## 6. Corner lab (`/corners`)
+
+One braking zone, every driver, every lap. Rows are drivers (team-colour bar,
+code, team); **each dot is one lap**; the **white tick is the driver's median**;
+the grey line is the field median. Order by value, or by team (teammates next
+to each other).
+
+- **Data:** the committed datasets (`results/09_dataset/dataset.csv.gz`,
+  `results/final/dataset_2025.csv.gz`), passed through the research's own
+  `dataset.clean`. The page shows exactly the rows the analysis used: a wet lap
+  is gone, and an impossible braking point (after the marker) is empty (tested).
+- **The error bar at the top** is the per-lap measurement error from the Phase 2
+  simulation (e.g. ±2.5 m for brake onset at medium corners), drawn on the
+  same axis. **Rule of thumb when reading it:** two drivers whose medians differ
+  by less than that bar can't be told apart from one lap each. With 4 laps each,
+  the error of a median shrinks (roughly by √4 = 2). But the driver's own
+  lap-to-lap variation is bigger than the measurement error in every measured
+  case, 2.9 to 28 times bigger (H1, `sd_over_measurement_error`), so the spread
+  of the dots, not the instrument, usually limits what you can conclude.
+- **The side panel** shows what the measurement means and how repeatable it is
+  for that corner type (H1): lap-level ICC ("how much of the lap-to-lap spread is
+  between drivers") and weekend-level ICC ("does a driver's place carry over to
+  the next weekend"). Brake onset: lap ICC 0.45 at slow corners, but weekend ICC
+  0.04, so "who brakes later" barely carries over between weekends.
+
+## 7. Driver vs car (`/signatures`)
+
+- **H3 chart:** per team, three marks on one accuracy axis: lap time only
+  (grey ring, the baseline), raw lap statistics (orange diamond), corner features
+  (blue dot). The line joins them, so you see the gain over lap time. Tabs switch
+  between the 2025 test and the development seasons. Ferrari 2025 (HAM vs LEC)
+  is the extreme case: raw lap statistics 0.87, corner features 0.62.
+- **H4 scatter:** x = distance from a driver's 2025 signature to their own 2024
+  signature, y = distance to their 2025 teammate's. **Above the diagonal = own
+  past closer.** Changers are orange; drivers who stayed are blue (the
+  exploratory control); Colapinto is hollow (not preregistered).
+- **Fingerprint (heat strip):** click a driver. Three rows: their 2024
+  signature, their 2025 signature, their 2025 teammate's. 30 cells = 10
+  measurements × 3 corner types, each a z-score against the 2024 field (blue =
+  below the average driver, red = above). For Hamilton the 2025 row looks a bit
+  more like Leclerc's than like his own 2024 row: distance 0.99 vs 1.04.
+- **The pictures can't drift from the numbers:** the export script rebuilds
+  these signatures with the exact H4 steps and **refuses to write the file**
+  unless every distance matches the frozen results (to 0.001).
+
+## 8. Colours, checked
+
+The chart colours were checked with a colour-blindness validator (the dataviz
+palette checker): blue `#3987e5` and orange `#d95926` on the dark background
+pass every check, including separation under colour-vision deficiency. Grey is
+reserved for the baseline (lap time), and each series also has its own
+**shape** (ring, diamond, dot), so nothing relies on colour alone.

@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pyarrow.parquet as pq
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -27,6 +28,12 @@ RAW_FILES = {2023: "09_dataset/raw_samples.parquet",
              2024: "09_dataset/raw_samples.parquet",
              2025: "final/raw_samples_2025.parquet"}
 LAP_COLUMNS = ["time_s", "s_m", "d_m", "speed_kmh", "throttle_pct", "brake", "gear", "x_m", "y_m"]
+
+# Corner lab: the committed datasets (one row per driver, lap, corner) and the columns it shows
+DATASET_FILES = ["09_dataset/dataset.csv.gz", "final/dataset_2025.csv.gz"]
+CORNER_FEATURES = ["brake_onset_m", "braking_distance_m", "mean_decel_ms2", "min_speed_kmh", "apex_m",
+                   "throttle_pickup_m", "full_throttle_m", "entry_speed_kmh", "exit_speed_kmh", "corner_time_s"]
+CORNER_COLUMNS = ["session_key", "driver", "team", "lap", "lap_time_s", "corner", "corner_type"] + CORNER_FEATURES
 
 # Below this, a mini-sector gain is inside the measurement error and shown as "even".
 # Alignment error per lap ~1.15 m (Phase 3); at 250 km/h (69 m/s) that is 0.017 s.
@@ -163,7 +170,7 @@ def mini_sectors(grid, delta, count=24, even_threshold_s=EVEN_THRESHOLD_S):
 # ---------------------------------------------------------------- data access
 
 class AppData:
-    """Loads the exported JSON once and reads raw laps on request."""
+    """Loads the exported JSON once, reads raw laps on request, and the corner table on first use."""
 
     def __init__(self, results_dir=DEFAULT_RESULTS):
         self.results_dir = Path(results_dir)
@@ -173,11 +180,60 @@ class AppData:
             self.sessions[session["key"]] = session
         self.headline = self._load(app_dir / "headline.json")
         self.hero = self._load(app_dir / "hero.json")
+        # Driver vs car / Corner lab exports (missing in old exports or tests: None)
+        self.features = self._load_optional(app_dir / "features.json")
+        self.identification = self._load_optional(app_dir / "identification.json")
+        self.signatures = self._load_optional(app_dir / "signatures.json")
+        self._corner_table = None
 
     @staticmethod
     def _load(path):
         with open(path, encoding="utf-8") as file:
             return json.load(file)
+
+    def _load_optional(self, path):
+        return self._load(path) if path.exists() else None
+
+    # ---------------------------------------------------------------- corner lab
+
+    def corner_table(self):
+        """Every clean (driver, lap, corner) row of 2023-2025, cleaned with the research's own rules.
+
+        Read from the committed datasets (09_build_dataset.py, 14_final_2025.py) and
+        passed through apextrace.dataset.clean, so the Corner lab shows exactly the
+        rows the analysis used. Loaded once, on the first request (~1 s).
+        """
+        if self._corner_table is None:
+            from apextrace.dataset import clean      # imported here: only this page needs it
+            tables = []
+            for relative in DATASET_FILES:
+                path = self.results_dir / relative
+                if path.exists():
+                    tables.append(pd.read_csv(path))
+            if not tables:
+                self._corner_table = pd.DataFrame()
+            else:
+                rows, _ = clean(pd.concat(tables, ignore_index=True))
+                self._corner_table = rows[CORNER_COLUMNS]
+        return self._corner_table
+
+    def corner_rows(self, session_key):
+        """The clean rows of one session as plain dicts (NaN -> None, so the JSON is valid)."""
+        table = self.corner_table()
+        if table.empty:
+            return None
+        rows = table[table["session_key"] == session_key]
+        out = []
+        for record in rows.to_dict("records"):
+            clean_record = {}
+            for key, value in record.items():
+                if isinstance(value, float):
+                    value = None if np.isnan(value) else round(value, 3)
+                elif isinstance(value, np.integer):
+                    value = int(value)
+                clean_record[key] = value
+            out.append(clean_record)
+        return out
 
     def session_index(self):
         """One light row per session (for the pickers), newest season first."""

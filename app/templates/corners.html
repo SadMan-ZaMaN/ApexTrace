@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Corner lab · ApexTrace{% endblock %}
+
+{% block content %}
+<div class="wrap" id="corners-page" data-default-session="{{ default_session }}">
+  <header class="page-head">
+    <p class="eyebrow">Corner lab <span class="dot">/</span> one braking zone, every driver, every lap</p>
+    <h1>Corner lab</h1>
+    <p>Pick a qualifying session, a braking zone and a measurement. Each dot is one lap; the white tick is the driver's
+      median. The bar at the top shows how precisely one lap can be measured, so you can judge which gaps are real.</p>
+  </header>
+
+  <form class="controls controls-corners" onsubmit="return false">
+    <label class="field"><span>Season</span><select id="season"></select></label>
+    <label class="field"><span>Qualifying</span><select id="event"></select></label>
+    <label class="field"><span>Braking zone</span><select id="corner"></select></label>
+    <label class="field"><span>Measurement</span><select id="feature"></select></label>
+    <div class="field"><span>Order</span>
+      <div class="segmented" role="group" aria-label="Order the rows">
+        <button type="button" data-order="value" aria-pressed="true">By value</button>
+        <button type="button" data-order="team" aria-pressed="false">By team</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="lab">
+    <section class="lab-main">
+      <div class="lab-head">
+        <h2 id="lab-title" class="lab-title"></h2>
+        <p id="lab-reading" class="lab-reading"></p>
+      </div>
+      <div class="tower" id="tower">
+        <div class="lights" id="lights" hidden><div class="lights-row" aria-label="Loading">
+          <span></span><span></span><span></span><span></span><span></span></div></div>
+      </div>
+    </section>
+    <aside class="side">
+      <div class="map-panel">
+        <div class="panel-title"><span>Where on track</span><span id="corner-caption"></span></div>
+        <svg class="map-svg" id="corner-map" viewBox="0 0 400 300" role="img" aria-label="Track map with the braking zone highlighted"></svg>
+      </div>
+      <div class="facts-panel" id="feature-facts"></div>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/corners.js') }}"></script>
+{% endblock %}

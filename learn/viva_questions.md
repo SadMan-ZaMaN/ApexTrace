@@ -326,3 +326,14 @@ position for the slow correction of its drift. Same idea as Phase 3, over a whol
 **Q: Why do 12 of 24 mini-sectors say "even"?**
 A gain smaller than 0.02 s can't be told from the measurement error (1.15 m
 alignment at 250 km/h is 0.017 s), so it is shown as even rather than invented.
+
+**Q: In the Corner lab, how do you know whether two drivers really brake at different points?**
+Compare the gap between their medians with the measurement-error bar at the top
+of the chart (the per-lap error from the Phase 2 simulation) and with how much
+each driver varies lap to lap. And check the weekend-level ICC: for brake onset
+it is about 0.04, so even a real difference this weekend says little about the next.
+
+**Q: How do you make sure the Driver vs car charts show the frozen results?**
+The export script rebuilds the signatures with the same steps as the final test
+and stops with an error unless every distance matches the frozen results files
+to 0.001. The page never recomputes a test.

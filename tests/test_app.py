@@ -181,6 +181,48 @@ def test_api_rejects_bad_input(client):
     assert client.get("/api/compare/1?a=AAA:9&b=BBB:5").status_code == 404      # no such lap
 
 
+def test_corner_lab_feature_list_is_the_research_feature_list():
+    from apextrace.identification import ALL_FEATURES
+    from app.data import CORNER_FEATURES
+    assert CORNER_FEATURES == ALL_FEATURES      # the app's copy must not drift from the analysis
+
+
+def fake_dataset_row(lap, compound="SOFT", brake_onset=-110.0):
+    row = {"session_key": 1, "driver": "AAA", "team": "Team One", "lap": lap, "lap_time_s": 90.0 + lap,
+           "corner": "C1", "corner_type": "medium", "usable": True, "compound": compound}
+    values = {"brake_onset_m": brake_onset, "braking_distance_m": 95.0, "mean_decel_ms2": 30.0, "min_speed_kmh": 172.0,
+              "apex_m": -12.0, "throttle_pickup_m": 5.0, "full_throttle_m": 60.0, "entry_speed_kmh": 290.0,
+              "exit_speed_kmh": 210.0, "corner_time_s": 5.1, "min_gear": 4}
+    return {**row, **values}
+
+
+def test_corner_rows_use_the_research_cleaning_rules(tmp_path):
+    fake_results(tmp_path, np.random.default_rng(6))
+    rows = [fake_dataset_row(1), fake_dataset_row(2, compound="WET"), fake_dataset_row(3, brake_onset=21.0)]
+    pd.DataFrame(rows).to_csv(tmp_path / "09_dataset" / "dataset.csv.gz", index=False)
+    client = create_app(tmp_path).test_client()
+    body = client.get("/api/corners/1").get_json()
+    laps = {r["lap"]: r for r in body["rows"]}
+    assert set(laps) == {1, 3}                                  # the wet lap is not analysed
+    assert laps[1]["brake_onset_m"] == -110.0
+    assert laps[3]["brake_onset_m"] is None                     # braking after the marker: impossible -> missing
+    assert laps[3]["braking_distance_m"] is None                # ... and what is computed from it
+    assert laps[3]["min_speed_kmh"] == 172.0                    # the rest of the row is kept
+
+
+def test_optional_exports_are_served_or_explained(tmp_path):
+    fake_results(tmp_path, np.random.default_rng(7))
+    client = create_app(tmp_path).test_client()
+    for endpoint in ["/api/features", "/api/identification", "/api/signatures"]:
+        response = client.get(endpoint)
+        assert response.status_code == 503
+        assert "16_app_data" in response.get_json()["hint"]
+    (tmp_path / "app" / "features.json").write_text(json.dumps({"features": []}), encoding="utf-8")
+    assert create_app(tmp_path).test_client().get("/api/features").status_code == 200
+    for page in ["/corners", "/signatures"]:
+        assert client.get(page).status_code == 200
+
+
 def test_missing_raw_samples_give_a_clear_503(tmp_path):
     fake_results(tmp_path, np.random.default_rng(5), with_raw=False)
     client = create_app(tmp_path).test_client()

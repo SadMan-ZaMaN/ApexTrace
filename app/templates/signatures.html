@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Driver vs car · ApexTrace{% endblock %}
+
+{% block content %}
+<div class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Driver vs car <span class="dot">/</span> H3 and H4, tested once on the held-out 2025 season</p>
+    <h1>Driver or car?</h1>
+    <p>Two questions. Can corner-by-corner telemetry tell two teammates apart, in the same car, on weekends the model
+      never saw? And when a driver moves to another team, does their style come with them?</p>
+  </header>
+
+  <section class="block" aria-labelledby="h3-title">
+    <div class="block-head">
+      <div>
+        <p class="eyebrow"><span class="dot">H3</span> telling teammates apart</p>
+        <h2 id="h3-title">Which teammate drove this lap?</h2>
+      </div>
+      <div class="segmented" role="group" aria-label="Season" id="season-tabs"></div>
+    </div>
+    <div class="tiles" id="h3-tiles"></div>
+    <p class="verdict-line" id="h3-verdict"></p>
+    <div class="chart-box" id="h3-chart"></div>
+    <p class="chart-note">Balanced accuracy: how often the right teammate is named for a lap, averaged over the two
+      drivers; 0.5 is guessing. For each team, a model is trained on all weekends but one and tested on the weekend left
+      out, then the next weekend is left out, and so on (leave-one-weekend-out).</p>
+  </section>
+
+  <section class="block" aria-labelledby="h4-title">
+    <div class="block-head">
+      <div>
+        <p class="eyebrow"><span class="dot">H4</span> drivers who changed teams</p>
+        <h2 id="h4-title">Does the style follow the driver?</h2>
+      </div>
+    </div>
+    <div class="h4-grid">
+      <div class="chart-box" id="h4-chart"></div>
+      <div class="h4-side">
+        <div class="tiles tiles-2" id="h4-tiles"></div>
+        <p class="side-copy">Each driver's 2025 season signature (30 corner measurements, each relative to the field) is
+          compared with <b>their own 2024 signature</b>, in another car for those who moved, and with <b>their 2025
+          teammate's</b>, in the same car on the same weekends. Above the diagonal, their own past is closer: the style
+          followed the driver. Below it, the teammate is closer: the car, or adapting to it, dominated.</p>
+        <p class="side-copy muted">With five team changers, all five had to land above the line for a significant result
+          (stated before the test). Colapinto also changed teams but was missing from the preregistered list; he is shown
+          hollow and is not part of the test.</p>
+        <div class="driver-chips" id="driver-chips" role="group" aria-label="Show a driver's signature"></div>
+      </div>
+    </div>
+    <div class="fingerprint" id="fingerprint"></div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/signatures.js') }}"></script>
+{% endblock %}
