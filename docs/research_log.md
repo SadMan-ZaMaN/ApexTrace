@@ -609,3 +609,22 @@ teammate's" (rank 1 only for 12 of 20); the 25.1 m filter shift is for the middl
 of a braking event.
 
 **State:** Phases 0–8 complete. 106 tests pass.
+
+---
+
+## 2026-10-20 — Replay controls, overview gap fixed, readability pass
+
+- **Bug found and fixed:** the overview hero's live gap used projected position
+  `s_m` (the Lap compare bug of 2026-10-19 had survived there). Measured on the
+  hero laps: with `s_m` the gap ranged +0.051 to +0.465 s and read +0.290 s at the
+  line; with `d_m` it ranged −0.059 to +0.223 s and read +0.198 s (official
+  +0.209 s). `hero.json` now carries `d`, and the gap uses it.
+- **Replay** (`app/static/js/replay.js`) on the overview and Lap compare:
+  play/pause, ×1/×2/×4, a timeline, click-to-jump on the track and on the charts.
+  On Lap compare there are position lines in every chart and a readout of the gap
+  in seconds and metres. With reduced motion, nothing moves until the viewer
+  presses play.
+- **Readability:** a line legend on Lap compare, a mark key on the Corner lab, and
+  evidence links from the results board to each hypothesis's page.
+- Checked in Edge via Playwright: ×4 advanced 8 s in 2 s, click-to-jump worked on
+  the track, chart and map, and there were no page errors.

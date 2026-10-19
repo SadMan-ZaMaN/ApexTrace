@@ -48,7 +48,7 @@ the telemetry.
 
 <table>
 <tr>
-<td width="50%"><img src="docs/images/lap_compare.png" alt="Lap compare page"><br><b>Lap compare.</b> Any two qualifying laps: speed, throttle, brake and gear on one distance axis, the time gap at every metre, and who was faster in each mini-sector.</td>
+<td width="50%"><img src="docs/images/lap_compare.png" alt="Lap compare page"><br><b>Lap compare.</b> Any two qualifying laps: speed, throttle, brake and gear on one distance axis, the time gap at every metre, who was faster in each mini-sector, and a replay of both cars (×1/×2/×4, click a chart or the map to jump there).</td>
 <td width="50%"><img src="docs/images/corner_lab.png" alt="Corner lab page"><br><b>Corner lab.</b> One braking zone, every driver, every lap, with the per-lap measurement error drawn on the axis so real differences can be told from noise.</td>
 </tr>
 <tr>

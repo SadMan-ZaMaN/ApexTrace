@@ -301,3 +301,7 @@ before "simplifying" code.
   Charts use the fused coordinate `d + moving_average(s − d)`. Guarded by
   `test_gap_from_integrated_distance_beats_projected_position` and
   `test_compare_returns_both_laps_and_a_correct_gap` (fails on the `s_m` version).
+  **The same mistake survived in the overview hero's live gap** (hero.js used
+  `s`; found 2026-10-20: it read +0.05..+0.47 s instead of −0.06..+0.22 s).
+  Fixed: hero.json carries `d`, hero.js looks up the gap on it. Any new
+  "gap" readout must use `d`.

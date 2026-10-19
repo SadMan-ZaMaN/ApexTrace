@@ -116,7 +116,7 @@
   }
 
   function message(text) {
-    ui.tower.querySelectorAll("svg, .message, .tooltip").forEach((n) => n.remove());
+    ui.tower.querySelectorAll(".tower-key, svg, .message, .tooltip").forEach((n) => n.remove());
     ui.tower.append(AT.el("p", { class: "message" }, text));
   }
 
@@ -164,11 +164,24 @@
       + `${drivers.length} drivers, ${lapCount} laps · ${DIRECTION[feature.key]}`;
     renderFacts(feature, corner);
     renderMap(corner);
-    ui.tower.querySelectorAll("svg, .message, .tooltip").forEach((n) => n.remove());
+    ui.tower.querySelectorAll(".tower-key, svg, .message, .tooltip").forEach((n) => n.remove());
     if (!drivers.length) {
       message("No clean laps for this measurement here (for example, no braking event was found in this zone).");
       return;
     }
+
+    // how to read the chart (a key, in words and marks)
+    const keyOf = (draw, text) => {
+      const key = AT.el("span", { class: "key" });
+      draw(d3.select(key).append("svg").attr("width", 18).attr("height", 18));
+      key.append(text);
+      return key;
+    };
+    ui.tower.append(AT.el("div", { class: "chart-legend tower-key" },
+      keyOf((s) => s.append("circle").attr("cx", 9).attr("cy", 9).attr("r", 5).attr("fill", "#b9b8b1"), "one lap"),
+      keyOf((s) => s.append("line").attr("x1", 9).attr("x2", 9).attr("y1", 2).attr("y2", 16).attr("stroke", "#f2f1ed").attr("stroke-width", 2.5), "the driver's median"),
+      keyOf((s) => s.append("line").attr("x1", 9).attr("x2", 9).attr("y1", 2).attr("y2", 16).attr("stroke", "#4a4c53").attr("stroke-width", 1.5), "median of all drivers"),
+      keyOf((s) => s.append("path").attr("d", "M2 9H16M2 5V13M16 5V13").attr("stroke", "#f2f1ed").attr("stroke-width", 1.5).attr("fill", "none"), "± measurement error of one lap")));
 
     const width = ui.tower.clientWidth;
     const height = TOP + drivers.length * ROW_H + BOTTOM;

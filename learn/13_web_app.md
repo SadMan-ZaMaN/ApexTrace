@@ -209,3 +209,41 @@ palette checker): blue `#3987e5` and orange `#d95926` on the dark background
 pass every check, including separation under colour-vision deficiency. Grey is
 reserved for the baseline (lap time), and each series also has its own
 **shape** (ring, diamond, dot), so nothing relies on colour alone.
+
+---
+
+# Part 3 (2026-10-20): the replay, and making every chart readable
+
+## 9. Replay (overview and Lap compare)
+
+`app/static/js/replay.js` is a small clock: `t` (seconds into the lap) advances with
+real elapsed time × the speed (×1, ×2, ×4), and every change redraws the cars.
+Seeking just sets `t`: the timeline slider, a click on the track (the nearest sample
+of car A, then its time), or a click on a chart (the time car A was at that distance).
+
+On Lap compare the replay also draws a vertical line in every chart at each car's
+position (A solid, B dashed). The space between the two lines is how far B is behind
+**in metres**; the readout gives the same gap **in seconds**. Both are useful: at
+300 km/h, 0.1 s is about 8 m, but in a slow corner it is only 2–3 m.
+
+**Honesty note:** positions arrive about four times a second; between samples the car
+moves in a straight line at constant speed (interpolation). The replay shows the
+measured positions joined smoothly, not a frame-by-frame recording.
+
+**Reduced motion:** if the viewer's system asks for less motion (Windows: Accessibility
+→ Visual effects → Animation effects off), nothing starts by itself; the button offers
+the replay.
+
+**A bug found while building it:** the overview's live gap still used the projected
+position `s` (the mistake fixed on Lap compare in Part 1), so it read +0.05 to +0.47 s
+during the lap instead of −0.06 to +0.22 s, and never showed Piastri briefly ahead at
+C3. It now uses integrated distance `d`, like everything else.
+
+## 10. Readability checklist (what every chart now has)
+
+A professor will look at a chart for ten seconds. In that time it must answer: what is
+on each axis (with units), which mark is which (a legend, never colour alone), how many
+data points, and how precise. Added in this part: a line legend on Lap compare (solid =
+A, dashed = B, and whether dots are measured samples), a key on the Corner lab (dot,
+median tick, field median, error bar), and on the results board a link from every
+hypothesis to the page that shows its data.

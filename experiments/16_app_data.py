@@ -193,6 +193,8 @@ def build_hero(sessions):
         cars.append({"code": code, "name": driver["name"], "team": driver["team"], "colour": driver["colour"],
                      "lap": best["lap"], "lap_time_s": best["time_s"], "compound": best["compound"],
                      "t": round_list(lap["time_s"], 3), "s": round_list(lap["s_m"], 1),
+                     # integrated speed: the coordinate for the live gap (see app/data.delta_time)
+                     "d": round_list(lap["d_m"], 1),
                      "x": round_list(x, 1), "y": round_list(y, 1), "speed": round_list(lap["speed_kmh"], 0)})
     return {"session_key": session["key"], "year": session["year"], "location": session["location"],
             "country": session["country"], "circuit": session["circuit"], "track": track,

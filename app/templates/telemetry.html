@@ -10,7 +10,8 @@
     <p class="eyebrow">Telemetry <span class="dot">/</span> any two qualifying laps, 2023–2025</p>
     <h1>Lap compare</h1>
     <p>Speed, throttle, brake and gear on one track coordinate, with the gap between the two laps at every point.
-      Drag across a chart to zoom, double-click to zoom out, or jump to a braking zone.</p>
+      Drag across a chart to zoom, double-click to zoom out, or jump to a braking zone. Click a chart or the map to move
+      the replay there.</p>
   </header>
 
   <form class="controls" id="controls" onsubmit="return false">
@@ -36,6 +37,8 @@
       <div class="map-panel">
         <div class="panel-title"><span>Who is faster where</span><span id="map-caption"></span></div>
         <svg class="map-svg" id="map" viewBox="0 0 400 300" role="img" aria-label="Track map coloured by the faster driver in each mini-sector"></svg>
+        <div class="replay-controls" id="replay-controls"></div>
+        <div class="replay-readout" id="replay-readout" aria-live="off"></div>
         <div class="legend" id="map-legend"></div>
       </div>
       <div class="notes" id="notes"></div>
@@ -45,5 +48,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/replay.js') }}"></script>
 <script src="{{ url_for('static', filename='js/telemetry.js') }}"></script>
 {% endblock %}

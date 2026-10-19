@@ -85,13 +85,15 @@
     readout.append(row);
   }
 
-  // distance -> time lookup for the gap, using only forward-moving samples
-  function forward(s, t) {
-    const fs = [], ft = [];
-    for (let i = 0; i < s.length; i++) if (!fs.length || s[i] > fs[fs.length - 1]) { fs.push(s[i]); ft.push(t[i]); }
-    return { s: fs, t: ft };
+  // distance -> time lookup for the gap. The distance is INTEGRATED SPEED (d), not the
+  // projected position (s): s scatters by ~3 m per sample and made the live gap jump
+  // around and read +0.29 s at the line instead of +0.2 s (CLAUDE.md bug history).
+  function forward(d, t) {
+    const fd = [], ft = [];
+    for (let i = 0; i < d.length; i++) if (!fd.length || d[i] > fd[fd.length - 1]) { fd.push(d[i]); ft.push(t[i]); }
+    return { d: fd, t: ft };
   }
-  const lookupA = forward(cars[0].s, cars[0].t);
+  const lookupA = forward(cars[0].d, cars[0].t);
   const fastest = Math.min(...cars.map((c) => c.lap_time_s));
 
   function draw(t) {
@@ -122,8 +124,8 @@
         car.gapNode.textContent = `${AT.signed(car.lap_time_s - cars[0].lap_time_s)} s`;
       } else {
         // gap = how much later than car A this car reached its current position
-        const s = AT.interp(tc, car.t, car.s);
-        const timeA = AT.interp(s, lookupA.s, lookupA.t);
+        const d = AT.interp(tc, car.t, car.d);
+        const timeA = AT.interp(d, lookupA.d, lookupA.t);
         car.gapNode.textContent = `gap ${AT.signed(tc - timeA, 2)} s`;
       }
     }
@@ -132,48 +134,29 @@
 
   const duration = Math.max(...cars.map((c) => c.lap_time_s));
 
-  // ---------------------------------------------------------------- playback (play/pause, paused off screen)
+  // ---------------------------------------------------------------- playback (shared replay clock)
   // If the viewer's system asks for reduced motion (Windows: Settings > Accessibility >
   // Visual effects > Animation effects off), nothing moves on its own: the finished laps
-  // are shown and the button offers a replay. Motion the viewer starts is fine.
-  const button = document.getElementById("hero-play");
-  let t = AT.reducedMotion ? duration : 0;     // replay time in seconds
-  let playing = !AT.reducedMotion;
-  let visible = true, last = null, raf = null;
+  // are shown and the controls offer a replay. Motion the viewer starts is fine.
+  const replay = new AT.Replay(document.getElementById("hero-controls"),
+    { duration, onFrame: draw, loop: true, hold: HOLD_S, showTime: false });
 
-  function frame(now) {
-    raf = null;
-    if (!playing || !visible) { last = null; return; }
-    if (last !== null) t += (now - last) / 1000;  // advance by real elapsed time
-    last = now;
-    if (t > duration + HOLD_S) t = 0;             // loop after a short hold at the finish
-    draw(Math.min(t, duration));
-    raf = requestAnimationFrame(frame);
-  }
-  function run() {
-    if (raf === null) { last = null; raf = requestAnimationFrame(frame); }
-  }
-  function label() {
-    button.textContent = playing ? "Pause" : t >= duration ? "Replay" : "Play";
-    button.setAttribute("aria-label", playing ? "Pause the lap replay" : "Play the lap replay");
-  }
-
-  button.hidden = false;
-  button.addEventListener("click", () => {
-    playing = !playing;
-    if (playing && t >= duration) t = 0;
-    label();
-    if (playing) run();
+  // click the track: jump to the moment car A passed the nearest point
+  const screenX = cars[0].x.map((x) => fit.x(x)), screenY = cars[0].y.map((y) => fit.y(y));
+  svg.style("cursor", "pointer").on("click", (event) => {
+    const [px, py] = d3.pointer(event, svg.node());
+    replay.seek(cars[0].t[AT.nearestSample(screenX, screenY, px, py)]);
   });
+
   new IntersectionObserver((entries) => {
-    visible = entries[0].isIntersecting && !document.hidden;
-    if (visible) run();
+    replay.setVisible(entries[0].isIntersecting && !document.hidden);   // no work while off screen
   }).observe(document.getElementById("hero"));
-  document.addEventListener("visibilitychange", () => {
-    visible = !document.hidden;
-    if (visible) run();
-  });
-  draw(Math.min(t, duration));
-  label();
-  run();
+  document.addEventListener("visibilitychange", () => replay.setVisible(!document.hidden));
+
+  if (AT.reducedMotion) {
+    replay.seek(duration);    // the finished laps; the button says "Replay"
+  } else {
+    replay.seek(0);
+    replay.play();
+  }
 })();

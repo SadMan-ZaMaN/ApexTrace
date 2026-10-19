@@ -28,15 +28,14 @@
     <figure class="track-panel" id="hero">
       <div class="track-panel-head">
         <span id="hero-title">Loading lap…</span>
-        <span class="hero-controls">
-          <button type="button" class="hero-play" id="hero-play" hidden>Pause</button>
-          <span class="clock num" id="hero-clock">0:00.000</span>
-        </span>
+        <span class="clock num" id="hero-clock">0:00.000</span>
       </div>
       <svg class="hero-svg" id="hero-svg" viewBox="0 0 800 450" role="img" aria-labelledby="hero-title"></svg>
+      <div class="replay-controls" id="hero-controls"></div>
       <div class="readout" id="hero-readout"></div>
-      <figcaption>Both fastest laps, replayed in real time from the timing feed's car positions. The line is drawn
-        from the same data; it is not an official track map.</figcaption>
+      <figcaption>Both fastest laps, replayed from the timing feed's car positions (about four per second, joined
+        smoothly). Click the track to jump there. The line is drawn from the same data; it is not an official track map.
+        Any two laps: <a href="{{ url_for('pages.telemetry') }}">Lap compare</a>.</figcaption>
     </figure>
   </div>
 </section>
@@ -53,10 +52,16 @@
         <tr><th class="pos">#</th><th>Question</th><th>Result</th><th>Verdict</th><th class="data">Data</th></tr>
       </thead>
       <tbody>
+        {# where each hypothesis can be checked in the app #}
+        {% set evidence = {"H1": (url_for('pages.corners'), "Corner lab: every lap, with its measurement error"),
+                           "H2": (url_for('pages.corners'), "Corner lab: 2024 Abu Dhabi, Norris vs Piastri"),
+                           "H3": (url_for('pages.signatures') ~ "#h3-title", "Driver vs car: every team, 2023–2025"),
+                           "H4": (url_for('pages.signatures') ~ "#h4-title", "Driver vs car: the five team changers")} %}
         {% for h in headline.hypotheses %}
         <tr>
           <td class="pos"><span class="pos-box cut">{{ h.id }}</span></td>
-          <td><p class="q">{{ h.question }}</p><p class="detail">{{ h.detail }}</p></td>
+          <td><p class="q">{{ h.question }}</p><p class="detail">{{ h.detail }}</p>
+            {% if h.id in evidence %}<a class="evidence" href="{{ evidence[h.id][0] }}">{{ evidence[h.id][1] }} &rarr;</a>{% endif %}</td>
           <td class="result num">{{ h.result }}</td>
           <td><span class="chip cut chip-{{ h.verdict|replace(' ', '-') }}">{{ h.verdict }}</span></td>
           <td class="data">{{ h.data }}</td>
@@ -93,5 +98,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/replay.js') }}"></script>
 <script src="{{ url_for('static', filename='js/hero.js') }}"></script>
 {% endblock %}

@@ -18,6 +18,7 @@
     swap: byId("swap"), cards: byId("cards"), corners: byId("corner-strip"),
     charts: byId("charts"), lights: byId("lights"), map: d3.select("#map"),
     mapCaption: byId("map-caption"), legend: byId("map-legend"), notes: byId("notes"),
+    replayControls: byId("replay-controls"), replayReadout: byId("replay-readout"),
   };
   const ALIGNMENT_M = page.dataset.alignmentError;
 
@@ -34,7 +35,8 @@
   const CORNER_WINDOW = [-300, 200];    // the window the features are measured in (corners.window_bounds)
   const SAMPLE_DOTS_BELOW_M = 1600;     // show the individual samples when zoomed in this far
 
-  const state = { index: [], session: null, a: null, b: null, data: null, domain: null, corner: null, request: 0 };
+  const state = { index: [], session: null, a: null, b: null, data: null, domain: null, corner: null, request: 0,
+    replay: null, replayView: null, replayMap: null };
 
   // ---------------------------------------------------------------- small lookups
 
@@ -175,6 +177,7 @@
       renderCharts();
       renderMap();
       renderNotes();
+      setupReplay();
     } catch (error) {
       if (request === state.request) showMessage(`Could not load these laps (${error.message}).`);
     } finally {
@@ -267,6 +270,20 @@
     ];
     const showDots = domain[1] - domain[0] <= SAMPLE_DOTS_BELOW_M;
     const charts = {};
+
+    // legend: which line is which driver (colour AND line style, never colour alone)
+    const lineKey = (colour, dash) => {
+      const key = AT.el("span", { class: "key" });
+      d3.select(key).append("svg").attr("width", 24).attr("height", 10).append("line")
+        .attr("x1", 1).attr("x2", 23).attr("y1", 5).attr("y2", 5).attr("stroke", colour).attr("stroke-width", 2.5)
+        .attr("stroke-dasharray", dash);
+      return key;
+    };
+    const legendA = lineKey(colours.a, null), legendB = lineKey(colours.b, "6 4");
+    legendA.append(`${state.a.code} (A), lap ${state.a.lap}`);
+    legendB.append(`${state.b.code} (B), lap ${state.b.lap}`);
+    ui.charts.append(AT.el("div", { class: "chart-panel chart-legend" }, legendA, legendB,
+      AT.el("span", { class: "key muted" }, showDots ? "dots = measured samples" : "zoom in to see the measured samples")));
 
     // ruler strip above the charts: the names of the detected braking zones
     const ruler = AT.el("div", { class: "chart-panel ruler" });
@@ -403,6 +420,19 @@
     }
 
     attachInteraction(charts, x, domain, width, series);
+
+    // replay position lines: where each car is at the replay time (A solid, B dashed)
+    const lines = [];
+    for (const chart of Object.values(charts)) {
+      const pair = {};
+      for (const sr of series) {
+        pair[sr.key] = chart.svg.append("line").attr("y1", 0).attr("y2", chart.height).attr("stroke", sr.colour)
+          .attr("stroke-width", 1.5).attr("stroke-dasharray", sr.dash).style("pointer-events", "none").style("display", "none");
+      }
+      lines.push(pair);
+    }
+    state.replayView = { x, domain, lines };
+    if (state.replay) state.replay.render();
   }
 
   // ---------------------------------------------------------------- hover readout, drag to zoom
@@ -467,6 +497,9 @@
           state.domain = [Math.min(from, to), Math.max(from, to)];
           state.corner = null;
           refreshView();
+        } else if (state.replay) {                   // a click: move the replay to when car A was here
+          const a = state.data.a.f;
+          state.replay.seek(AT.interp(to, a.s, a.t));
         }
       });
       overlay.on("dblclick", () => {
@@ -577,12 +610,77 @@
 
     // hover markers (moved by the charts' crosshair)
     markers = { fit, a: null, b: null };
+    state.replayMap = null;
     if (state.data) {
       for (const which of ["a", "b"]) {
         markers[which] = svg.append("circle").attr("r", 5.5).attr("fill", colours[which])
           .attr("stroke", "#0b0c0e").attr("stroke-width", 2.5).style("display", "none");
       }
+      // replay cars: a short trail and a dot each (B's trail dashed, like its chart lines)
+      const cars = {};
+      for (const which of ["a", "b"]) {
+        cars[which] = {
+          trail: svg.append("path").attr("fill", "none").attr("stroke", colours[which]).attr("stroke-width", 3)
+            .attr("stroke-linecap", "round").attr("stroke-opacity", 0.6).attr("stroke-dasharray", which === "b" ? "5 4" : null),
+          dot: svg.append("circle").attr("r", 6.5).attr("fill", colours[which]).attr("stroke", "#0b0c0e").attr("stroke-width", 2.5),
+        };
+      }
+      // click the map: jump the replay to when car A passed the nearest point
+      const lapA = state.data.a;
+      const screenX = lapA.x.map((v) => fit.x(v)), screenY = lapA.y.map((v) => fit.y(v));
+      svg.style("cursor", "pointer").on("click", (event) => {
+        const [px, py] = d3.pointer(event, svg.node());
+        if (state.replay) state.replay.seek(lapA.t[AT.nearestSample(screenX, screenY, px, py)]);
+      });
+      state.replayMap = { fit, cars };
+      if (state.replay) state.replay.render();
     }
+  }
+
+  // ---------------------------------------------------------------- replay
+
+  function setupReplay() {
+    if (state.replay) state.replay.destroy();
+    const duration = Math.max(lapOf(state.a).time_s, lapOf(state.b).time_s);
+    state.replay = new AT.Replay(ui.replayControls, { duration, onFrame: drawReplay });
+    state.replay.seek(0);
+  }
+
+  /** Draw both cars at replay time t: map dots and trails, chart position lines, live readout. */
+  function drawReplay(t) {
+    if (!state.data || !state.replayMap) return;
+    const TRAIL_S = 1.2;
+    const now = {};
+    for (const which of ["a", "b"]) {
+      const lap = state.data[which];
+      const tc = Math.min(t, lapOf(state[which]).time_s);       // a finished car waits at the line
+      now[which] = { s: AT.interp(tc, lap.t, lap.s), speed: AT.interp(tc, lap.t, lap.speed) };
+      const { fit, cars } = state.replayMap;
+      const trail = [];
+      for (let ts = Math.max(lap.t[0], tc - TRAIL_S); ts <= tc; ts += 0.05) {
+        trail.push([fit.x(AT.interp(ts, lap.t, lap.x)), fit.y(AT.interp(ts, lap.t, lap.y))]);
+      }
+      const px = fit.x(AT.interp(tc, lap.t, lap.x)), py = fit.y(AT.interp(tc, lap.t, lap.y));
+      trail.push([px, py]);
+      cars[which].trail.attr("d", trail.length > 1 ? d3.line()(trail) : null);
+      cars[which].dot.attr("cx", px).attr("cy", py);
+      if (state.replayView) {
+        const { x, domain, lines } = state.replayView;
+        const inside = now[which].s >= domain[0] && now[which].s <= domain[1];
+        for (const pair of lines) {
+          pair[which].attr("x1", x(now[which].s)).attr("x2", x(now[which].s)).style("display", inside && t > 0 ? null : "none");
+        }
+      }
+    }
+    // gap at car A's position (time) and how far behind B is on track (metres)
+    const delta = state.data.delta;
+    const gap = now.a.s >= delta.s[0] && now.a.s <= delta.s[delta.s.length - 1] ? AT.interp(now.a.s, delta.s, delta.d) : null;
+    const metres = now.a.s - now.b.s;
+    ui.replayReadout.replaceChildren(
+      AT.el("span", {}, `${state.a.code} `, AT.el("b", {}, `${Math.round(now.a.speed)} km/h`)),
+      AT.el("span", {}, `${state.b.code} `, AT.el("b", {}, `${Math.round(now.b.speed)} km/h`)),
+      AT.el("span", {}, "gap ", AT.el("b", {}, gap === null ? "–" : `${AT.signed(gap, 3)} s`),
+        t > 0 ? ` (${state.b.code} ${Math.abs(metres).toFixed(0)} m ${metres >= 0 ? "behind" : "ahead"})` : ""));
   }
 
   function key(colour, text) {
