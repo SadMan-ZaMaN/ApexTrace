@@ -575,3 +575,37 @@ per-lap measurement error for all 21 measured (feature, corner type) cases
 (`results/11_repeatability/summary.json`).
 
 **Next (Phase 8, part 3):** README with results, a short report, CI (GitHub Actions).
+
+---
+
+## 2026-10-19 (final build) — Phase 8, part 3: README, report, CI, handover
+
+**Built:**
+- **Generated documents.** `README.md` and `docs/report.md` are rendered from
+  templates (`docs/templates/*.j2`) by `experiments/17_write_docs.py`. Every number
+  comes from the results files through `collect_numbers()`, and a placeholder
+  without a number is an error (Jinja2 StrictUndefined). All numbers are also
+  saved to `results/report_numbers.json`. `tests/test_docs.py` re-renders the
+  documents and fails if the committed files differ. Checked: it fails after a
+  one-number hand edit of the README.
+- **Report:** about 2,900 words, written for a faculty reader: abstract, data,
+  measurement science, statistical design, results H1–H4 with both deviations,
+  discussion, limitations (including the open position-offset question),
+  references.
+- **CI:** `.github/workflows/tests.yml` (Python 3.13, pinned requirements, pytest).
+  Checked before adding: the suite passes in a fresh clone without any
+  gitignored files, and a dry-run resolve finds Linux/Python 3.13 wheels for all
+  58 pinned packages.
+- **README screenshots** of the four app pages (`docs/images/`).
+- **Related work:** Enev et al. 2016 (PoPETs) and Bell et al. 2016 (JQAS) were
+  verified by web search, and only verified works are cited.
+- **Handover:** `learn/14_presenting_and_next_steps.md` covers the video shot list,
+  pitch, faculty email, CV lines, the update loop and what is most likely to break;
+  the private roadmap has a task list for working alone.
+
+**Wording checks made while writing:** balanced accuracy is not described as "the
+share of laps"; "own signature closest" was changed to "closer than the
+teammate's" (rank 1 only for 12 of 20); the 25.1 m filter shift is for the middle
+of a braking event.
+
+**State:** Phases 0–8 complete. 106 tests pass.

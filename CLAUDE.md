@@ -29,7 +29,8 @@ proposal — check before relying on it.
 | 2026-10-18 (later) | **Phase 7 done (M7): final 2025 test run once** (after `225385c`; attempt 1 crashed on Baku with no laps before any result, fix logged, attempt 2). **H3 replicated:** ours 0.662 vs lap time 0.575, 8/10 teams, p = 0.027 (still ≈ raw stats 0.680). **H4 not supported:** 2 of 5 changers closer to own 2024 than to new teammate (p = 0.81); stayers 10/11. COL missed from the changer list (deviation; 3/6 with him). Exploratory control: stayers 8/10 in the H4 comparison. Numbers frozen. |
 | 2026-10-19 | **Phase 8, part 1:** web app (`app/`, Flask + vanilla JS + D3; Barlow fonts; timing-screen design, no logos): Overview (hero replays 2024 Abu Dhabi pole laps, results board) + Lap compare (any two 2023–2025 laps, gap curve, braking-zone zoom, mini-sector map). `16_app_data.py` exports `results/app/`. Gap curve fixed to integrated distance (projected position gave ±0.1 s noise). 101 tests. |
 | 2026-10-19 (later) | **Phase 8, part 2:** Corner lab (per-corner dot plots with measurement error + H1 ICC in words; rows via `dataset.clean`) and Driver vs car (H3 per team 2023–2025, H4 scatter + control, signature heat strip). Export adds features/identification/signatures JSON; signatures asserted to match frozen H4 distances. Phone layouts fixed. |
-| next | Phase 8, part 3: README with results, short report (`docs/report.md`), CI (GitHub Actions). Then part 4: video shot list, screenshots, handover. Open question in research log: lap-specific position offset. |
+| 2026-10-19 (final build) | **Phase 8 done (M8):** README + `docs/report.md` generated from templates by `17_write_docs.py` (every number from results/; `tests/test_docs.py` fails if stale or hand-edited); GitHub Actions CI (tests pass in a clean clone; all pins have Linux 3.13 wheels); README screenshots; related work: Enev 2016 + Bell 2016 verified; `learn/14` (video shot list, pitch, faculty email, CV lines, update loop); roadmap §8 handover filled. |
+| next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -185,6 +186,8 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 ├── experiments/            # numbered scripts: 00_hello_lap.py, 01_data_pilot.py, ...
 │                           # 14_final_2025.py = the one-time final test (done; results/final/ frozen)
 │                           # 16_app_data.py = exports results/app/*.json for the web app
+│                           # 17_write_docs.py = renders README.md + docs/report.md from docs/templates/*.j2
+├── .github/workflows/      # tests.yml: pytest on every push (GitHub Actions)
 ├── notebooks/              # exploration only — final numbers come from experiments/
 ├── tests/                  # pytest; never downloads F1 data
 ├── docs/                   # PROJECT_CONTEXT, research_log, decisions, related_work,
@@ -212,7 +215,9 @@ synthetic signals and tiny derived fixtures.
 - A new test should be checked to **fail** on the broken version it guards
   against.
 - Numbers in README/report come only from scripts in `experiments/`, never
-  typed in by hand.
+  typed in by hand. README.md and docs/report.md are GENERATED: edit
+  `docs/templates/*.j2`, add any new number to `collect_numbers()` in
+  `experiments/17_write_docs.py`, re-run it (`tests/test_docs.py` checks).
 - Keep the **bug history** below for anything that took real debugging, so
   nobody "simplifies" back into a known-broken approach.
 

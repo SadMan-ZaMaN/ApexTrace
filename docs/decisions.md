@@ -324,3 +324,12 @@ preregistration Part B is committed.
   changers, grey ring = lap-time baseline; shapes differ too. Heat strip:
   blue–grey–red diverging, clamped at ±2 SD. Signatures are exported only if
   they reproduce the frozen H4 distances.
+
+## 2026-10-19 — Documents generated from results; CI
+- **README.md and docs/report.md are generated** from Jinja2 templates by
+  `experiments/17_write_docs.py`, so the rule "numbers only from scripts" holds
+  mechanically, not by care. A test fails if they are stale or edited by hand.
+- **CI on GitHub Actions** runs the tests on Python 3.13 with the pinned
+  requirements. The tests need no F1 data (synthetic signals, fake results
+  folders, committed result files).
+- **Citations:** only works whose details were verified are cited in the report.

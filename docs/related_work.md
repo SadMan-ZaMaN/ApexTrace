@@ -61,18 +61,29 @@ web on 2026-10-14 · ⚠️ = not yet verified.
 - **How we differ:** racing telemetry at ~3.7 Hz, interpretable DSP features,
   leave-one-session-out evaluation, and the driver-vs-car question.
 
-### Enev et al., 2016 — "Automobile Driver Fingerprinting" (PoPETs) ⚠️
+### Enev et al., 2016 — "Automobile Driver Fingerprinting" (PoPETs) ✅ (citation verified 2026-10-19)
+- **Citation:** M. Enev, A. Takakuwa, K. Koscher, T. Kohno. Automobile Driver
+  Fingerprinting. *Proceedings on Privacy Enhancing Technologies* 2016(1), 34–51.
+  DOI 10.1515/popets-2015-0029. Open access: https://petsymposium.org/popets/2016/popets-2015-0029.php
 - **Read:** —
-- **Note:** verify the citation. Classic reference that drivers can be told
-  apart from in-car sensor data.
+- **What they did (from the abstract):** identified drivers from short snippets
+  of in-car sensor data from natural driving; with more training data, a single
+  sensor such as the brake pedal was enough for high identification accuracy.
+- **How we differ:** racing laps, public data at ~3.7 Hz with an on/off brake,
+  teammates in the same car, and a held-out season.
 
 ---
 
 ## Driver vs car — framing for H4
 
-### Bell et al., 2016 — multilevel model of F1 driver vs constructor performance ⚠️
-- **Venue:** Journal of Quantitative Analysis in Sports (verify).
+### Bell et al., 2016 — multilevel model of F1 driver vs constructor performance ✅ (citation verified 2026-10-19)
+- **Citation:** A. Bell, J. Smith, C. E. Sabel, K. Jones. Formula for success:
+  Multilevel modelling of Formula One Driver and Constructor performance,
+  1950–2014. *Journal of Quantitative Analysis in Sports* 12(2), 99–112 (2016).
+  DOI 10.1515/jqas-2015-0050.
 - **Read:** —
+- **Their finding (from the abstract):** team effects matter more than driver
+  effects for results, and increasingly so over time.
 - **What they did:** separated driver and constructor effects on F1 **results**
   with a multilevel (mixed) model.
 - **How we differ:** apply the same idea to corner-level **style** features,

@@ -1,0 +1,38 @@
+# Continuous integration: run the test suite on GitHub's computers after every push.
+#
+# The tests never download F1 data: they use synthetic signals and tiny fake
+# results folders (CLAUDE.md, "Tests"). So this needs no API access, no cache,
+# and none of the gitignored raw files. Checked before adding: the suite passes
+# in a fresh clone, and every pinned package has a Linux wheel for Python 3.13.
+
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip                      # reuse downloaded packages between runs
+
+      - name: Install the exact pinned versions
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e . --no-deps
+
+      - name: Run the tests
+        env:
+          MPLBACKEND: Agg                 # draw figures without a screen
+        run: pytest -q

@@ -22,6 +22,7 @@ your exams and then explain any part to a faculty member or an interviewer.
 | 11 | [11_driver_vs_car.md](11_driver_vs_car.md) | Phase 7: season signatures, own vs teammate, sign tests, how a one-time final test is protected | 1 h |
 | 12 | [12_final_results.md](12_final_results.md) | The one-time 2025 test: a crash and how it was handled, H3 replicated, H4 not supported, a missed changer, reading a "no" with a control, what the project can claim | 1 h |
 | 13 | [13_web_app.md](13_web_app.md) | Phase 8: the Flask + D3 web app, the design rules, D3 basics, the signals lesson behind the lap-gap chart (integration as a low-pass filter, common-mode drift), the Corner lab and the Driver vs car page | 1.5 h |
+| 14 | [14_presenting_and_next_steps.md](14_presenting_and_next_steps.md) | The demo-video shot list, a two-minute pitch, the faculty email, CV lines, the update loop, what you are most likely to break, and future work | 45 min |
 | — | [viva_questions.md](viva_questions.md) | Practice questions with answers, per chapter | |
 | — | [exercises.md](exercises.md) | Hands-on: change a number, predict, run, check | |
 

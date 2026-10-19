@@ -1,0 +1,255 @@
+# ApexTrace: driving signatures from low-rate public Formula 1 telemetry
+
+**Sadman Zaman** · Department of Computer Science and Engineering, Bangladesh University of Engineering and Technology (BUET) · October 2026
+
+## Abstract
+
+Public Formula 1 timing data report each car's speed, throttle, an on/off brake flag, gear and position only
+about {{ data.rate_hz }} times per second, on an irregular clock with gaps. We ask whether signal-processing methods can still
+extract repeatable, interpretable *driving signatures* from these data, whether those signatures identify a driver on
+unseen sessions, and how much of them belongs to the driver rather than the car. We first quantify what the feed can
+measure with synthetic laps of known truth, choose event estimators by Monte Carlo error, and place every lap on one
+track coordinate with a complementary filter ({{ measure.alignment_m }} m along-track error). From every braking zone of
+{{ data.sessions_clean_total }} dry qualifying sessions (2023–2025) we compute corner features such as brake onset, minimum speed and throttle pickup.
+Features repeat lap to lap (intraclass correlation {{ h1.lap_min }}–{{ h1.lap_max }}) but much less from weekend to weekend
+({{ h1.weekend_min }}–{{ h1.weekend_max }}). In a preregistered test on the held-out 2025 season, the features told teammates apart
+on unseen weekends with balanced accuracy {{ h3.final.ours }}, against {{ h3.final.lap_time }} for lap time ({{ h3.final.wins }} of {{ h3.final.teams }} teams,
+Wilcoxon {{ h3.final.p }}), but not better than simple whole-lap statistics ({{ h3.final.raw }}). Whether a signature follows a driver
+to a new team was not supported: {{ h4.final.own_closer }} of {{ h4.final.changers }} team changers stayed closer to their own previous season than to
+their new teammate (sign test {{ h4.final.p }}).
+
+## 1. Introduction
+
+Television graphics and fan tools compare drivers through telemetry traces, but they rarely ask how precisely those
+traces are measured, or whether an apparent difference would appear again next weekend. This project treats the
+public feed as a measured signal with known limits, and tests four hypotheses, each of which could come out "no":
+
+- **H1, repeatability.** Corner-level features vary less within a driver than between drivers.
+- **H2, teammate differences.** Two teammates differ by more than the measurement error (pilot only).
+- **H3, identification.** The features identify which of two teammates drove a lap, on sessions the model never
+  saw, better than baselines including lap time alone.
+- **H4, driver versus car.** A driver's signature follows them when they change teams.
+
+We do not claim who is the better driver, anything faster than the data can show, or brake pressure (the public
+brake channel is on/off).
+
+**Contributions.** (i) An error budget for corner features from {{ data.rate_hz }} Hz public telemetry, built from synthetic
+laps with known truth. (ii) A reproducible pipeline from raw feed to field-relative corner features for every
+qualifying session of 2023–2025. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
+season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
+of team, with an exploratory control. (v) A web application that shows every result with its uncertainty.
+
+## 2. Data
+
+**Source.** Timing data come from the official live-timing feed through two public interfaces. The pilot used FastF1;
+when the F1 archive began refusing requests (HTTP 401) we switched to OpenF1, which serves the same feed. On the
+pilot weekend (2024 Abu Dhabi), the two sources gave identical kept laps for {{ validation.kept_same_q }} of {{ validation.kept_drivers }} drivers in qualifying and
+{{ validation.kept_same_fp2 }} of {{ validation.kept_drivers }} in practice, and brake-onset features within {{ validation.brake_onset_max_diff_m }} m.
+
+**What the feed is.** Car data arrive on a {{ data.clock_ms }} ms clock at {{ data.rate_hz }} samples per second on average (median interval
+{{ data.interval_median_s }} s, 5–95 % range {{ data.interval_p5_s }}–{{ data.interval_p95_s }} s, dropouts up to {{ data.interval_max_s }} s in the pilot session). At 300 km/h that is about {{ data.metres_between_samples_300 }} m
+between samples, and nothing faster than {{ data.nyquist_hz }} Hz can be resolved. Speed is reported in whole km/h, throttle in
+whole percent, and the brake as on/off. Position (X/Y) is too coarse to show racing-line differences.
+
+**Sessions.** Main qualifying sessions of 2023–2024 for development ({{ data.sessions_dev }} sessions, {{ data.laps_dev }} kept laps, {{ data.drivers_dev }} drivers)
+and of 2025 for the final test ({{ data.sessions_2025 }} sessions; OpenF1 has no lap data for one, so {{ data.sessions_2025_built }} were built). Laps were kept by
+FastF1-style rules (timed, accurate, green flag, not deleted, within 107 % of the best lap of the same stint).
+Braking zones were detected automatically on each session's fastest kept lap and typed slow (< 120 km/h minimum),
+medium or fast (≥ 200 km/h).
+
+**Cleaning.** Rules were fixed in an exploratory data analysis of 2023–2024 and applied unchanged to 2025: dry
+compounds only, corner passes with an implausible minimum speed dropped, and impossible feature values (for example,
+braking after the corner marker) set to missing. This leaves {{ data.clean_dev }} clean (driver, lap, corner) rows in
+{{ data.sessions_dev_clean }} dry development sessions and {{ data.clean_2025 }} rows in {{ data.sessions_2025_clean }} dry 2025 sessions.
+
+**The frozen season.** From the first day, the code refused to load 2025 unless an environment flag was set, and the
+final script refused to run unless the preregistration was committed, unchanged, and had not been run before.
+
+## 3. Measurement science
+
+Every estimator was tested on synthetic laps with a known truth (realistic speed profiles, the feed's irregular
+sampling and dropouts, whole-unit quantisation), with {{ measure.mc_laps }} laps per corner type.
+
+**Filtering moves events.** A causal 5-sample moving average shifted the middle of a braking event by
+{{ measure.ma5_mid_shift_m }} m, and a causal 0.5 Hz Butterworth filter by {{ measure.butter_mid_shift_m }} m (group delay). Zero-phase filtering removes
+the shift of the middle ({{ measure.zero_phase_mid_shift_m }} m) but smears the onset {{ measure.zero_phase_onset_shift_m }} m early. Events are therefore located
+on the raw samples, and smoothing is never used for a reported value.
+
+![Braking-point shift caused by filters](../results/02_group_delay/braking_shift.png)
+
+**Estimator choices** (heavy-braking corners, root-mean-square error):
+
+| Feature | Naive estimator | Chosen estimator |
+|---|---|---|
+| Brake onset | first sample with the brake on: {{ measure.onset_naive_rmse_m }} m (late by {{ measure.onset_naive_bias_m }} m on average) | speed breakpoint inside the off→on interval: {{ measure.onset_chosen_rmse_m }} m |
+| Slowest point (apex) | lowest sample: {{ measure.apex_lowest_rmse_m }} m | parabola through the three slowest samples: {{ measure.apex_parabola_rmse_m }} m |
+| Minimum speed | | parabola: {{ measure.min_speed_rmse_kmh }} km/h |
+| Throttle pickup (10 %) | first sample above: {{ measure.pickup_first_rmse_m }} m | interpolated crossing: {{ measure.pickup_interp_rmse_m }} m |
+
+Peak deceleration cannot be measured: the best estimator still had {{ measure.peak_decel_best_rmse }} m/s² error, so the mean deceleration from
+brake onset to the slowest point is used instead.
+
+**Alignment.** Projecting X/Y onto a reference path gives a track coordinate that is right on average but noisy;
+integrating speed gives one that is smooth but drifts. A complementary filter (integrated speed plus a low-pass
+correction from position, weighted by 1/speed²) gives {{ measure.alignment_m }} m along-track error in each corner window.
+
+## 4. Features and statistical design
+
+**Features.** For each (driver, lap, corner): brake onset, entry speed (200 m before the marker), minimum speed,
+slowest point, braking distance, mean deceleration, throttle pickup, full throttle, exit speed (150 m after), corner
+time and minimum gear ({{ data.features }} features). Positions are in metres from the corner marker. For comparisons across
+tracks, each value is taken relative to the field median at the same corner and session (*field-relative*).
+
+**Repeatability (H1).** The intraclass correlation ICC(1) gives the share of the variance that lies between drivers,
+at two levels: laps within a weekend, and weekend means within a season. Intervals come from a bootstrap that
+resamples whole driver-seasons.
+
+**Identification (H3).** For each team-season, a logistic regression (with imputation and scaling fitted on training
+data only) predicts which teammate drove a lap from 30 numbers: the field-relative mean of 10 features over the
+lap's slow, medium and fast corners. Evaluation is leave-one-weekend-out, the score is balanced accuracy, and every
+model is compared with a majority guess, lap time only, simple whole-lap statistics (mean and top speed, mean
+throttle, share at full throttle, share braking) and shuffled labels. Ours vs lap time is a two-sided Wilcoxon
+signed-rank test over teams.
+
+**Driver vs car (H4).** A season signature is the mean of a driver's weekend means (each weekend counts once),
+z-scored with the 2024 spread; the distance between signatures is the root-mean-square difference. For each
+driver who changed teams for 2025, we ask whether their 2025 signature is closer to their own 2024 signature (another
+car) than to their new teammate's 2025 signature (the same car, the same weekends). One-sided sign test over the
+changers.
+
+**Preregistration.** The pilot tests (Part A, commit `{{ prereg.part_a }}`) and the final 2025 evaluation (Part B, commit
+`{{ prereg.part_b }}`) were committed before they were run. Deviations are reported in a separate file and below.
+
+## 5. Results
+
+### 5.1 Pilot (H2): too few laps, as predicted
+
+Norris vs Piastri, 2024 Abu Dhabi qualifying, {{ pilot.laps_nor }} and {{ pilot.laps_pia }} push laps: {{ pilot.discoveries }} of {{ pilot.tests }} feature-by-corner comparisons survived
+Benjamini–Hochberg correction, as the preregistration predicted from the smallest possible p-values. The largest
+effects: Norris braked {{ pilot.t5_diff_m }} m later at T5 (Hedges' g {{ pilot.t5_g }}, p = {{ pilot.t5_p }}) and {{ pilot.t9_diff_m }} m later at T9 (g {{ pilot.t9_g }}, p = {{ pilot.t9_p }}):
+consistent with a real difference, not confirmed.
+
+### 5.2 Repeatability (H1): partly
+
+Across all 2023–2024 drivers, lap-level ICCs ranged from {{ h1.lap_min }} to {{ h1.lap_max }}, and weekend-level ICCs from {{ h1.weekend_min }} to
+{{ h1.weekend_max }}. The lap-to-lap spread was {{ h1.ratio_min }} to {{ h1.ratio_max }} times the per-lap measurement error in all {{ h1.ratio_cases }} cases where the error
+was simulated, so the variation is the drivers', not the instrument's. The features that carry over best between
+weekends are {{ h1.best_weekend | join(", ") }}. Brake onset at slow corners repeats within a weekend
+(ICC {{ h1.brake_slow_lap }}) but hardly between weekends ({{ h1.brake_slow_weekend }}).
+
+![ICC per feature and corner type](../results/11_repeatability/icc.png)
+
+### 5.3 Identification (H3): supported, and replicated on 2025
+
+| Balanced accuracy (mean over teams) | Development 2023–2024 ({{ h3.dev.teams }} team-seasons) | Final 2025 ({{ h3.final.teams }} teams) |
+|---|---|---|
+| Corner features | {{ h3.dev.ours }} {{ h3.dev.ours_ci }} | **{{ h3.final.ours }}** {{ h3.final.ours_ci }} |
+| Lap time only | {{ h3.dev.lap_time }} {{ h3.dev.lap_time_ci }} | {{ h3.final.lap_time }} {{ h3.final.lap_time_ci }} |
+| Whole-lap statistics | {{ h3.dev.raw }} {{ h3.dev.raw_ci }} | {{ h3.final.raw }} {{ h3.final.raw_ci }} |
+| Corner features, weekend vote | {{ h3.dev.vote }} | {{ h3.final.vote }} |
+| Shuffled labels | {{ h3.dev.shuffled }} | {{ h3.final.shuffled }} |
+| Ours better than lap time | {{ h3.dev.wins }} of {{ h3.dev.teams }}, {{ h3.dev.p }} | {{ h3.final.wins }} of {{ h3.final.teams }}, {{ h3.final.p }} |
+| Ours better than whole-lap statistics | {{ h3.dev.raw_wins }} of {{ h3.dev.teams }}, {{ h3.dev.raw_p }} | {{ h3.final.raw_wins }} of {{ h3.final.teams }}, {{ h3.final.raw_p }} |
+
+The preregistered criterion (Wilcoxon p < 0.05 and ours higher than lap time) was met on 2025. Shuffled labels sit at
+chance, so the pipeline does not leak. Removing the throttle features costs the most ({{ h3.final.no_throttle }} without them in
+2025). The whole-lap statistics are as good or better; the extreme case is Ferrari 2025 (Hamilton vs Leclerc),
+{{ h3.ferrari_raw }} for whole-lap statistics vs {{ h3.ferrari_ours }} for corner features. Across all drivers of a season (a harder task: {{ h3.multi["2023"].drivers }} and {{ h3.multi["2024"].drivers }}
+drivers), corner features reached {{ h3.multi["2024"].ours }} in 2024 (chance {{ h3.multi["2024"].chance }}, lap time {{ h3.multi["2024"].lap_time }}, whole-lap statistics {{ h3.multi["2024"].raw }});
+lap time alone is little better than chance there.
+
+![Teammate identification per team, 2025](../results/15_final_exploratory/final_h3_teams.png)
+
+### 5.4 Driver vs car (H4): not supported
+
+**Development (2023 → 2024, same car both years).** A driver's 2024 signature ranked their own 2023 signature
+{{ h4.dev.mean_rank }} of {{ h4.dev.pool }} on average (chance {{ h4.dev.chance_rank }}; first for {{ h4.dev.rank_1 }} of {{ h4.dev.drivers }}, permutation {{ h4.dev.rank_p }}) and was closer to it than to the
+teammate's for {{ h4.dev.own_closer }} of {{ h4.dev.pairs }} drivers ({{ h4.dev.p }}).
+
+**Final test (2025 team changers).**
+
+| Driver | 2024 → 2025 | Distance to own 2024 | Distance to new teammate | Closer to | Own 2024 rank |
+|---|---|---|---|---|---|
+{% for r in h4.final.rows -%}
+| {{ r.driver }} | {{ r.team_2024 }} → {{ r.team_2025 }} ({{ r.teammate }}) | {{ r.own }} | {{ r.mate }} | {{ r.closer }} | {{ r.rank }} of {{ r.of }} |
+{% endfor %}
+{{ h4.final.own_closer }} of {{ h4.final.changers }} changers stayed closer to their own past: sign test {{ h4.final.p }} (the smallest possible p with five drivers
+was {{ h4.final.min_p }}, so all five had to agree). H4 is not supported. Secondary results: the share of the lap spent
+braking stayed closer to the driver's own for {{ h4.final.brake_share_own }} of {{ h4.final.changers }} ({{ h4.final.brake_share_p }}), and drivers who did not change
+teams kept their signature against their old teammate for {{ h4.final.stayers_own }} of {{ h4.final.stayers }} ({{ h4.final.stayers_p }}).
+
+**Exploratory, not preregistered.** Running the same comparison on the drivers who stayed (own 2024 vs current
+teammate, same weekends) gave {{ h4.explore.control_own }} of {{ h4.explore.control_n }} ({{ h4.explore.control_p }}). Changers ({{ h4.final.own_closer }} of {{ h4.final.changers }}) and stayers ({{ h4.explore.control_own }} of {{ h4.explore.control_n }}) can't be told apart with
+these numbers (Fisher's exact {{ h4.explore.fisher_p }}).
+
+![Distance to own past vs to the 2025 teammate](../results/15_final_exploratory/final_h4_distances.png)
+
+### 5.5 Deviations from the plan
+
+1. The first final run crashed while downloading, before any result existed: OpenF1 has no lap data for 2025 Baku
+   qualifying. The session is skipped (a one-line fix with a test); the deviation was recorded before the rerun.
+2. Franco Colapinto (Williams → Alpine) also changed teams but was missing from the preregistered list. The primary test
+   was kept as planned; with him included the result is {{ h4.explore.with_col_own }} of {{ h4.explore.with_col_n }} ({{ h4.explore.with_col_p }}), so the conclusion does not change.
+
+## 6. Discussion
+
+**What holds.** Within a team, corner-level telemetry carries a driver signature that generalises to unseen
+weekends and to an unseen season, and that is stable from one year to the next for drivers who stay. It is weak
+per lap and stronger per weekend (vote {{ h3.final.vote }}).
+
+**Interpretability, not extra power.** Simple statistics of the whole lap identify teammates at least as well. The
+value of the corner features is that they locate a difference (where a driver brakes, where they get back on the
+throttle) with a known error, which the Corner lab in the web app makes visible.
+
+**Driver or car.** The "no" for H4 has two readings that these data cannot separate: the car (its brakes, downforce
+and set-up) shapes the measured style, or drivers adapt their style to a new car. The comparison is also not
+symmetric: a driver's own signature is a year apart, while the teammate's comes from the same weekends. The
+exploratory control suggests the own past usually wins when the car stays the same, but five changers are too few to
+compare the groups.
+
+**Limitations.** Qualifying laps only. A {{ data.rate_hz }} Hz feed with an on/off brake signal and coarse positions. Corners are
+detected per session, so the same corner can be typed differently in different years. The identification task is
+between two teammates; the all-driver task is much harder. H4 rests on five drivers. While building the web app we
+found that the projected track position may carry a lap-specific offset of a few metres; it would add noise to the
+position features, and checking it over many laps is future work. The frozen results do not depend on it.
+
+## 7. Conclusion and future work
+
+Low-rate public telemetry supports corner-level features with known errors, and those features carry a
+teammate-level driver signature that replicated on a held-out season. They do not beat simple lap statistics, and they
+did not show that style follows a driver into a new car. Next steps: more team changes as seasons accumulate (and the
+2026 regulation change, H5); features made relative to the teammate on each weekend to remove the car; the
+position-offset check; a learned sequence model under the same held-out protocol; and a systematic literature search.
+
+## Reproducibility
+
+Everything runs from the repository: `pip install -r requirements.txt`, `pip install -e .`, then the numbered scripts
+in `experiments/` (the data download, `08`–`09`, takes about an hour). Tests (`pytest`) use synthetic data only and run on
+GitHub Actions. Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
+research log and a decision log record what was done and why, with dates.
+
+## References
+
+- Bell, A., Smith, J., Sabel, C. E. and Jones, K. (2016). Formula for success: multilevel modelling of Formula One
+  driver and constructor performance, 1950–2014. *Journal of Quantitative Analysis in Sports*, 12(2), 99–112.
+- Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to
+  multiple testing. *Journal of the Royal Statistical Society, Series B*, 57(1), 289–300.
+- Efron, B. and Tibshirani, R. J. (1993). *An Introduction to the Bootstrap*. Chapman & Hall.
+- Enev, M., Takakuwa, A., Koscher, K. and Kohno, T. (2016). Automobile driver fingerprinting. *Proceedings on Privacy
+  Enhancing Technologies*, 2016(1), 34–51.
+- Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect size and related estimators. *Journal of
+  Educational Statistics*, 6(2), 107–128.
+- Holm, S. (1979). A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*, 6(2), 65–70.
+- Nosek, B. A., Ebersole, C. R., DeHaven, A. C. and Mellor, D. T. (2018). The preregistration revolution. *Proceedings of
+  the National Academy of Sciences*, 115(11), 2600–2606.
+- Shrout, P. E. and Fleiss, J. L. (1979). Intraclass correlations: uses in assessing rater reliability. *Psychological
+  Bulletin*, 86(2), 420–428.
+- Wilcoxon, F. (1945). Individual comparisons by ranking methods. *Biometrics Bulletin*, 1(6), 80–83.
+- FastF1 (Python package), https://github.com/theOehrly/Fast-F1, and OpenF1 (API), https://openf1.org.
+
+## Acknowledgements
+
+The software and much of the documentation were written with an AI coding assistant (Claude, by Anthropic) under the
+author's direction; the author set the questions and the plan and reviewed and committed every change. ApexTrace is
+unofficial and not associated with the Formula 1 companies; F1 and related marks are trade marks of Formula One
+Licensing B.V.
