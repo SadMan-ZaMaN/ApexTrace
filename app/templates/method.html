@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Method · ApexTrace{% endblock %}
+
+{% block content %}
+<div class="wrap" id="method-page">
+  <header class="page-head">
+    <p class="eyebrow">Method <span class="dot">/</span> what four samples a second can and can't measure</p>
+    <h1>Measure first, compare later</h1>
+    <p>Before any driver was compared, every step was checked against a known truth: how the public feed samples
+      the car, what filtering does to an event, how accurate each way of finding a braking point is, and how well
+      laps line up. These charts are that evidence (Phases 1–3).</p>
+  </header>
+
+  <section class="block" aria-labelledby="m1">
+    <div class="block-head"><div>
+      <p class="eyebrow"><span class="dot">1</span> the feed</p>
+      <h2 id="m1">Under four samples a second, on a 40 ms clock</h2>
+    </div></div>
+    <div class="tiles" id="sampling-tiles"></div>
+    <div class="method-grid">
+      <div class="chart-box" id="sampling-chart"></div>
+      <div class="method-side">
+        <p class="side-copy">Every interval between two car samples, from the pilot weekend. They come in steps of
+          40 ms (the bars stand on a comb), mostly 0.16–0.48 s apart, with rare dropouts of up to
+          <span id="max-gap"></span> s. Anything faster than half the sample rate (the <b>Nyquist frequency</b>) can't be
+          seen, and interpolating more points in between adds no information.</p>
+        <label class="field speed-field"><span>Speed: <b id="speed-value"></b> km/h</span>
+          <input type="range" id="speed-slider" class="replay-range" min="80" max="340" step="10" value="300"></label>
+        <p class="side-copy" id="speed-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="m2">
+    <div class="block-head"><div>
+      <p class="eyebrow"><span class="dot">2</span> filters and group delay</p>
+      <h2 id="m2">Smoothing moves the braking point</h2>
+    </div>
+      <div class="segmented filter-buttons" role="group" aria-label="Filter" id="filter-buttons"></div>
+    </div>
+    <div class="method-grid">
+      <div class="chart-box" id="filter-chart"></div>
+      <div class="method-side">
+        <p class="side-copy" id="filter-text"></p>
+        <table class="mini-table" id="filter-table"></table>
+        <p class="chart-note" id="filter-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="m3">
+    <div class="block-head"><div>
+      <p class="eyebrow"><span class="dot">3</span> choosing estimators</p>
+      <h2 id="m3">The obvious method is the wrong one</h2>
+    </div>
+      <div class="segmented" role="group" aria-label="Corner type" id="type-buttons"></div>
+    </div>
+    <div class="method-grid">
+      <div class="chart-box" id="estimator-chart"></div>
+      <div class="method-side">
+        <p class="side-copy">Synthetic corners with a known truth were sampled exactly like the feed (random phase,
+          real intervals, whole-unit rounding), <span id="mc-laps"></span> times per corner type, and every candidate
+          estimator was scored by its root-mean-square error (RMSE, the typical size of the error, bias included).</p>
+        <p class="side-copy" id="estimator-text"></p>
+        <p class="chart-note">Hover a row to see every estimator that was tried.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="m4">
+    <div class="block-head"><div>
+      <p class="eyebrow"><span class="dot">4</span> alignment, a complementary filter</p>
+      <h2 id="m4">One track coordinate for every lap</h2>
+    </div></div>
+    <div class="tiles" id="alignment-tiles"></div>
+    <div class="two-charts">
+      <div>
+        <h3 class="chart-heading">Two ways to say "how far along the lap": their difference</h3>
+        <div class="chart-box" id="offset-chart"></div>
+        <p class="chart-note" id="offset-note"></p>
+      </div>
+      <div>
+        <h3 class="chart-heading">The gap between two laps, from each coordinate</h3>
+        <div class="chart-box" id="gap-chart"></div>
+        <p class="chart-note" id="gap-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="m5">
+    <div class="block-head"><div>
+      <p class="eyebrow"><span class="dot">5</span> cleaning</p>
+      <h2 id="m5">What was kept, and why the rest was not</h2>
+    </div></div>
+    <div class="chart-box" id="funnel-chart"></div>
+    <p class="chart-note">Rules were fixed on 2023–2024 (exploratory data analysis) and applied unchanged to the held-out
+      2025 season. A corner pass with a feed dropout inside its window is not used: an event inside a 1-second hole
+      can't be located.</p>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/method.js') }}"></script>
+{% endblock %}

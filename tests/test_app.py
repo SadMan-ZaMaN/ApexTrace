@@ -213,13 +213,13 @@ def test_corner_rows_use_the_research_cleaning_rules(tmp_path):
 def test_optional_exports_are_served_or_explained(tmp_path):
     fake_results(tmp_path, np.random.default_rng(7))
     client = create_app(tmp_path).test_client()
-    for endpoint in ["/api/features", "/api/identification", "/api/signatures"]:
+    for endpoint in ["/api/features", "/api/identification", "/api/signatures", "/api/method"]:
         response = client.get(endpoint)
         assert response.status_code == 503
         assert "16_app_data" in response.get_json()["hint"]
     (tmp_path / "app" / "features.json").write_text(json.dumps({"features": []}), encoding="utf-8")
     assert create_app(tmp_path).test_client().get("/api/features").status_code == 200
-    for page in ["/corners", "/signatures"]:
+    for page in ["/corners", "/signatures", "/method"]:
         assert client.get(page).status_code == 200
 
 

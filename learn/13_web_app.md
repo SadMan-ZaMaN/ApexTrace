@@ -108,7 +108,8 @@ official gap +0.209 s):
 - **Integration is a low-pass filter** (in the frequency domain, 1/jω): it
   averages away sample-to-sample noise. The projected position scatters by
   about 3 m per sample, which is 0.04 s at 270 km/h.
-- **Its error is a slow drift** (~12 m per lap), and that drift is nearly the
+- **Its error is slow** (against position it wanders between about −4 and +14 m
+  along the lap, ending ~12 m off), and that slow error is nearly the
   same on both laps, so it **cancels in the subtraction**. This is common-mode
   rejection, like a differential amplifier rejecting noise that is common to
   both inputs.
@@ -247,3 +248,35 @@ data points, and how precise. Added in this part: a line legend on Lap compare (
 A, dashed = B, and whether dots are measured samples), a key on the Corner lab (dot,
 median tick, field median, error bar), and on the results board a link from every
 hypothesis to the page that shows its data.
+
+---
+
+# Part 4 (2026-10-20): the Method page
+
+The other pages show results; `/method` shows why the numbers can be trusted, which
+is what a signals professor will ask about first. Every chart comes from the Phase 1–3
+results or from the project's own functions (`experiments/16_app_data.build_method`):
+
+1. **The feed.** A histogram of every interval between car samples on the pilot
+   weekend. The bars stand on a comb at 40 ms steps (the timing clock), mostly
+   0.16–0.48 s, with 36 dropouts up to 1.36 s. Nyquist frequency = half the sample
+   rate. The speed slider converts intervals into metres between samples.
+2. **Filters and group delay.** One simulated heavy-braking corner (the same one as
+   `02_group_delay_demo.py`, lap 0), sampled like the feed, then passed through each
+   filter. A causal moving average delays the middle of the braking zone by about
+   25 m; zero-phase filtering removes the delay but smears the start ~36 m early. The
+   table is the average over 200 corners.
+3. **Choosing estimators.** For each feature, the obvious method versus the one the
+   pipeline uses, scored by RMSE on 1,000 simulated corners per type. Hover a row to
+   see every estimator that was tried.
+4. **Alignment.** For one real lap: (position − integrated speed) per sample, a
+   noisy cloud (±3 m), and its smooth trend, which wanders between about −4 and +14 m
+   along the lap. The complementary filter is exactly "integrated speed + that trend".
+   Next to it: the gap between two laps computed from each coordinate.
+5. **Cleaning.** What was removed at each step, and why.
+
+**Correction made while building it:** earlier notes called the slow difference
+"~12 m of drift per lap". That is the start-to-end change; within the lap it wanders
+over ~18 m (−4 to +14 m), because it is not only integration drift but also the car's
+line being longer or shorter than the reference path. The docstring and this chapter
+now say so.

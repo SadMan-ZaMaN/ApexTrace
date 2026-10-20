@@ -628,3 +628,22 @@ of a braking event.
   evidence links from the results board to each hypothesis's page.
 - Checked in Edge via Playwright: ×4 advanced 8 s in 2 s, click-to-jump worked on
   the track, chart and map, and there were no page errors.
+
+---
+
+## 2026-10-20 (later) — Method page: the measurement science as live charts
+
+- **New page** `/method` (`app/templates/method.html`, `app/static/js/method.js`).
+  Its data come from `method.json`, written by `16_app_data.build_method`: the pilot
+  interval histogram; one synthetic braking event through each filter (the
+  02_group_delay_demo functions; this corner's shifts match the 200-corner means, e.g.
+  causal moving average +24.9 m here vs +25.1 m on average); every estimator's Monte
+  Carlo error; the hero lap's position − integrated offset and the gap from each
+  coordinate; and the cleaning funnel.
+- **Wording corrected:** the slow difference between position and integrated distance
+  is not a steady drift. On the hero lap it wanders from −3.7 to +14.1 m (range 17.8 m)
+  and changes by 11.8 m from start to end (the "~12 m" quoted before). The
+  `fused_distance` docstring, learn/13 and the page now describe it this way.
+- **Links:** the overview's "How it works" points to the Method page, and the README
+  table shows it. Checked at 1440 px and 390 px (estimator chart and cleaning funnel
+  re-laid out for phones).

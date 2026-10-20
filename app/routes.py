@@ -16,7 +16,7 @@ api = Blueprint("api", __name__)
 
 DRIVER_CODE = re.compile(r"^[A-Z]{3}$")
 NAV = [("pages.home", "Overview"), ("pages.telemetry", "Lap compare"), ("pages.corners", "Corner lab"),
-       ("pages.signatures", "Driver vs car")]
+       ("pages.signatures", "Driver vs car"), ("pages.method", "Method")]
 
 
 def data():
@@ -56,6 +56,11 @@ def corners():
 @pages.route("/signatures")
 def signatures():
     return render_template("signatures.html", active="pages.signatures")
+
+
+@pages.route("/method")
+def method():
+    return render_template("method.html", active="pages.method")
 
 
 # ---------------------------------------------------------------- JSON API
@@ -124,6 +129,11 @@ def identification():
 @api.route("/signatures")
 def signature_data():
     return export_or_503(data().signatures, "signatures.json")
+
+
+@api.route("/method")
+def method_data():
+    return export_or_503(data().method, "method.json")
 
 
 @api.route("/corners/<int:key>")

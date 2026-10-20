@@ -40,6 +40,8 @@ Tips: zoom the browser to 110 % so text is readable in a small video; rehearse o
 **Who:** BUET faculty in signal processing, machine learning, data science or time series. Read their recent
 papers first; ask seniors who have published.
 
+**In the meeting:** open the app's **Method** page first (the feed's 40 ms comb, the filter that moves a braking point by 25 m, the estimator table): it shows the signals work in two minutes. Then a Corner lab chart and Lap compare zoomed into one corner (real samples, real errors).
+
 **Bring (or attach):** `docs/report.md` exported to PDF (VS Code: "Markdown PDF" extension, or print from the
 GitHub page), the repo link, and three figures:
 - `results/02_group_delay/braking_shift.png`: filters move events (the measurement-science result),

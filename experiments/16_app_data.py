@@ -16,6 +16,10 @@ them into three small JSON files (committed, unlike the raw-sample Parquet):
   signatures.json      the H4 season signatures (z-scores, 30 features) for every
                  driver in both 2024 and 2025, built with the exact H4 steps and
                  CHECKED to reproduce the frozen H4 distances
+  method.json    the measurement science for the Method page: the sampling histogram,
+                 one synthetic braking event through each filter (02_group_delay_demo's
+                 own functions), every estimator's Monte Carlo error, the alignment of the
+                 hero lap, and what each cleaning step removed
 
 Team colours come from the OpenF1 driver list (cached, no download).
 Driver head-shot URLs in that list are deliberately NOT exported (no photos).
@@ -26,6 +30,7 @@ Run from the repo root (reads only local files):
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -451,6 +456,126 @@ def build_signatures(sessions):
                                 "results/15_final_exploratory/h4_shape_control_non_changers.csv"]}
 
 
+# ---------------------------------------------------------------- method.json (the measurement science)
+
+# The estimator the pipeline uses for each feature (features.py, chosen by the Phase 2 Monte Carlo),
+# and the obvious "naive" one it replaced. Peak deceleration has no usable estimator (replaced by mean).
+CHOSEN_ESTIMATOR = {"brake_onset_m": "speed breakpoint inside off-on interval", "apex_m": "parabola 3 points",
+                    "min_speed_kmh": "parabola 3 points", "throttle_pickup_m": "interpolated crossing",
+                    "full_throttle_m": "interpolated crossing", "entry_speed_kmh": "linear interpolation",
+                    "exit_speed_kmh": "linear interpolation"}
+NAIVE_ESTIMATOR = {"brake_onset_m": "first on sample", "apex_m": "lowest sample", "min_speed_kmh": "lowest sample",
+                   "throttle_pickup_m": "first sample >= 10 %", "full_throttle_m": "first sample >= 99 %"}
+
+
+def build_method(sessions):
+    """Data for the Method page: sampling, filter delay, estimator errors, alignment, cleaning funnel.
+
+    Everything is read from the Phase 1-3 results files or recomputed with the
+    project's own functions (the same synthetic corner and filters as
+    experiments/02_group_delay_demo.py, the same gap function as the app).
+    """
+    sys.path.insert(0, str(REPO_ROOT))      # so `import app` works when this file is run as a script
+    from app.data import delta_time, fused_distance, increasing_distance
+    from apextrace.resampling import to_uniform_grid
+    from apextrace.synthetic import degrade_like_feed, load_interval_distribution, make_true_corner, random_corner_params
+
+    out = {}
+
+    # 1. the feed's sampling: the measured interval histogram (2024 Abu Dhabi, check 1)
+    histogram = pd.read_csv(RESULTS / "01_data_pilot" / "interval_histogram.csv")
+    histogram = histogram[histogram["car_count"] > 0]
+    timing = load("01_data_pilot/summary.json")["check_1_sample_timing"]["car"]
+    out["sampling"] = {
+        "bins": [{"interval_s": round(float(r.interval_s), 2), "count": int(r.car_count)} for r in histogram.itertuples()],
+        "rate_hz": round(timing["rate_from_mean_hz"], 2), "median_s": timing["median_s"], "p95_s": timing["p95_s"],
+        "max_s": timing["max_s"], "clock_s": timing["clock_tick_s"], "normal_max_s": timing["normal_max_s"],
+        "gaps": timing["gaps_longer_than_threshold"], "count": timing["count"],
+        "source": "results/01_data_pilot (2024 Abu Dhabi, all car samples of the pilot laps)"}
+
+    # 2. filters move events: one synthetic heavy-braking corner, exactly as 02_group_delay_demo part A (lap 0)
+    demo = load_module("group_delay", REPO_ROOT / "experiments" / "02_group_delay_demo.py")
+    intervals, probs = load_interval_distribution(RESULTS / "01_data_pilot" / "interval_histogram.csv")
+    rng = np.random.default_rng(demo.SEED)
+    truth = make_true_corner(random_corner_params("heavy_braking", rng))
+    samples = degrade_like_feed(truth, intervals, probs, rng, max_interval_s=0.6)
+    grid, speed, _ = to_uniform_grid(samples["time_s"], samples["speed_kmh"], demo.GRID_STEP_S)
+    t0 = truth["events"]["brake_onset"]["t"]
+    level = 0.5 * (truth["events"]["entry_speed_kmh"] + truth["events"]["apex"]["speed_kmh"])
+    true_mid = demo.mid_braking_time(truth["time_s"], truth["speed_kmh"], level)
+    window = (truth["time_s"] >= t0 - 2.0) & (truth["time_s"] <= t0 + 3.5)
+    step = max(1, int(np.sum(window) / 400))                     # ~400 points are plenty for a line
+    shifts = load("02_group_delay/summary.json")["A_braking_shift_heavy_braking"]
+    filters = []
+    for name, apply in demo.filters_to_compare().items():
+        filtered = apply(speed)
+        found_mid = demo.mid_braking_time(grid, filtered, level)
+        shift_m = float(np.interp(found_mid, truth["time_s"], truth["distance_m"])
+                        - np.interp(true_mid, truth["time_s"], truth["distance_m"]))
+        keep = (grid >= t0 - 2.0) & (grid <= t0 + 3.5)
+        filters.append({"name": name, "t": round_list(grid[keep] - t0, 3), "speed": round_list(filtered[keep], 2),
+                        "mid_t": round(float(found_mid - t0), 3), "mid_shift_m_this_corner": round(shift_m, 1),
+                        "mean_shift_m": {k: round(v, 2) for k, v in shifts[name].items()}})
+    sample_window = (samples["time_s"] >= t0 - 2.0) & (samples["time_s"] <= t0 + 3.5)
+    out["filters"] = {
+        "truth": {"t": round_list(truth["time_s"][window][::step] - t0, 3),
+                  "speed": round_list(truth["speed_kmh"][window][::step], 2)},
+        "samples": {"t": round_list(samples["time_s"][sample_window] - t0, 3),
+                    "speed": round_list(samples["speed_kmh"][sample_window], 0)},
+        "level_kmh": round(float(level), 1), "true_mid_t": round(float(true_mid - t0), 3),
+        "grid_step_s": demo.GRID_STEP_S, "corners_in_average": demo.LAPS, "filters": filters,
+        "source": "experiments/02_group_delay_demo.py (part A), results/02_group_delay/summary.json"}
+
+    # 3. estimator errors (Monte Carlo, realistic sampling): every estimator tried, per corner type
+    rows = load("03_synthetic_errors/summary.json")
+    estimators = []
+    for r in rows["rows"]:
+        if r["scenario"] != "real":
+            continue
+        estimators.append({"corner_type": r["corner_type"], "feature": r["feature"], "estimator": r["estimator"],
+                           "bias": round(r["bias"], 2), "std": round(r["std"], 2), "rmse": round(r["rmse"], 2),
+                           "chosen": CHOSEN_ESTIMATOR.get(r["feature"]) == r["estimator"],
+                           "naive": NAIVE_ESTIMATOR.get(r["feature"]) == r["estimator"]})
+    out["estimators"] = {"rows": estimators, "laps_per_type": rows["laps_per_type"],
+                         "source": "results/03_synthetic_errors/summary.json"}
+
+    # 4. alignment: the hero lap's projected-minus-integrated offset, and the gap from each coordinate
+    hero_session = next(s for s in sessions if s["year"] == HERO["year"] and s["location"] == HERO["location"])
+    raw = pd.read_parquet(RAW[HERO["year"]], filters=[("session_key", "=", hero_session["key"])])
+    laps = {}
+    for code in HERO["drivers"]:
+        best = next(d for d in hero_session["drivers"] if d["code"] == code)["laps"][0]
+        laps[code] = raw[(raw["driver"] == code) & (raw["lap"] == best["lap"])].sort_values("time_s")
+        laps[code].attrs["lap_time"] = best["time_s"]
+    a, b = laps[HERO["drivers"][0]], laps[HERO["drivers"][1]]
+    s, d = a["s_m"].to_numpy(), a["d_m"].to_numpy()
+    fused = fused_distance(s, d)
+    gaps = {}
+    for column in ["s_m", "d_m"]:
+        g, gap = delta_time(a[column], a["time_s"], b[column], b["time_s"])
+        gaps[column] = {"s": round_list(g, 0), "gap": round_list(gap, 3)}
+    d_a, s_a = increasing_distance(d, fused)
+    alignment = load("04_alignment/summary.json")
+    out["alignment"] = {
+        "driver": HERO["drivers"][0], "other": HERO["drivers"][1], "lap_time_gap": round(b.attrs["lap_time"] - a.attrs["lap_time"], 3),
+        "offset": {"d": round_list(d, 1), "raw": round_list(s - d, 2), "smooth": round_list(fused - d, 2)},
+        "gap_from_projected": gaps["s_m"], "gap_from_integrated": gaps["d_m"],
+        "window_error_m": round(alignment["fusion_offset_noise_m"], 2),
+        "source": "raw samples of the hero laps (2024 Abu Dhabi), app.data.fused_distance / delta_time; "
+                  "results/04_alignment/summary.json"}
+
+    # 5. what survives each step (the cleaning funnel), development and final test
+    dataset = load("09_dataset/summary.json")
+    repeat = load("11_repeatability/summary.json")["cleaning"]
+    final = load("final/summary.json")["cleaning_2025"]
+    out["funnel"] = {
+        "development": {"rows": dataset["rows"], "usable": dataset["usable_rows"],
+                        "excluded": dataset["exclusion_reasons"], "cleaning": repeat},
+        "final_2025": {"usable": final["usable_rows"], "cleaning": final},
+        "source": "results/09_dataset, results/11_repeatability, results/final (summary.json)"}
+    return out
+
+
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     sessions = build_sessions()
@@ -458,7 +583,7 @@ def main():
     headline = build_headline(sessions)
     outputs = [("sessions.json", sessions), ("hero.json", hero), ("headline.json", headline),
                ("features.json", build_features()), ("identification.json", build_identification()),
-               ("signatures.json", build_signatures(sessions))]
+               ("signatures.json", build_signatures(sessions)), ("method.json", build_method(sessions))]
     for name, content in outputs:
         with open(OUT_DIR / name, "w", encoding="utf-8") as file:
             json.dump(content, file, ensure_ascii=False, separators=(",", ":"))

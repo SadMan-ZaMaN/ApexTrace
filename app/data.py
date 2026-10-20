@@ -88,8 +88,10 @@ def fused_distance(s, d, window_m=FUSION_WINDOW_M):
       s (projected X/Y position): right on average, but each sample scatters by
         about +-3 m (position noise), which shakes the traces sideways;
       d (integrated speed): smooth, because integrating averages the noise
-        (an integrator is a low-pass filter), but it drifts: ~12 m per lap at
-        2024 Abu Dhabi.
+        (an integrator is a low-pass filter), but it drifts away from s slowly:
+        at 2024 Abu Dhabi the difference wanders between about -4 and +14 m
+        along the lap (speed-integration error, and the car's line being
+        longer or shorter than the reference path). See the Method page.
     A complementary filter keeps the good part of each: the offset s - d changes
     only slowly (drift) apart from the noise, so a moving average over
     `window_m` of track (about 20 samples) removes the noise and keeps the drift
@@ -184,6 +186,7 @@ class AppData:
         self.features = self._load_optional(app_dir / "features.json")
         self.identification = self._load_optional(app_dir / "identification.json")
         self.signatures = self._load_optional(app_dir / "signatures.json")
+        self.method = self._load_optional(app_dir / "method.json")
         self._corner_table = None
 
     @staticmethod
