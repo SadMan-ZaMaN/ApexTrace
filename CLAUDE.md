@@ -77,6 +77,8 @@ with dates.
   broadcast footage, onboard audio, team radio clips, driver photos, or
   F1/team logos. Charts made from telemetry are fine.
 
+update needed
+
 ### Environment
 - Windows 11, Claude Code inside VS Code. PowerShell is the main shell; Git
   Bash is also available.
