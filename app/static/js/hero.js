@@ -87,7 +87,7 @@
 
   // distance -> time lookup for the gap. The distance is INTEGRATED SPEED (d), not the
   // projected position (s): s scatters by ~3 m per sample and made the live gap jump
-  // around and read +0.29 s at the line instead of +0.2 s (CLAUDE.md bug history).
+  // around and read +0.29 s at the line instead of +0.2 s (docs/engineering_notes.md, bug history).
   function forward(d, t) {
     const fd = [], ft = [];
     for (let i = 0; i < d.length; i++) if (!fd.length || d[i] > fd[fd.length - 1]) { fd.push(d[i]); ft.push(t[i]); }

@@ -18,7 +18,7 @@ Two tools:
      peak is refined between grid points with a parabola, the same trick as
      Consonance's pitch detector on its autocorrelation peak.
 
-The trap (CLAUDE.md, Phase 3): alignment must not absorb the very difference
+The trap (Phase 3): alignment must not absorb the very difference
 we want to measure. If we shifted each lap so its *braking zone* matched the
 reference, a driver who brakes 5 m later would be "corrected" by 5 m. The
 projection method uses only positions, never the speed trace, so it can't do

@@ -2,6 +2,8 @@
 # Claude Code still reads CLAUDE.md from disk, so ignoring it changes nothing there.
 CLAUDE.md
 docs/PROJECT_CONTEXT.md
+# Personal study guide (chapters, viva questions, CV and email drafts): local only.
+learn/
 # Any other private note: put it in private/ and it stays local automatically.
 private/
 

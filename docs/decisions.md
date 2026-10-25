@@ -333,3 +333,11 @@ preregistration Part B is committed.
   requirements. The tests need no F1 data (synthetic signals, fake results
   folders, committed result files).
 - **Citations:** only works whose details were verified are cited in the report.
+
+## 2026-10-25 — What is public
+- **Public:** the code, the results, the report and README, the preregistration and
+  its deviations, the research log, the decisions, the data report, related work, and
+  the new `docs/engineering_notes.md` (structure, conventions, update loop and the full
+  bug history, moved out of a local working file so that reviewers can see it).
+- **Local only:** the AI working notes and the personal study guide (chapters, viva
+  practice, CV and email drafts). Public files no longer point to them.

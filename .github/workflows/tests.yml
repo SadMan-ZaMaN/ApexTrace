@@ -1,7 +1,7 @@
 # Continuous integration: run the test suite on GitHub's computers after every push.
 #
 # The tests never download F1 data: they use synthetic signals and tiny fake
-# results folders (CLAUDE.md, "Tests"). So this needs no API access, no cache,
+# results folders (docs/engineering_notes.md, "Conventions"). So this needs no API access, no cache,
 # and none of the gitignored raw files. Checked before adding: the suite passes
 # in a fresh clone, and every pinned package has a Linux wheel for Python 3.13.
 

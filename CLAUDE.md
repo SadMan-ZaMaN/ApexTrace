@@ -31,6 +31,7 @@ proposal — check before relying on it.
 | 2026-10-19 (later) | **Phase 8, part 2:** Corner lab (per-corner dot plots with measurement error + H1 ICC in words; rows via `dataset.clean`) and Driver vs car (H3 per team 2023–2025, H4 scatter + control, signature heat strip). Export adds features/identification/signatures JSON; signatures asserted to match frozen H4 distances. Phone layouts fixed. |
 | 2026-10-19 (final build) | **Phase 8 done (M8):** README + `docs/report.md` generated from templates by `17_write_docs.py` (every number from results/; `tests/test_docs.py` fails if stale or hand-edited); GitHub Actions CI (tests pass in a clean clone; all pins have Linux 3.13 wheels); README screenshots; related work: Enev 2016 + Bell 2016 verified; `learn/14` (video shot list, pitch, faculty email, CV lines, update loop); roadmap §8 handover filled. |
 | 2026-10-20 | **App polish after review:** replay (play/pause, ×1/×2/×4, timeline, click-to-jump) on the overview and Lap compare; overview live gap fixed (used `s_m`); line legend, Corner lab key, evidence links; **Method page** (sampling comb, filter group-delay demo, estimator errors, alignment offset + gap from each coordinate, cleaning funnel) from `method.json`. "~12 m drift" corrected: the offset wanders −4..+14 m within a lap. |
+| 2026-10-25 | Claude renewed for 30 days. **Public/private split:** CLAUDE.md and `learn/` become local-only (gitignored; Sadman untracks them with `git rm --cached`); the bug history, conventions and structure move to the public `docs/engineering_notes.md`; public code comments repointed there. |
 | next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
@@ -54,7 +55,8 @@ with dates.
 - **Working solo** (decided 2026-10-14). Rajin is not part of this project.
 - Big F1 fan, but not a vehicle-dynamics engineer. Explain car/racing terms
   plainly too (glossary in §22).
-- Time: ~3–4 h/day until 2026-10-23, then ~8–10 h/week. No deadline given yet.
+- Time: ~8–10 h/week after 2026-10-23. Claude Pro renewed on 2026-10-25 for
+  30 days (to about 2026-11-24). No deadline given yet.
 
 ### How to work with Sadman
 - **Teach, then build.** For each step: a short plain-language explanation
@@ -77,7 +79,6 @@ with dates.
   broadcast footage, onboard audio, team radio clips, driver photos, or
   F1/team logos. Charts made from telemetry are fine.
 
-update needed
 
 ### Environment
 - Windows 11, Claude Code inside VS Code. PowerShell is the main shell; Git
@@ -193,8 +194,10 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 ├── .github/workflows/      # tests.yml: pytest on every push (GitHub Actions)
 ├── notebooks/              # exploration only — final numbers come from experiments/
 ├── tests/                  # pytest; never downloads F1 data
-├── docs/                   # PROJECT_CONTEXT, research_log, decisions, related_work,
-│                           # data_report, preregistration
+├── docs/                   # report, preregistration (+ deviations), research_log, decisions,
+│                           # related_work, data_report, engineering_notes (PUBLIC copy of the
+│                           # bug history + conventions); PROJECT_CONTEXT is local-only
+├── learn/                  # Sadman's study guide (chapters, viva, CV/email drafts): LOCAL ONLY
 ├── results/                # small JSON/CSV outputs + figures
 └── cache/                  # FastF1 cache — gitignored
 ```
@@ -270,41 +273,12 @@ synthetic signals and tiny derived fixtures.
 
 ## Bug history
 
-Anything that took real debugging: what broke, why, and the fix. Read this
-before "simplifying" code.
+The full entries (what broke, why, the fix, the guarding tests) are in the PUBLIC
+file [docs/engineering_notes.md](docs/engineering_notes.md): add new entries
+there. Read it before "simplifying" code. The rules, in one line each:
 
-- **2026-10-15 — Don't judge "slow laps" against the driver's session best.**
-  The first `select_laps` (and FastF1's `pick_quicklaps()`) used 107 % of the
-  driver's fastest lap of the session. In 2024 Abu Dhabi FP2 that cut 6 of
-  Norris's 7 medium long-run laps but only 2 of Piastri's, only because his
-  soft-tyre lap was 0.23 s quicker. Fix: 107 % of the best lap *of the same
-  stint*, plus a "not a timed run" rule for whole stints (> 115 % of the
-  driver's best). Tests `test_long_run_is_judged_against_its_own_stint` and
-  `test_stint_that_was_never_a_timed_run_is_dropped` guard it.
-- **2026-10-17 — Minimum permutation p-value is 1/C for unequal groups, 2/C only
-  for equal groups** (no mirror split otherwise). Found when a 3 vs 4 test gave
-  p = 1/35 below the stated "minimum" 2/35. Guarded by
-  `test_minimum_p_for_unequal_groups_has_no_mirror_split`.
-- **2026-10-17 — OpenF1 lap table: don't use FastF1's "lap start = previous
-  lap end (3 ms)" check, and give overlapping stint laps to the NEW stint.**
-  OpenF1 lap starts are only accurate to ~0.1 s; with the check, ~3 of 4 push
-  laps per driver were dropped. Guarded by the validation experiment (kept laps
-  identical for 20/20 drivers) and `test_overlapping_stints_give_the_shared_lap_to_the_new_stint`.
-- **2026-10-18 — OpenF1 can have NO laps for a whole session** (2025 Baku
-  qualifying: `laps` → 404, while stints/race control/drivers exist).
-  `lap_table` did `groupby("driver_number")` on an empty table → KeyError, and
-  the one-time final run crashed (before any result). Fix: return an empty
-  table; `build_session` skips it ("no laps"). Guarded by
-  `test_session_without_laps_is_skipped_not_crashed`. Lesson: before a
-  one-time run, download everything first, then analyse.
-- **2026-10-19 — Don't compute the lap-to-lap time gap from projected position
-  `s_m`.** It gave a ±0.1 s sawtooth and ended 0.08 s off the official gap
-  (position scatter ~3 m + a lap-specific offset). Use integrated distance
-  `d_m` (smooth; drift common to both laps cancels): ends within ~0.01 s.
-  Charts use the fused coordinate `d + moving_average(s − d)`. Guarded by
-  `test_gap_from_integrated_distance_beats_projected_position` and
-  `test_compare_returns_both_laps_and_a_correct_gap` (fails on the `s_m` version).
-  **The same mistake survived in the overview hero's live gap** (hero.js used
-  `s`; found 2026-10-20: it read +0.05..+0.47 s instead of −0.06..+0.22 s).
-  Fixed: hero.json carries `d`, hero.js looks up the gap on it. Any new
-  "gap" readout must use `d`.
+- Judge slow laps against the best lap of the same **stint**, not the session best.
+- Minimum permutation p-value: 1/C for unequal groups, 2/C only for equal groups.
+- OpenF1 lap table: no FastF1 3 ms lap-start check; overlapping stint laps go to the NEW stint.
+- OpenF1 can have no laps for a whole session: return an empty table and skip it.
+- Never compute a time gap from projected position `s_m`: use integrated distance `d_m`.

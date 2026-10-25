@@ -48,7 +48,7 @@ FP2, Lando Norris (NOR) and Oscar Piastri (PIA), the 30 laps kept by
 1. FastF1's docs say interpolated rows have `Source == 'interpolated'`; the
    code (3.8.3) writes `'interpolation'`.
 2. A "slow lap" rule against the driver's session best treats long runs
-   unfairly (bug history in CLAUDE.md).
+   unfairly (bug history in docs/engineering_notes.md).
 3. `add_distance()` without `interpolate_edges=True` leaves out the stretch
    from the last sample to the finish line.
 4. FastF1's own docs warn: "Expect an error of around ±10m when overlapping

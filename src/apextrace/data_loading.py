@@ -145,7 +145,7 @@ def select_laps(laps, slow_lap_factor=SLOW_LAP_FACTOR,
     mediums is ~6-9 % slower. Against the session best, a 107 % rule cut 6
     of Norris's 7 long-run laps but only 2 of Piastri's, just because his
     soft lap was quicker. Against the stint best, a long run is compared
-    with itself. See the bug history in CLAUDE.md.
+    with itself. See the bug history in docs/engineering_notes.md.
 
     References are per driver, so one driver's pace never decides which laps
     of another driver count.
