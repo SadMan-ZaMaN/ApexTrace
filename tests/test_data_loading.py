@@ -10,7 +10,7 @@ import fastf1
 import pandas as pd
 import pytest
 
-from apextrace.data_loading import load_session, select_laps
+from apextrace.data_loading import check_not_frozen, load_session, select_laps
 
 
 def make_lap(driver, lap_number, stint, seconds, **changes):
@@ -126,3 +126,27 @@ def test_load_session_refuses_the_frozen_2025_season(monkeypatch):
 
     with pytest.raises(PermissionError):
         load_session(2025, "Abu Dhabi", "Q")
+
+
+def test_2026_is_held_out_with_its_own_switch(monkeypatch):
+    # The 2025 switch must NOT open 2026: each held-out season has its own.
+    monkeypatch.setenv("FINAL_TEST", "1")
+    monkeypatch.delenv("FINAL_TEST_2026", raising=False)
+    check_not_frozen(2025)                       # opened by its switch: no error
+    with pytest.raises(PermissionError, match="FINAL_TEST_2026"):
+        check_not_frozen(2026)
+    monkeypatch.setenv("FINAL_TEST_2026", "1")
+    check_not_frozen(2026)                       # only its own switch opens it
+    check_not_frozen(2024)                       # development seasons are never blocked
+
+
+def test_openf1_refuses_2026_before_any_download(monkeypatch):
+    from apextrace import openf1
+    monkeypatch.delenv("FINAL_TEST_2026", raising=False)
+
+    def must_not_be_called(*args, **kwargs):
+        raise AssertionError("OpenF1 was asked for 2026 data")
+
+    monkeypatch.setattr(openf1, "fetch", must_not_be_called)
+    with pytest.raises(PermissionError):
+        openf1.qualifying_sessions(2026)

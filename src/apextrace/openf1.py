@@ -18,7 +18,8 @@ pieces, not FastF1's ready-made lap table, so this module rebuilds it:
   IsAccurate       FastF1's four checks, from OpenF1 fields (see accuracy_checks)
 
 Every request is cached as a JSON file in cache/openf1/, so each piece of
-data is downloaded only once. The 2025 season is refused unless FINAL_TEST=1.
+data is downloaded only once. Held-out seasons are refused unless their own switch
+is set (2025: FINAL_TEST=1, 2026: FINAL_TEST_2026=1; data_loading.check_not_frozen).
 """
 
 import hashlib

@@ -341,3 +341,17 @@ preregistration Part B is committed.
   bug history, moved out of a local working file so that reviewers can see it).
 - **Local only:** the AI working notes and the personal study guide (chapters, viva
   practice, CV and email drafts). Public files no longer point to them.
+
+## 2026-10-26 — 2026 is the next held-out season
+- **2026 is frozen in the code** before anything about it was looked at:
+  `data_loading.FROZEN_SEASONS = {2025: "FINAL_TEST", 2026: "FINAL_TEST_2026"}`.
+  Each season has its own switch, so the 2025 switch can't open 2026 by accident.
+  Checked first: the local cache holds no 2026 data at all.
+- **Why 2026:** the 2026 regulations introduced a new car generation, which allows
+  a new question (H5: does a driver's signature survive a new car?) and a second,
+  independent test of H4 with the 2026 team changes. It will be planned on
+  2023–2025 data, preregistered as Part C, committed, and then run once.
+- **2025 becomes development data for these new questions.** Its final test
+  (H3/H4) is done and frozen in `results/final/`; the saved 2025 dataset may now
+  be used to develop H5, the way 2023–2024 were used for H3/H4. The 2025 download
+  guard stays in place.

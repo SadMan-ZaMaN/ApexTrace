@@ -32,6 +32,7 @@ proposal — check before relying on it.
 | 2026-10-19 (final build) | **Phase 8 done (M8):** README + `docs/report.md` generated from templates by `17_write_docs.py` (every number from results/; `tests/test_docs.py` fails if stale or hand-edited); GitHub Actions CI (tests pass in a clean clone; all pins have Linux 3.13 wheels); README screenshots; related work: Enev 2016 + Bell 2016 verified; `learn/14` (video shot list, pitch, faculty email, CV lines, update loop); roadmap §8 handover filled. |
 | 2026-10-20 | **App polish after review:** replay (play/pause, ×1/×2/×4, timeline, click-to-jump) on the overview and Lap compare; overview live gap fixed (used `s_m`); line legend, Corner lab key, evidence links; **Method page** (sampling comb, filter group-delay demo, estimator errors, alignment offset + gap from each coordinate, cleaning funnel) from `method.json`. "~12 m drift" corrected: the offset wanders −4..+14 m within a lap. |
 | 2026-10-25 | Claude renewed for 30 days. **Public/private split:** CLAUDE.md and `learn/` become local-only (gitignored; Sadman untracks them with `git rm --cached`); the bug history, conventions and structure move to the public `docs/engineering_notes.md`; public code comments repointed there. |
+| 2026-10-26 | **Extension, day 1 of 30:** 2026 frozen in the code (own switch `FINAL_TEST_2026`; cache checked: no 2026 data). Daily plan in roadmap.md §9. Sadman: exams until ~2026-11-24, commits one portion per day; Claude builds autonomously. |
 | next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
@@ -136,8 +137,10 @@ braking, medium speed, fast), chosen from the data in Phase 1.
   ≈ 37.5 m at 250 km/h → use zero-phase filtering (`filtfilt`, §9.3).
   Differentiation amplifies noise (§9.4).
 - FFT on a single corner (~15 samples) is nearly useless (§9.10).
-- **The 2025 season is the frozen final test set** (confirmed 2026-10-14).
-  Develop on 2023–2024; commit `docs/preregistration.md` before loading 2025 (§11.7).
+- **The 2025 season was the frozen final test set** (used once, 2026-10-18;
+  `results/final/` frozen; its saved data is now development data for H5).
+- **2026 is the next held-out season** (frozen 2026-10-26, switch `FINAL_TEST_2026`):
+  plan H5 + a second H4 test on 2023–2025, commit preregistration Part C, then run once.
 
 ## Roadmap summary (full table: §14)
 

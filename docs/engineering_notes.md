@@ -51,8 +51,10 @@ results/                small outputs (JSON, CSV, PNG); raw Parquet files are gi
 - **Events on raw samples:** smoothing is never applied before locating an event
   (filters shift or smear events; see the Method page and Phase 2).
 - **No random splits** in identification: whole weekends are left out.
-- **The 2025 season is frozen:** never re-run `14_final_2025.py` into `results/final/`;
-  a fix is re-run into a new folder and both results are reported.
+- **Held-out seasons are frozen in the code** (`data_loading.FROZEN_SEASONS`), each
+  with its own switch: 2025 (`FINAL_TEST`, used once; never re-run `14_final_2025.py`
+  into `results/final/`; a fix is re-run into a new folder and both results are
+  reported) and 2026 (`FINAL_TEST_2026`, held out for preregistration Part C).
 - **No raw data or media in the repository:** `*.parquet` and `cache/` are gitignored;
   no logos, photos, broadcast footage or team radio.
 

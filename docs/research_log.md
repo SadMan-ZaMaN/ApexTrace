@@ -647,3 +647,18 @@ of a braking event.
 - **Links:** the overview's "How it works" points to the Method page, and the README
   table shows it. Checked at 1440 px and 390 px (estimator chart and cleaning funnel
   re-laid out for phones).
+
+---
+
+## 2026-10-26 — Day 1 of the extension: 2026 locked in the code
+
+- **Next phase planned:** H5 (does a driver's signature survive the 2026 new car
+  generation?) plus a second H4 test with the 2026 team changes, planned on
+  2023–2025 data, preregistered as Part C, then run once on 2026.
+- **Before anything else, the 2026 season was frozen.** `check_not_frozen` now
+  refuses each held-out season unless its own switch is set (2025: `FINAL_TEST`,
+  2026: `FINAL_TEST_2026`). Checked first: no 2026 file in the OpenF1 cache, no 2026
+  row in any cached session list, and no 2026 FastF1 folder.
+- **Tests:** `test_2026_is_held_out_with_its_own_switch` (the 2025 switch must not
+  open 2026) and `test_openf1_refuses_2026_before_any_download`; both fail on the
+  previous code. 108 tests pass.

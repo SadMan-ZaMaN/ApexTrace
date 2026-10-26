@@ -2,10 +2,10 @@
 
 Why this module exists:
   - One place that sets up the cache, so every script loads data the same way.
-  - A guard that stops us loading the 2025 season by accident. 2025 is the
-    frozen final test set (decisions.md): if we look at it while developing,
-    we tune our method to it without meaning to, and the final numbers look
-    better than they are.
+  - A guard that stops us loading a held-out season by accident (2025, used
+    once for the final test, and 2026, the next one; decisions.md): if we
+    look at a test season while developing, we tune our method to it without
+    meaning to, and the final numbers look better than they are.
   - Lap selection that never drops a lap silently. Each dropped lap comes
     back with the reason(s), so the data report can say exactly what was
     removed and why ("12 of 23 laps dropped: 6 out laps, 5 in laps, ...").
@@ -20,7 +20,13 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CACHE_DIR = REPO_ROOT / "cache"
 
-FROZEN_TEST_YEAR = 2025
+# Held-out seasons, each opened only by its OWN switch, once, for a preregistered test:
+#   2025: the final test of H3/H4 (run once on 2026-10-18; results/final/ is frozen)
+#   2026: the next held-out season: H5 (new car generation) and a second H4 test,
+#         preregistration Part C
+# FINAL_TEST=1 opens 2025 only; it can never open 2026 by accident.
+FROZEN_SEASONS = {2025: "FINAL_TEST", 2026: "FINAL_TEST_2026"}
+FROZEN_TEST_YEAR = 2025      # the first held-out season (kept for older scripts)
 
 # A lap slower than this many times the best clean lap *of its own stint*
 # (one set of tyres) is not a push lap: a cool-down lap, or a lap stuck in
@@ -37,11 +43,19 @@ TIMED_RUN_FACTOR = 1.15
 
 
 def check_not_frozen(year):
-    """Raise PermissionError for the frozen 2025 season unless FINAL_TEST=1 (used by every data source)."""
-    if int(year) == FROZEN_TEST_YEAR and os.environ.get("FINAL_TEST") != "1":
+    """Raise PermissionError for a held-out season unless its own switch is set to 1.
+
+    WHY: a test season only counts if nothing was tuned on it. Every data
+    source (FastF1 and OpenF1) calls this BEFORE downloading anything, so a
+    held-out season can't be looked at by accident while developing.
+    Example: check_not_frozen(2026) fails unless FINAL_TEST_2026=1, even when
+    FINAL_TEST=1 is set (that switch belonged to the 2025 run).
+    """
+    switch = FROZEN_SEASONS.get(int(year))
+    if switch is not None and os.environ.get(switch) != "1":
         raise PermissionError(
-            f"{year} is the frozen final test set. Set FINAL_TEST=1 only for "
-            f"the one-time final evaluation, after docs/preregistration.md "
+            f"{year} is a held-out test season. Set {switch}=1 only for its "
+            f"one-time evaluation, after its part of docs/preregistration.md "
             f"is committed."
         )
 
