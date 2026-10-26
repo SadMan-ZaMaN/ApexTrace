@@ -662,3 +662,25 @@ of a braking event.
 - **Tests:** `test_2026_is_held_out_with_its_own_switch` (the 2025 switch must not
   open 2026) and `test_openf1_refuses_2026_before_any_download`; both fail on the
   previous code. 108 tests pass.
+
+---
+
+## 2026-10-27 — Day 2: literature search, part 1
+
+- **Searched** (general web search, 7 queries; logged in `docs/related_work.md`) and
+  **verified citations** for 9 new items: Hallac et al. 2016 (driver identification
+  from a single turn: turns separate drivers better than straights), Chen, Cho & Shin
+  2017 (Dri-Fi: 74–91 % from one turn for 12–5 drivers), Remonda et al. 2021 (PLOS ONE,
+  simulator), van Kesteren & Bergkamp 2023 (JQAS: ~88 % of race-result variance is the
+  constructor), Lindner et al. 2026 (arXiv: state-space model on qualifying lap times;
+  driver abilities more stable than constructor abilities), Eichenberger & Stadelmann
+  2009, Löckel 2022 (thesis exists; method details still to check), three CAN-bus
+  identification reviews/datasets, and the authors of the IJMO 2026 clustering paper
+  (Taylor & Secco).
+- **Unverified, marked ⚠️:** Phillips 2014 (only from other papers' reference lists),
+  the details of Löckel's method, two sim-racing items.
+- **Gap, as far as these searches go:** no study found that identifies drivers from
+  real F1 telemetry on held-out sessions, quantifies corner-feature error at ~3.7 Hz,
+  or tests driver vs car at the level of style (the driver-vs-car papers model
+  results). To be confirmed with Scholar/Semantic Scholar/arXiv and forward citations
+  (Day 3) before any novelty claim.
