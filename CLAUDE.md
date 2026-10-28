@@ -34,6 +34,7 @@ proposal — check before relying on it.
 | 2026-10-25 | Claude renewed for 30 days. **Public/private split:** CLAUDE.md and `learn/` become local-only (gitignored; Sadman untracks them with `git rm --cached`); the bug history, conventions and structure move to the public `docs/engineering_notes.md`; public code comments repointed there. |
 | 2026-10-26 | **Extension, day 1 of 30:** 2026 frozen in the code (own switch `FINAL_TEST_2026`; cache checked: no 2026 data). Daily plan in roadmap.md §9. Sadman: exams until ~2026-11-24, commits one portion per day; Claude builds autonomously. |
 | 2026-10-27 | **Day 2:** literature search I: related_work.md rebuilt with a search log, 9 new verified citations (Hallac 2016, Chen 2017, van Kesteren & Bergkamp 2023, Lindner 2026, ...), ⚠️ marks for what is unverified, and the gap stated as "not found so far". |
+| 2026-10-28 | **Day 3:** literature II: Semantic Scholar + OpenAlex searches, forward citations (126 citers of Hallac 2016: none in racing), abstracts read; Frontiers 2025 is pit-stop prediction; report gets Section 2 "Related work" (12 new references, renumbered). |
 | next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)

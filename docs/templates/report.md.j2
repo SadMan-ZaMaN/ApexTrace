@@ -39,7 +39,37 @@ qualifying session of 2023–2025. (iii) A leakage-free identification protocol 
 season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
 of team, with an exploratory control. (v) A web application that shows every result with its uncertainty.
 
-## 2. Data
+## 2. Related work
+
+{# Literature figures below (74-91 %, 88 %) are quotations from the cited papers, not results of this project. #}
+**Identifying drivers from vehicle data.** Drivers of road cars can be told apart from in-car sensor data (Enev et
+al., 2016), and a single turn already carries much of the signature: Hallac et al. (2016) identified drivers from one
+turn and found turns more informative than straights, and Chen, Cho and Shin (2017) reached 74–91 % accuracy from one
+turn with phone motion sensors, for groups of 12 down to 5 drivers. Later work uses sequence models (Girma, Yan and
+Homaifar, 2019; Govers et al., 2024). These studies log sensors inside the car. Here the data are a public broadcast
+feed at about {{ data.rate_hz }} samples per second with an on/off brake signal, the drivers to separate are teammates
+in identical cars, and the test is on unseen weekends and an unseen season.
+
+**Driving style in racing.** In simulators, telemetry separates human skill levels (Remonda, Veas and Luzhnica, 2021)
+and individual drivers (Vogel et al., 2022). For Formula 1, Taylor and Secco (2026) cluster drivers on race-level
+statistics such as lap-time consistency and tyre degradation. A 2026 scoping review of artificial intelligence in
+motorsport (Lucaciu and Győrödi, 2026) finds race strategy and vehicle optimisation well covered; its abstract does not
+mention driver identification or driving style.
+
+**Driver versus car.** Separating the driver from the car has been studied on results: points (Eichenberger and
+Stadelmann, 2009; Phillips, 2014; Bell et al., 2016), finishing positions, where about 88 % of the variance in
+hybrid-era race results is attributed to the constructor (van Kesteren and Bergkamp, 2023), and qualifying lap times
+with race results, where driver abilities are more stable over time than constructor abilities (Lindner et al., 2026).
+These models use the same two sources of information as this project, teammates and team changes, but they explain
+outcomes, not how the car is driven.
+
+**Gap.** Our searches (a general web search engine, Semantic Scholar and OpenAlex, October 2026, plus the 126 papers
+that cite Hallac et al., 2016) found no study that identifies
+drivers from real Formula 1 telemetry on held-out sessions, quantifies the measurement error of corner features at the
+public feed's sample rate, or separates driver from car at the level of driving style. This describes what we found,
+not a proof that no such study exists.
+
+## 3. Data
 
 **Source.** Timing data come from the official live-timing feed through two public interfaces. The pilot used FastF1;
 when the F1 archive began refusing requests (HTTP 401) we switched to OpenF1, which serves the same feed. On the
@@ -65,7 +95,7 @@ braking after the corner marker) set to missing. This leaves {{ data.clean_dev }
 **The frozen season.** From the first day, the code refused to load 2025 unless an environment flag was set, and the
 final script refused to run unless the preregistration was committed, unchanged, and had not been run before.
 
-## 3. Measurement science
+## 4. Measurement science
 
 Every estimator was tested on synthetic laps with a known truth (realistic speed profiles, the feed's irregular
 sampling and dropouts, whole-unit quantisation), with {{ measure.mc_laps }} laps per corner type.
@@ -93,7 +123,7 @@ brake onset to the slowest point is used instead.
 integrating speed gives one that is smooth but drifts. A complementary filter (integrated speed plus a low-pass
 correction from position, weighted by 1/speed²) gives {{ measure.alignment_m }} m along-track error in each corner window.
 
-## 4. Features and statistical design
+## 5. Features and statistical design
 
 **Features.** For each (driver, lap, corner): brake onset, entry speed (200 m before the marker), minimum speed,
 slowest point, braking distance, mean deceleration, throttle pickup, full throttle, exit speed (150 m after), corner
@@ -120,16 +150,16 @@ changers.
 **Preregistration.** The pilot tests (Part A, commit `{{ prereg.part_a }}`) and the final 2025 evaluation (Part B, commit
 `{{ prereg.part_b }}`) were committed before they were run. Deviations are reported in a separate file and below.
 
-## 5. Results
+## 6. Results
 
-### 5.1 Pilot (H2): too few laps, as predicted
+### 6.1 Pilot (H2): too few laps, as predicted
 
 Norris vs Piastri, 2024 Abu Dhabi qualifying, {{ pilot.laps_nor }} and {{ pilot.laps_pia }} push laps: {{ pilot.discoveries }} of {{ pilot.tests }} feature-by-corner comparisons survived
 Benjamini–Hochberg correction, as the preregistration predicted from the smallest possible p-values. The largest
 effects: Norris braked {{ pilot.t5_diff_m }} m later at T5 (Hedges' g {{ pilot.t5_g }}, p = {{ pilot.t5_p }}) and {{ pilot.t9_diff_m }} m later at T9 (g {{ pilot.t9_g }}, p = {{ pilot.t9_p }}):
 consistent with a real difference, not confirmed.
 
-### 5.2 Repeatability (H1): partly
+### 6.2 Repeatability (H1): partly
 
 Across all 2023–2024 drivers, lap-level ICCs ranged from {{ h1.lap_min }} to {{ h1.lap_max }}, and weekend-level ICCs from {{ h1.weekend_min }} to
 {{ h1.weekend_max }}. The lap-to-lap spread was {{ h1.ratio_min }} to {{ h1.ratio_max }} times the per-lap measurement error in all {{ h1.ratio_cases }} cases where the error
@@ -139,7 +169,7 @@ weekends are {{ h1.best_weekend | join(", ") }}. Brake onset at slow corners rep
 
 ![ICC per feature and corner type](../results/11_repeatability/icc.png)
 
-### 5.3 Identification (H3): supported, and replicated on 2025
+### 6.3 Identification (H3): supported, and replicated on 2025
 
 | Balanced accuracy (mean over teams) | Development 2023–2024 ({{ h3.dev.teams }} team-seasons) | Final 2025 ({{ h3.final.teams }} teams) |
 |---|---|---|
@@ -160,7 +190,7 @@ lap time alone is little better than chance there.
 
 ![Teammate identification per team, 2025](../results/15_final_exploratory/final_h3_teams.png)
 
-### 5.4 Driver vs car (H4): not supported
+### 6.4 Driver vs car (H4): not supported
 
 **Development (2023 → 2024, same car both years).** A driver's 2024 signature ranked their own 2023 signature
 {{ h4.dev.mean_rank }} of {{ h4.dev.pool }} on average (chance {{ h4.dev.chance_rank }}; first for {{ h4.dev.rank_1 }} of {{ h4.dev.drivers }}, permutation {{ h4.dev.rank_p }}) and was closer to it than to the
@@ -184,14 +214,14 @@ these numbers (Fisher's exact {{ h4.explore.fisher_p }}).
 
 ![Distance to own past vs to the 2025 teammate](../results/15_final_exploratory/final_h4_distances.png)
 
-### 5.5 Deviations from the plan
+### 6.5 Deviations from the plan
 
 1. The first final run crashed while downloading, before any result existed: OpenF1 has no lap data for 2025 Baku
    qualifying. The session is skipped (a one-line fix with a test); the deviation was recorded before the rerun.
 2. Franco Colapinto (Williams → Alpine) also changed teams but was missing from the preregistered list. The primary test
    was kept as planned; with him included the result is {{ h4.explore.with_col_own }} of {{ h4.explore.with_col_n }} ({{ h4.explore.with_col_p }}), so the conclusion does not change.
 
-## 6. Discussion
+## 7. Discussion
 
 **What holds.** Within a team, corner-level telemetry carries a driver signature that generalises to unseen
 weekends and to an unseen season, and that is stable from one year to the next for drivers who stay. It is weak
@@ -213,13 +243,14 @@ between two teammates; the all-driver task is much harder. H4 rests on five driv
 found that the projected track position may carry a lap-specific offset of a few metres; it would add noise to the
 position features, and checking it over many laps is future work. The frozen results do not depend on it.
 
-## 7. Conclusion and future work
+## 8. Conclusion and future work
 
 Low-rate public telemetry supports corner-level features with known errors, and those features carry a
 teammate-level driver signature that replicated on a held-out season. They do not beat simple lap statistics, and they
 did not show that style follows a driver into a new car. Next steps: more team changes as seasons accumulate (and the
 2026 regulation change, H5); features made relative to the teammate on each weekend to remove the car; the
-position-offset check; a learned sequence model under the same held-out protocol; and a systematic literature search.
+position-offset check; a learned sequence model under the same held-out protocol; and a full reading of the
+closest related work (Section 2).
 
 ## Reproducibility
 
@@ -234,16 +265,41 @@ research log and a decision log record what was done and why, with dates.
   driver and constructor performance, 1950–2014. *Journal of Quantitative Analysis in Sports*, 12(2), 99–112.
 - Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to
   multiple testing. *Journal of the Royal Statistical Society, Series B*, 57(1), 289–300.
+- Chen, D., Cho, K.-T. and Shin, K. G. (2017). Mobile IMUs reveal driver's identity from vehicle turns. arXiv:1710.04578.
 - Efron, B. and Tibshirani, R. J. (1993). *An Introduction to the Bootstrap*. Chapman & Hall.
+- Eichenberger, R. and Stadelmann, D. (2009). Who is the best Formula 1 driver? An economic approach to evaluating
+  talent. *Economic Analysis and Policy*, 39(3), 389–406.
 - Enev, M., Takakuwa, A., Koscher, K. and Kohno, T. (2016). Automobile driver fingerprinting. *Proceedings on Privacy
   Enhancing Technologies*, 2016(1), 34–51.
+- Girma, A., Yan, X. and Homaifar, A. (2019). Driver identification based on vehicle telematics data using
+  LSTM-recurrent neural network. IEEE International Conference on Tools with Artificial Intelligence (ICTAI); arXiv:1911.08030.
+- Govers, W., Yurtman, A., Aslandere, T. et al. (2024). Time-shifted transformers for driver identification using
+  vehicle data. *IEEE Transactions on Intelligent Transportation Systems*. DOI 10.1109/TITS.2023.3326652.
+- Hallac, D., Sharang, A., Stahlmann, R., Lamprecht, A., Huber, M., Roehder, M., Sosič, R. and Leskovec, J. (2016).
+  Driver identification using automobile sensor data from a single turn. *2016 IEEE 19th International Conference on
+  Intelligent Transportation Systems (ITSC)*, 953–958.
 - Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect size and related estimators. *Journal of
   Educational Statistics*, 6(2), 107–128.
 - Holm, S. (1979). A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*, 6(2), 65–70.
+- Lindner, T., Almeida, R. J., Baştürk, N. and Smeekes, S. (2026). Drivers of success: a Bayesian state-space model to
+  disentangling latent driver and constructor abilities in Formula One. arXiv:2608.04629.
+- Lucaciu, R. C. and Győrödi, C. A. (2026). Artificial intelligence in motorsport: a scoping review of applications,
+  challenges, and research gaps. *International Journal of Advanced Computer Science and Applications*, 17(5).
 - Nosek, B. A., Ebersole, C. R., DeHaven, A. C. and Mellor, D. T. (2018). The preregistration revolution. *Proceedings of
   the National Academy of Sciences*, 115(11), 2600–2606.
+- Phillips, A. J. (2014). Uncovering Formula One driver performances from 1950 to 2013 by adjusting for team and
+  competition effects. *Journal of Quantitative Analysis in Sports*, 10(2), 261–278.
+- Remonda, A., Veas, E. and Luzhnica, G. (2021). Comparing driving behavior of humans and autonomous driving in a
+  professional racing simulator. *PLOS ONE*, 16(2), e0245320.
 - Shrout, P. E. and Fleiss, J. L. (1979). Intraclass correlations: uses in assessing rater reliability. *Psychological
   Bulletin*, 86(2), 420–428.
+- Taylor, A. J. W. and Secco, E. (2026). Can unsupervised learning methods reveal distinct driving styles among
+  Formula 1 (F1) drivers? *International Journal of Modeling and Optimization*, 16. DOI 10.7763/IJMO.2026.V16.881.
+- van Kesteren, E.-J. and Bergkamp, T. L. G. (2023). Bayesian analysis of Formula One race results: disentangling
+  driver skill and constructor advantage. *Journal of Quantitative Analysis in Sports*, 19(4), 273–293.
+- Vogel, R., Schmidsberger, F., Kühn, A. et al. (2022). You can't drive my car: a method to fingerprint individual
+  driving styles in a sim-racing setting. *International Conference on Electrical, Computer and Energy Technologies
+  (ICECET)*. DOI 10.1109/ICECET55527.2022.9872663.
 - Wilcoxon, F. (1945). Individual comparisons by ranking methods. *Biometrics Bulletin*, 1(6), 80–83.
 - FastF1 (Python package), https://github.com/theOehrly/Fast-F1, and OpenF1 (API), https://openf1.org.
 

@@ -684,3 +684,28 @@ of a braking event.
   or tests driver vs car at the level of style (the driver-vs-car papers model
   results). To be confirmed with Scholar/Semantic Scholar/arXiv and forward citations
   (Day 3) before any novelty claim.
+
+---
+
+## 2026-10-28 — Day 3: literature search, part 2, and a related-work section
+
+- **Academic indexes:** Semantic Scholar (3 searches answered; then its free tier
+  returned "too many requests") and OpenAlex (3 searches + citation lookups).
+- **Forward citations:** none of the 126 papers in OpenAlex that cite Hallac et al.
+  2016 (driver identification from a single turn) applies it to racing. Van Kesteren
+  & Bergkamp 2023 has 3 citing papers; the one about F1 compares results metrics.
+- **Pass 1 (abstracts) read:** Hallac et al. 2016 (venue verified: IEEE ITSC 2016,
+  953–958), Girma et al. 2019, Lindner et al. 2026, the 2025 Frontiers paper (it is
+  pit-stop prediction, not driver identification: the ⚠️ is resolved), and the 2026
+  scoping review of AI in motorsport (Lucaciu & Győrödi): its abstract lists six
+  domains and does not mention driver identification or driving style.
+- **New items:** sim-racing driving-style fingerprinting (Vogel et al. 2022),
+  smartphone identification from one turn (Tahmasbi et al. 2018), transformers for
+  driver identification (Govers et al. 2024), an Elo method separating car and driver
+  (Xun 2024), braking-point estimation for racing cars (Peitzmeier et al. 2022), and
+  others; Phillips 2014's citation is now verified (DOI 10.1515/jqas-2013-0031).
+- **Report:** new Section 2, "Related work" (identifying drivers; style in racing;
+  driver vs car; the gap, stated as what the searches found), 12 new references,
+  sections renumbered. Only verified works are cited; literature figures are quotes.
+- **Before any novelty claim:** read the full scoping review and the five closest
+  papers (pass 2); Google Scholar by hand.
