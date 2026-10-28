@@ -709,3 +709,24 @@ of a braking event.
   sections renumbered. Only verified works are cited; literature figures are quotes.
 - **Before any novelty claim:** read the full scoping review and the five closest
   papers (pass 2); Google Scholar by hand.
+
+---
+
+## 2026-10-29 — Day 4: a method to measure the position offset (synthetic first)
+
+- **New function** `quality.start_offset(s, d)`: the median of projected position minus
+  integrated distance over the first 300 m after the line, where integrated speed has
+  had no time to drift. A lap-specific offset shows as a non-zero median.
+- **Tested on synthetic laps** at realistic speed, sampled like the feed, with known
+  offsets (−6, 0, +5 m) and drift (0.25 %, 0.5 %): averaged over 30 laps the estimate
+  hits the true offset apart from a small, predictable drift bias of −drift × 150 m
+  (worst error 0.41 m over 60 cases and 10 seeds); one lap's estimate scatters by
+  0.82–0.97 m (the noise floor); projection glitches are ignored.
+- **Bias found while testing** (and documented rather than hidden by a looser
+  tolerance): integrated speed drifts a little even inside the window, so the estimate
+  is low by about drift × 150 m (−0.4 m at the feed's ~0.25 %).
+- **Guard:** the obvious shortcut (average position − integrated distance over the whole
+  lap) is off by more than 5 m at 0.5 % drift; the test checks this, so nobody
+  "simplifies" to it.
+- **Experiment design written down before running** (decisions.md, four questions with
+  decision rules). Tomorrow: run it on all 2023–2025 kept laps.

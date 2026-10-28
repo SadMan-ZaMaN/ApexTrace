@@ -14,6 +14,7 @@ from apextrace.quality import (
     sample_intervals,
     share_on_grid,
     smallest_step,
+    start_offset,
 )
 
 
@@ -133,3 +134,63 @@ def test_distance_to_path_on_a_realistic_corner():
     chord_error = radius * (1 - math.cos(0.1))
     assert np.all(distances >= 1.5 - 1e-9)
     assert np.all(distances <= 1.5 + chord_error + 1e-9)
+
+
+def synthetic_lap(rng, offset_m, drift, scatter_m=3.0, length_m=5000.0):
+    """A lap sampled like the feed, with a known position offset.
+
+    True distance x(t) from a speed that swings between ~30 and ~80 m/s
+    (corners and straights), sampled at irregular 0.16-0.44 s intervals.
+    Integrated distance d = x * (1 + drift) (a speed-scale error), projected
+    position s = x + offset + scatter (the position error under test).
+    """
+    step = 0.01
+    t, x, times, true = 0.0, 0.0, [], []
+    next_sample = rng.uniform(0.0, 0.2)
+    while x < length_m:
+        speed = 55.0 + 25.0 * np.cos(2 * np.pi * x / 800.0)
+        if t >= next_sample:
+            times.append(t)
+            true.append(x)
+            next_sample = t + rng.choice([0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44])
+        x += speed * step
+        t += step
+    true = np.array(true)
+    d = true * (1.0 + drift)
+    s = true + offset_m + rng.normal(0.0, scatter_m, len(true))
+    return s, d
+
+
+def test_start_offset_recovers_a_known_offset_despite_drift_and_scatter():
+    # Averaged over 30 laps the estimate lands on the true offset, apart from the
+    # small documented drift bias: -drift x 150 m (half the 300 m window).
+    # (One lap scatters by about +-1 m; that is the next test.)
+    rng = np.random.default_rng(11)
+    for offset in [-6.0, 0.0, 5.0]:
+        for drift in [0.0025, 0.005]:
+            laps = [synthetic_lap(rng, offset, drift) for _ in range(30)]
+            estimates = [start_offset(s, d) for s, d in laps]
+            assert np.mean(estimates) == pytest.approx(offset - drift * 150.0, abs=0.5)
+            # the tempting shortcut, a whole-lap average of s - d, is ruined by the drift
+            # (0.5 % over 5 km is 25 m at the end); this is why only the start window is used
+            if drift == 0.005:
+                naive = [np.mean(s - d) for s, d in laps]
+                assert abs(np.mean(naive) - offset) > 5.0
+
+
+def test_start_offset_noise_floor_is_about_a_metre():
+    # with no offset at all, how much does the estimate wander from lap to lap?
+    rng = np.random.default_rng(12)
+    estimates = [start_offset(*synthetic_lap(rng, 0.0, 0.0025)) for _ in range(200)]
+    assert abs(np.mean(estimates)) < 0.6
+    assert 0.3 < np.std(estimates) < 1.3
+
+
+def test_start_offset_ignores_projection_glitches_and_needs_enough_samples():
+    rng = np.random.default_rng(13)
+    s, d = synthetic_lap(rng, 4.0, 0.0025)
+    clean = start_offset(s, d)
+    glitched = s.copy()
+    glitched[1] += 5000.0                     # a point near the line snapped onto the end of the track
+    assert start_offset(glitched, d) == pytest.approx(clean, abs=0.6)
+    assert np.isnan(start_offset([10.0, 30.0], [8.0, 27.0]))   # 2 samples: not enough

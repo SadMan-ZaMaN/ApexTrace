@@ -355,3 +355,25 @@ preregistration Part B is committed.
   (H3/H4) is done and frozen in `results/final/`; the saved 2025 dataset may now
   be used to develop H5, the way 2023–2024 were used for H3/H4. The 2025 download
   guard stays in place.
+
+## 2026-10-29 — Position-offset check: design fixed BEFORE running it
+The open question (research log, 2026-10-19): does projected position carry a
+lap-specific offset of a few metres? Measured with `quality.start_offset` (median of
+position − integrated distance over the first 300 m after the line; single-lap noise
+0.8–1.0 m on synthetic laps; drift bias about −0.4 m at 0.25 % drift). The experiment
+(`experiments/18_position_offset.py`, 2023–2025 kept laps, development data only)
+answers four questions with rules written down now:
+1. **Do laps carry offsets beyond the noise?** Yes if the median within-session
+   standard deviation of the per-lap offset is more than twice the synthetic noise floor.
+2. **Whose offset is it?** Split the variance into between sessions, between drivers
+   within a session, and between laps of the same driver and session.
+3. **Does it explain the gap error at the line?** For pairs of laps of the same driver
+   and session: correlation between (gap at the line from projected position − official
+   lap-time gap) and the difference of the two laps' offsets.
+4. **Does it leak into the corner features?** Slope of the lap's position-feature
+   residuals (brake onset, slowest point, throttle pickup, each minus the
+   driver-session-corner median) against the lap's offset. A slope near +1 means the
+   offset passes straight into the features.
+**Consequence fixed in advance:** if (1) holds and the slope in (4) is above 0.5, a
+per-lap offset correction becomes a preregistered *secondary* feature variant for the
+2026 test (Part C); the frozen 2023–2025 results are not changed.

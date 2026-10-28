@@ -185,3 +185,40 @@ def distance_to_path(points_x, points_y, path_x, path_y):
         nearest_y = start_y + t * seg_y
         distances[i] = np.min(np.hypot(px - nearest_x, py - nearest_y))
     return distances
+
+
+def start_offset(s_m, d_m, window_m=300.0, max_abs_m=50.0):
+    """The lap's position offset, measured where the true position is known best: just after the line.
+
+    WHY: two measurements say how far along the lap the car is. Projected
+    position s (X/Y snapped onto the track) is right on average but scatters
+    by ~3 m per sample, and might carry an offset of its own for a whole lap
+    (e.g. if the position stream's clock is a little off). Integrated speed d
+    is smooth and starts at exactly 0 on the line, so in the first few hundred
+    metres it has had no time to drift (0.25 % drift over 300 m is under 1 m).
+    There, s - d is the position's own error: its median over the window
+    (about 15 samples at race speed) averages the scatter down to about 1 m,
+    so a lap-specific offset shows up as a clearly non-zero median.
+
+    Known small bias: inside the window, integrated speed has drifted by
+    drift x (distance so far), so the estimate is off by about
+    -drift x (window_m / 2): at the feed's ~0.25 % that is -0.4 m, under the
+    ~1 m noise of one lap's estimate (tests check both numbers).
+
+    Samples whose difference exceeds max_abs_m are projection glitches (for
+    example a point near the line snapped onto the END of the track), not an
+    offset, and are ignored. Returns NaN with fewer than 3 usable samples.
+
+    Example: samples at d = 20, 45, 70 m with s = 25.5, 49.0, 76.2 m give
+    s - d = 5.5, 4.0, 6.2 m -> offset +5.5 m: the position puts the car
+    5.5 m further along than integrated speed does.
+    """
+    differences = []
+    for s, d in zip(s_m, d_m):
+        if d <= window_m:
+            difference = float(s) - float(d)
+            if abs(difference) <= max_abs_m:
+                differences.append(difference)
+    if len(differences) < 3:
+        return float("nan")
+    return float(np.median(differences))
