@@ -150,9 +150,9 @@ That's honest, not a failure.
 "The site is Flask serving JSON and D3 drawing it, with every number exported
 by a script. The most interesting bit was the lap-gap chart. My first version
 used track position and drew a ±0.1 s sawtooth of noise. Integrating speed is a
-low-pass filter, and its drift is common to both laps, so it cancels. That
-version matches the official gap within about 0.01 s, and the page shows that
-check next to the chart."
+low-pass filter, so that version is smooth. At the finish line it is typically
+within about 0.06 s of the official gap (measured over 15,326 lap pairs), and the
+page shows that check for every comparison."
 
 ---
 

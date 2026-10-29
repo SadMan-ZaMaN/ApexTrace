@@ -239,6 +239,19 @@
    "stayers_no_col_p": "p = 0.011"
   }
  },
+ "offset": {
+  "laps": "6,544",
+  "within_driver_sd_m": "4.4",
+  "noise_floor_m": "0.75",
+  "session_share": "57",
+  "pairs": "15,326",
+  "gap_slope": "−0.84",
+  "leak_slope": "0.006",
+  "leak_low": "−0.006",
+  "leak_high": "0.017",
+  "line_error_d_s": "0.064",
+  "line_error_s_s": "0.061"
+ },
  "prereg": {
   "part_a": "ab2510c",
   "part_b": "225385c"

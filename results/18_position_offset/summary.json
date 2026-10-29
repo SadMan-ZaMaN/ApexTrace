@@ -1,0 +1,91 @@
+{
+  "laps": 6591,
+  "laps_with_offset": 6544,
+  "offset_m": {
+    "mean": -2.974695904645477,
+    "median": -2.4950000000000045,
+    "sd": 9.168869659793272,
+    "p5": -16.075499999999995,
+    "p95": 10.36699999999997
+  },
+  "window_samples_median": 14.0,
+  "start_speed_kmh_median": 296.0,
+  "q1_beyond_noise": {
+    "median_within_session_sd_m": 5.538795696576511,
+    "median_within_driver_session_sd_m": 4.399091667605934,
+    "noise_floor_m": 0.7523915855788041,
+    "measured_scatter_m": 2.386985999999978,
+    "holds": true
+  },
+  "q2_variance_share": {
+    "sessions": 0.5690375207042235,
+    "drivers_within_session": 0.08766750134061695,
+    "laps_within_driver_session": 0.34329497795515934
+  },
+  "q3_gap_error": {
+    "pairs": 15326,
+    "median_abs_error_s_projected": 0.06093676923921265,
+    "median_abs_error_s_integrated": 0.06449536666248434,
+    "slope_error_m_on_offset_difference": -0.8389970492995131,
+    "ci95": [
+      -0.8532619474198307,
+      -0.8244437476142544
+    ],
+    "r": -0.7348079073317816
+  },
+  "q4_feature_leakage": {
+    "brake_onset_m": {
+      "slope": 0.01756590705196123,
+      "ci95": [
+        -0.012442764956442323,
+        0.048357061793673356
+      ],
+      "r": 0.006707459683884251,
+      "rows": 29866
+    },
+    "apex_m": {
+      "slope": 0.006486056991468954,
+      "ci95": [
+        -0.0046842673224931335,
+        0.017812620315143766
+      ],
+      "r": 0.006421306082039979,
+      "rows": 30011
+    },
+    "throttle_pickup_m": {
+      "slope": -0.00798694031142077,
+      "ci95": [
+        -0.02156301038233102,
+        0.004702940756532823
+      ],
+      "r": -0.00596277739958724,
+      "rows": 28479
+    },
+    "min_speed_kmh": {
+      "slope": 0.03450488562688167,
+      "ci95": [
+        0.02865346847679924,
+        0.04099252203294803
+      ],
+      "r": 0.058693719353724416,
+      "rows": 30177
+    },
+    "pooled_position_features": {
+      "slope": 0.005640216926054321,
+      "ci95": [
+        -0.006270415788310573,
+        0.01722740112488338
+      ],
+      "r": 0.003127618679892398,
+      "rows": 88356
+    }
+  },
+  "consequence_secondary_variant_for_2026": false,
+  "exploratory_timing_interpretation": {
+    "sessions": 69,
+    "corr_session_sd_m_vs_start_speed": 0.014323811071388522,
+    "corr_session_sd_seconds_vs_start_speed": -0.5643869736758269,
+    "median_within_driver_session_sd_s": 0.056338738028897155,
+    "note": "exploratory interpretation: offset = -(speed at the line) x (lap-start timestamp error)"
+  }
+}

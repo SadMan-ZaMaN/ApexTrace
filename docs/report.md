@@ -243,9 +243,17 @@ compare the groups.
 
 **Limitations.** Qualifying laps only. A 3.77 Hz feed with an on/off brake signal and coarse positions. Corners are
 detected per session, so the same corner can be typed differently in different years. The identification task is
-between two teammates; the all-driver task is much harder. H4 rests on five drivers. While building the web app we
-found that the projected track position may carry a lap-specific offset of a few metres; it would add noise to the
-position features, and checking it over many laps is future work. The frozen results do not depend on it.
+between two teammates; the all-driver task is much harder. H4 rests on five drivers.
+
+**A check made after the frozen results: per-lap position offsets.** Projected position minus integrated distance,
+measured just after the line where integrated distance has not yet drifted, varies from lap to lap far more than its
+measurement noise (4.4 m within a driver and session against a 0.75 m noise
+floor; 6,544 laps); 57 % of that variance is shared by a whole session. It explains
+the error of a lap gap computed from projected position at the line (slope −0.84 over 15,326
+lap pairs), but it does not move the corner features (slope 0.006, 95 % interval
+−0.006 to 0.017), so the results above are unaffected. Its cause is not established. At
+the line, a gap from either coordinate is typically about 0.064 s from the official lap-time gap
+(median; 0.061 s from projected position); integrated distance's advantage is a smooth curve.
 
 ## 8. Conclusion and future work
 
@@ -253,7 +261,7 @@ Low-rate public telemetry supports corner-level features with known errors, and 
 teammate-level driver signature that replicated on a held-out season. They do not beat simple lap statistics, and they
 did not show that style follows a driver into a new car. Next steps: more team changes as seasons accumulate (and the
 2026 regulation change, H5); features made relative to the teammate on each weekend to remove the car; the
-position-offset check; a learned sequence model under the same held-out protocol; and a full reading of the
+cause of the per-lap position offset; a learned sequence model under the same held-out protocol; and a full reading of the
 closest related work (Section 2).
 
 ## Reproducibility

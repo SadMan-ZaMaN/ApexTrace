@@ -36,6 +36,7 @@ proposal — check before relying on it.
 | 2026-10-27 | **Day 2:** literature search I: related_work.md rebuilt with a search log, 9 new verified citations (Hallac 2016, Chen 2017, van Kesteren & Bergkamp 2023, Lindner 2026, ...), ⚠️ marks for what is unverified, and the gap stated as "not found so far". |
 | 2026-10-28 | **Day 3:** literature II: Semantic Scholar + OpenAlex searches, forward citations (126 citers of Hallac 2016: none in racing), abstracts read; Frontiers 2025 is pit-stop prediction; report gets Section 2 "Related work" (12 new references, renumbered). |
 | 2026-10-29 | **Day 4:** `quality.start_offset` (position − integrated distance over the first 300 m) tested on synthetic laps (noise floor 0.8–1.0 m; small documented drift bias −drift×150 m; whole-lap shortcut guarded); position-offset experiment designed with decision rules BEFORE running (decisions.md). |
+| 2026-10-30 | **Day 5:** experiment 18 on 6,544 laps: per-lap position offsets are real (SD 4.4 m within driver-session vs 0.75 m noise; 57 % session-level) and explain the s-based line-gap error (slope −0.84), but do NOT leak into corner features (slope 0.006) → no 2026 correction; cause open (timing check inconclusive). Corrected the one-pair "gap within 0.01 s" claim: typical line error ~0.06 s for both coordinates. Report updated. |
 | next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
@@ -135,6 +136,8 @@ braking, medium speed, fast), chosen from the data in Phase 1.
   position data interpolates; resample once, from the original data.
 - X/Y can't show racing-line differences: laps sit as close to the teammate's
   path as to their own (median 0.06 m).
+- Projected position carries a per-lap offset (SD ~4.4 m within a driver and session,
+  57 % shared by the session) that does NOT move the corner features (experiment 18).
 - `add_distance()` integrates speed, so distance drifts → align laps (§9.5).
 - Causal filters shift events: a 5-sample moving average delays by ≈ 0.54 s
   ≈ 37.5 m at 250 km/h → use zero-phase filtering (`filtfilt`, §9.3).

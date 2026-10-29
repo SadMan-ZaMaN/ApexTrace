@@ -90,9 +90,12 @@ After changing an analysis: re-run its experiment script, then
   download everything first, then analyse.
 - **2026-10-19 — Don't compute the time gap between two laps from projected position
   `s_m`.** It gave a ±0.1 s sawtooth and ended 0.08 s off the official gap (position
-  scatter of ~3 m plus a lap-specific offset). Use integrated distance `d_m`: smooth,
-  and its slow error is nearly the same on both laps, so it cancels; it ends within
-  ~0.01 s. Charts use the fused coordinate `d + moving_average(s − d)`. Guarded by
+  scatter of ~3 m plus a lap-specific offset). Use integrated distance `d_m`: smooth
+  (jitter 0.007 s instead of 0.041 s). Correction (2026-10-30, experiment 18): on that
+  one lap pair it ended within 0.011 s of the official gap, but across 15,326 lap pairs
+  the typical error at the line is about 0.06 s for BOTH coordinates (median 0.064 s
+  from `d_m`, 0.061 s from `s_m`); `d_m`'s advantage is the smooth curve, not accuracy
+  at the line. Charts use the fused coordinate `d + moving_average(s − d)`. Guarded by
   `test_gap_from_integrated_distance_beats_projected_position` and
   `test_compare_returns_both_laps_and_a_correct_gap`. The same mistake survived in the
   overview's live gap until 2026-10-20 (it read +0.05..+0.47 s instead of

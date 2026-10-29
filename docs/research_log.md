@@ -730,3 +730,34 @@ of a braking event.
   "simplifies" to it.
 - **Experiment design written down before running** (decisions.md, four questions with
   decision rules). Tomorrow: run it on all 2023–2025 kept laps.
+
+---
+
+## 2026-10-30 — Day 5: the position-offset check on every 2023–2025 lap
+
+`experiments/18_position_offset.py`, rules fixed on 2026-10-29. 6,544 laps
+(14 samples per 300 m start window, median line speed 296 km/h). The noise floor used
+the scatter measured on the real feed (2.39 m per sample): 0.75 m per lap.
+
+| Question | Result |
+|---|---|
+| Q1 offsets beyond noise? | **Yes**: median within-session SD 5.5 m, within driver-session 4.4 m, vs a 0.75 m noise floor |
+| Q2 whose offset? | 57 % between sessions, 9 % between drivers within a session, 34 % lap to lap |
+| Q3 explains the line-gap error of projected position? | **Yes**: slope −0.84 [−0.85, −0.82], r = −0.73, 15,326 lap pairs |
+| Q4 leaks into corner features? | **No**: pooled slope 0.006 [−0.006, 0.017] (brake onset 0.018, slowest point 0.006, throttle pickup −0.008); minimum speed (control) r = 0.06 |
+
+**Consequence (rule fixed in advance):** Q4 fails, so no correction variant for 2026; the
+frozen results are unaffected.
+
+**Exploratory, not preregistered:** if the "offset" were a lap-start timing error
+(integrated distance is counted from the reported lap start, accurate to ~0.1 s on
+OpenF1), its spread in metres should grow with the speed at the line. Across 69 sessions
+it doesn't (r = 0.01); line speeds vary too little between tracks for this to be a strong
+test. The cause stays open.
+
+**Correction of an earlier claim:** "integrated distance ends within ~0.01 s of the
+official gap" (2026-10-19) was one lap pair. Across 15,326 pairs the median error at the
+line is 0.064 s from integrated distance and 0.061 s from projected position.
+Integrated distance's advantage is smoothness (jitter 0.007 s vs 0.041 s), not accuracy
+at the line. Corrected in engineering_notes.md and the learn/ notes; the report now
+states the measured numbers.

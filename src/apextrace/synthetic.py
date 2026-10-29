@@ -333,3 +333,31 @@ def degrade_like_feed(truth, intervals_s, probabilities, rng, max_interval_s=Non
         "throttle_pct": np.round(true_throttle),
         "brake": truth["brake"][brake_index],
     }
+
+
+def lap_with_position_offset(rng, offset_m, drift, scatter_m=3.0, length_m=5000.0):
+    """A whole lap sampled like the feed, where the position stream has a known offset.
+
+    Used to test and calibrate quality.start_offset (the per-lap position-offset
+    check). True distance x(t) comes from a speed that swings between ~30 and
+    ~80 m/s every 800 m (corners and straights), sampled at irregular
+    0.16-0.44 s intervals like the feed. Then:
+      integrated distance d = x * (1 + drift)          (a speed-scale error)
+      projected position  s = x + offset_m + scatter   (the error under test)
+    Example: drift 0.0025 puts d 12.5 m long after 5 km; offset_m 5 puts every
+    s 5 m ahead of where the car really is. Returns (s, d).
+    """
+    step = 0.01
+    t, x, true = 0.0, 0.0, []
+    next_sample = rng.uniform(0.0, 0.2)
+    while x < length_m:
+        speed = 55.0 + 25.0 * np.cos(2 * np.pi * x / 800.0)
+        if t >= next_sample:
+            true.append(x)
+            next_sample = t + rng.choice([0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44])
+        x += speed * step
+        t += step
+    true = np.array(true)
+    d = true * (1.0 + drift)
+    s = true + offset_m + rng.normal(0.0, scatter_m, len(true))
+    return s, d

@@ -227,6 +227,21 @@ def collect_numbers():
                     "stayers_no_col_n": explore["non_changer_check_without_changers"]["drivers"],
                     "stayers_no_col_p": p_text(explore["non_changer_check_without_changers"]["sign_test_p"])},
     }
+    # --- the per-lap position-offset check (experiment 18)
+    offset = load("18_position_offset/summary.json")
+    n["offset"] = {
+        "laps": thousands(offset["laps_with_offset"]),
+        "within_driver_sd_m": f(offset["q1_beyond_noise"]["median_within_driver_session_sd_m"], 1),
+        "noise_floor_m": f(offset["q1_beyond_noise"]["noise_floor_m"], 2),
+        "session_share": f(offset["q2_variance_share"]["sessions"] * 100, 0),
+        "pairs": thousands(offset["q3_gap_error"]["pairs"]),
+        "gap_slope": f(offset["q3_gap_error"]["slope_error_m_on_offset_difference"], 2),
+        "leak_slope": f(offset["q4_feature_leakage"]["pooled_position_features"]["slope"], 3),
+        "leak_low": f(offset["q4_feature_leakage"]["pooled_position_features"]["ci95"][0], 3),
+        "leak_high": f(offset["q4_feature_leakage"]["pooled_position_features"]["ci95"][1], 3),
+        "line_error_d_s": f(offset["q3_gap_error"]["median_abs_error_s_integrated"], 3),
+        "line_error_s_s": f(offset["q3_gap_error"]["median_abs_error_s_projected"], 3),
+    }
     n["prereg"] = {"part_a": pilot["preregistration_commit"][:7], "part_b": final["preregistration_commit"][:7]}
     return n
 

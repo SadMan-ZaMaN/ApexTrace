@@ -90,7 +90,7 @@ the raw lap samples, which are not in the repository: `experiments/08_download_o
 | Folder | What |
 |---|---|
 | `src/apextrace/` | the package: data loading, quality checks, filters, alignment, events, features, statistics, identification, signatures |
-| `experiments/` | numbered scripts `00`–`17`; every number and figure comes from one of them |
+| `experiments/` | numbered scripts `00`–`18`; every number and figure comes from one of them |
 | `results/` | small outputs (JSON, CSV, figures); `results/final/` holds the frozen 2025 test |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |

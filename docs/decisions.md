@@ -377,3 +377,13 @@ answers four questions with rules written down now:
 **Consequence fixed in advance:** if (1) holds and the slope in (4) is above 0.5, a
 per-lap offset correction becomes a preregistered *secondary* feature variant for the
 2026 test (Part C); the frozen 2023–2025 results are not changed.
+
+## 2026-10-30 — Position-offset check: outcome
+Run as designed the day before (`experiments/18_position_offset.py`). Q1 holds (the
+offsets are real), but Q4's pooled slope is 0.006, far below 0.5, so by the rule fixed
+in advance **no offset correction is added for 2026** and the frozen results stand. The
+offsets explain the line-gap error of projected position (Q3) but not the corner
+features. An exploratory check of a lap-start-timing explanation was inconclusive; the
+cause stays open. A claim made on 2026-10-19 from one lap pair ("integrated distance
+ends within ~0.01 s of the official gap") was corrected everywhere: the typical error
+at the line is about 0.06 s for both coordinates.

@@ -316,8 +316,9 @@ Projected position scatters by about 3 m per sample and has a lap-specific
 offset of a few metres, so the gap came out as a 0.04 s sawtooth and ended 0.08 s
 off at the line. Integrated speed is smooth (integration is a low-pass filter),
 and its slow drift is almost the same on both laps, so it cancels in the
-difference (common-mode rejection). It ended within about 0.01 s of the official
-lap-time gap, and the page shows that check.
+difference (common-mode rejection). On the pilot pair it ended within 0.011 s of the
+official gap, but over 15,326 lap pairs the typical error at the line is about 0.06 s
+for both coordinates: integrated speed wins on smoothness, not on the finish line.
 
 **Q: What is the complementary filter doing on the charts' x axis?**
 fused = d + moving_average(s - d): integrated speed for the fast detail,

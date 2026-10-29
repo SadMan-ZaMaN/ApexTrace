@@ -13,7 +13,7 @@ no team radio, no logos: only the app.
 |---|---|---|
 | 0–8 s | Overview, hero playing | "ApexTrace: can you recognise a Formula 1 driver from public telemetry, sampled under four times a second?" |
 | 8–15 s | Scroll to the results board | "Four hypotheses, tested on a season I locked away until the end. Two came out yes or partly, one no." |
-| 15–35 s | Lap compare: NOR vs PIA, click C3, hover | "Any two laps on one track coordinate. Zoom into a corner: each dot is a real sample. Piastri brakes earlier here, and the gap curve shows where time moves. It matches the official gap to about a hundredth." |
+| 15–35 s | Lap compare: NOR vs PIA, click C3, hover | "Any two laps on one track coordinate. Zoom into a corner: each dot is a real sample. Piastri brakes earlier here, and the gap curve shows where time moves; the page checks it against the official lap times." |
 | 35–50 s | Corner lab, brake onset at C1 | "Every driver, every lap at one braking zone. The bar at the top is how precisely one lap can be measured, so you can see which differences are real." |
 | 50–75 s | Driver vs car: H3 chart, then click HAM in the scatter | "Corner features tell teammates apart on unseen weekends. But when Hamilton moved to Ferrari, his 2025 style ended up slightly closer to Leclerc's than to his own Mercedes year, and 3 of 5 drivers who moved went the same way." |
 | 75–90 s | Back to the overview | "Measured errors, a preregistered test, and honest negatives. Code and report on GitHub." |
