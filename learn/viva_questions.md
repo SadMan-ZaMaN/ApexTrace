@@ -338,3 +338,29 @@ it is about 0.04, so even a real difference this weekend says little about the n
 The export script rebuilds the signatures with the same steps as the final test
 and stops with an error unless every distance matches the frozen results files
 to 0.001. The page never recomputes a test.
+
+
+## Extension: the 2026 rules (Day 6)
+
+**Q: What changed in the 2026 cars, in one breath?**
+Smaller and about 30 kg lighter, narrower tyres, about 30 % less downforce and 55 %
+less drag (FIA targets), active front and rear wings instead of DRS, and a power unit
+that is roughly half electric: about 400 kW engine plus a 350 kW electric motor (was
+120 kW), with the electric power falling away at high speed.
+
+**Q: Your features are field-relative. Doesn't that already remove the rule change?**
+It removes what every car shares at a corner, like everyone braking earlier. It does
+not remove what differs from car to car, like one team's energy plan. Comparing
+teammates removes that part, because they share a car. What is left is what H5 asks
+about: how much each driver's own habits carry over.
+
+**Q: Which feature do you expect to suffer most, and why?**
+Entry speed, 200 m before a corner. At the end of a straight it now depends on how
+the team spends electric energy (power falls with speed and can be cut when energy
+runs short), not only on the driver. That's a hypothesis; the 2024 → 2025 carry-over
+gives the baseline it will be compared with.
+
+**Q: Why didn't you look at 2026 results while planning?**
+For the same reason the 2025 test was planned first: if I see the data, my choices
+can bend towards what it shows. I read only the rule texts, cited by FIA issue number,
+because the rules changed several times between 2024 and 2026.

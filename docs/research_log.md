@@ -761,3 +761,38 @@ line is 0.064 s from integrated distance and 0.061 s from projected position.
 Integrated distance's advantage is smoothness (jitter 0.007 s vs 0.041 s), not accuracy
 at the line. Corrected in engineering_notes.md and the learn/ notes; the report now
 states the measured numbers.
+
+---
+
+## 2026-10-31 — Day 6: the 2026 car rules, and what they could do to our features
+
+`docs/regulations_2026.md`, written from the FIA texts (Section C Issue 17,
+Section B Issue 07, the June 2024 announcement) and nothing from the 2026 season.
+
+**What changed** (checked in the texts): shorter (≤ 3400 mm) and narrower (1900 mm)
+cars, about 30 kg lighter, narrower tyres; downforce −30 % and drag −55 % (FIA
+targets); active front and rear wings (Corner Mode / Straight Mode, ≤ 400 ms to
+switch, only in FIA activation zones, commanded by the driver) instead of DRS; engine
+about 400 kW + electric motor 350 kW (was 120 kW), no MGU-H, at most 8.5 MJ recovered
+per lap. Electric power falls with speed: P = 1800 − 5·v kW below 340 km/h without
+Overtake (300 kW at 300 km/h, zero at 345 km/h), 7100 − 20·v with it (full 350 kW up
+to 337.5 km/h). Our reading of B7.2.2(a) and B7.2.3(b): in qualifying, Overtake is
+active all the time.
+
+**What it could do to the features** (hypotheses, not data): entry speed 200 m before a
+corner is now partly set by a team's energy plan, so it may become more "car" than
+"driver". Brake onset may be harder to measure if cars already slow down before
+braking (lift and coast, superclipping). Corner types (120 / 200 km/h thresholds) may
+change with less downforce. Field-relative features remove what every car shares, and
+teammate comparisons remove what the car adds.
+
+**Found while checking:** OpenF1 describes `throttle` as "percentage of maximum engine
+power being used". The project has treated it as pedal position. In 2026 the two can
+differ (power cut while the pedal stays down). This is open: Part C should keep throttle
+features separate so this can't decide the overall result.
+
+**Inputs for Day 8 (H5 design):** the 2024 → 2025 carry-over as the no-rule-change
+baseline; a proposed split into energy-sensitive features (entry/exit speed, full
+throttle, corner time) and driver-control-point features (brake onset, minimum speed
+and its position, throttle pickup); how to type 2026 corners; a synthetic check of the
+brake-onset estimator with a coasting phase.

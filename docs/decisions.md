@@ -387,3 +387,12 @@ features. An exploratory check of a lap-start-timing explanation was inconclusiv
 cause stays open. A claim made on 2026-10-19 from one lap pair ("integrated distance
 ends within ~0.01 s of the official gap") was corrected everywhere: the typical error
 at the line is about 0.06 s for both coordinates.
+
+## 2026-10-31 — What we may read about 2026 before Part C is committed
+Rule texts (FIA Sections B and C, the FIA's 2024 announcement) and data-source
+documentation only. No 2026 session data, results, lap times or telemetry analyses
+until preregistration Part C is committed, so the H5 plan can't be shaped by what 2026
+looked like. Where an explainer and the FIA text disagree, the FIA text wins (one
+explainer calls the active-wing switch automatic; B7.1.1(c) says the driver commands
+it). Every rule number cites its issue, because the rules changed between the 2024
+announcement and Issue 17 (April 2026). The notes are in `docs/regulations_2026.md`.

@@ -37,6 +37,8 @@ proposal — check before relying on it.
 | 2026-10-28 | **Day 3:** literature II: Semantic Scholar + OpenAlex searches, forward citations (126 citers of Hallac 2016: none in racing), abstracts read; Frontiers 2025 is pit-stop prediction; report gets Section 2 "Related work" (12 new references, renumbered). |
 | 2026-10-29 | **Day 4:** `quality.start_offset` (position − integrated distance over the first 300 m) tested on synthetic laps (noise floor 0.8–1.0 m; small documented drift bias −drift×150 m; whole-lap shortcut guarded); position-offset experiment designed with decision rules BEFORE running (decisions.md). |
 | 2026-10-30 | **Day 5:** experiment 18 on 6,544 laps: per-lap position offsets are real (SD 4.4 m within driver-session vs 0.75 m noise; 57 % session-level) and explain the s-based line-gap error (slope −0.84), but do NOT leak into corner features (slope 0.006) → no 2026 correction; cause open (timing check inconclusive). Corrected the one-pair "gap within 0.01 s" claim: typical line error ~0.06 s for both coordinates. Report updated. |
+| 2026-10-31 | **Day 6:** `docs/regulations_2026.md` from the FIA texts only (Section C Iss 17, B Iss 07, 2024 announcement; no 2026 data or results): smaller/lighter cars, −30 % downforce / −55 % drag, active wings (driver-commanded, activation zones), 350 kW MGU-K with a speed cap (Overtake always on in qualifying, our reading). Feature-by-feature effects (entry speed may become "car"; brake onset harder if cars coast; corner types may shift). New caveat: OpenF1 calls `throttle` "% of max engine power". Inputs listed for Day 8. |
+| 2026-10-31 (later) | Sadman asked for one place that explains data provenance and sources: public `docs/sources.md` (tools, OpenF1 endpoints, what was downloaded when, data flow, row counts, rebuild, where every other source is listed) and local `learn/00_start_here.md` (project in 5 sentences, results, data in one minute, question → file map, working without Claude). learn/01 phase table brought up to date. |
 | next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
@@ -138,6 +140,8 @@ braking, medium speed, fast), chosen from the data in Phase 1.
   path as to their own (median 0.06 m).
 - Projected position carries a per-lap offset (SD ~4.4 m within a driver and session,
   57 % shared by the session) that does NOT move the corner features (experiment 18).
+- Until Part C is committed, read only RULE TEXTS about 2026 (no results, lap times or
+  telemetry analyses). Rule notes: docs/regulations_2026.md (cite the FIA issue number).
 - `add_distance()` integrates speed, so distance drifts → align laps (§9.5).
 - Causal filters shift events: a 5-sample moving average delays by ≈ 0.54 s
   ≈ 37.5 m at 250 km/h → use zero-phase filtering (`filtfilt`, §9.3).
@@ -204,6 +208,7 @@ E:\Formula1-Project  (GitHub: SadMan-ZaMaN/ApexTrace)
 ├── notebooks/              # exploration only — final numbers come from experiments/
 ├── tests/                  # pytest; never downloads F1 data
 ├── docs/                   # report, preregistration (+ deviations), research_log, decisions,
+│                           # sources (data provenance), regulations_2026 (2026 rule notes),
 │                           # related_work, data_report, engineering_notes (PUBLIC copy of the
 │                           # bug history + conventions); PROJECT_CONTEXT is local-only
 ├── learn/                  # Sadman's study guide (chapters, viva, CV/email drafts): LOCAL ONLY

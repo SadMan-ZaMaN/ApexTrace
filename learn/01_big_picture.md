@@ -50,12 +50,13 @@ be a publishable negative result, if measured carefully.
 | 0 Setup | Does the environment work? | Done |
 | 1 Data pilot | What is the data, really? | Done: `docs/data_report.md` |
 | 2 Measurement science | How accurately can we measure each feature? | Done: error table |
-| 3 Alignment | How do we put all laps on one distance axis? | — |
-| 4 Features | Norris vs Piastri at three corners (descriptive) | — |
-| 5 Statistics | H1, H2 with confidence intervals | — |
-| 6 Identification | H3 on all 2023–2024 qualifying sessions | — |
-| 7 Driver vs car | H4; final one-time test on 2025 | — |
-| 8 Write-up | Report, README, app | — |
+| 3 Alignment | How do we put all laps on one distance axis? | Done: complementary filter, 1.15 m |
+| 4 Features | Norris vs Piastri at three corners (descriptive) | Done: `docs/writeups/norris_vs_piastri.md` |
+| 5 Statistics | H1, H2 with confidence intervals | Done: preregistered, 0 of 27 (as predicted) |
+| 6 Identification | H3 on all 2023–2024 qualifying sessions | Done: chapter 10 |
+| 7 Driver vs car | H4; final one-time test on 2025 | Done: H3 replicated, H4 not supported (chapter 12) |
+| 8 Write-up | Report, README, app | Done: `docs/report.md`, the web app |
+| Extension | H5: does the signature survive the 2026 rules? | Being planned (Oct–Nov 2026) |
 
 ## The four candidate contributions (what could be new)
 

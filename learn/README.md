@@ -9,6 +9,7 @@ your exams and then explain any part to a faculty member or an interviewer.
 
 | # | Chapter | What you'll understand | Time |
 |---|---|---|---|
+| 0 | [00_start_here.md](00_start_here.md) | What the project is and found, where the data came from, which file answers which question, how to work without Claude | 15 min |
 | 1 | [01_big_picture.md](01_big_picture.md) | The research question, the hypotheses, the plan, and why this is research and not a dashboard | 30 min |
 | 2 | [02_setup_and_tools.md](02_setup_and_tools.md) | venv, `pip install -e .`, pytest, git workflow, FastF1 and pandas basics; `data_loading.py` | 1 h |
 | 3 | [03_the_data.md](03_the_data.md) | What the F1 timing feed really is (Phase 1): sampling, gaps, resolution, distance drift; `quality.py` | 1.5 h |
