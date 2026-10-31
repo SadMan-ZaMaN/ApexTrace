@@ -39,7 +39,8 @@ proposal — check before relying on it.
 | 2026-10-30 | **Day 5:** experiment 18 on 6,544 laps: per-lap position offsets are real (SD 4.4 m within driver-session vs 0.75 m noise; 57 % session-level) and explain the s-based line-gap error (slope −0.84), but do NOT leak into corner features (slope 0.006) → no 2026 correction; cause open (timing check inconclusive). Corrected the one-pair "gap within 0.01 s" claim: typical line error ~0.06 s for both coordinates. Report updated. |
 | 2026-10-31 | **Day 6:** `docs/regulations_2026.md` from the FIA texts only (Section C Iss 17, B Iss 07, 2024 announcement; no 2026 data or results): smaller/lighter cars, −30 % downforce / −55 % drag, active wings (driver-commanded, activation zones), 350 kW MGU-K with a speed cap (Overtake always on in qualifying, our reading). Feature-by-feature effects (entry speed may become "car"; brake onset harder if cars coast; corner types may shift). New caveat: OpenF1 calls `throttle` "% of max engine power". Inputs listed for Day 8. |
 | 2026-10-31 (later) | Sadman asked for one place that explains data provenance and sources: public `docs/sources.md` (tools, OpenF1 endpoints, what was downloaded when, data flow, row counts, rebuild, where every other source is listed) and local `learn/00_start_here.md` (project in 5 sentences, results, data in one minute, question → file map, working without Claude). learn/01 phase table brought up to date. |
-| next | Sadman: push, check CI is green, pick a licence, record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
+| 2026-11-01 | **Day 7:** `LICENSE` (MIT, code) + `results/LICENSE.md` (CC BY-NC-SA 4.0 for derived data/figures, following OpenF1's licence) + `CITATION.cff` (validated). Polish: "unofficial interfaces", 47 listed / 46 with data (Imola 2023 cancelled), download time from the log (68 min, not "~1.5 h"), README licence section, report Licences paragraph, Related-work blank line. |
+| next | Sadman: push, check CI is green, confirm the licence (MIT + CC BY-NC-SA for data), record the video, read + literature search, contact faculty. Optional: position-offset check, teammate-relative features, H5 (2026), Phase 9 ML — task list in roadmap §8. |
 
 Keep this table current. Add decisions to [docs/decisions.md](docs/decisions.md)
 with dates.
@@ -120,7 +121,7 @@ including "lap time only" · **H4** the signature follows drivers who changed
 teams · **H5** (optional) it survives the 2026 regulation change.
 
 **We will not claim:** who is the better driver; anything faster than the data
-can show (Nyquist ≈ 1.85 Hz); brake pressure (the channel is on/off); labels
+can show (Nyquist ≈ 1.89 Hz); brake pressure (the channel is on/off); labels
 like "aggressive" unless first defined as a measurable rule.
 
 **Pilot:** 2024 Abu Dhabi GP, Norris vs Piastri (McLaren). Qualifying = the
@@ -130,7 +131,7 @@ braking, medium speed, fast), chosen from the data in Phase 1.
 **Data facts to keep in mind every session** (§7, §9):
 - Car data (measured 2026-10-16): 3.77 samples/s on average, on a 40 ms clock,
   0.16–0.56 s between samples (13–47 m at 300 km/h), plus feed dropouts of
-  0.6–1.4 s in 21 of 30 laps. Nyquist ≈ 1.85 Hz. Upsampling adds no information.
+  0.6–1.4 s in 21 of 30 laps. Nyquist ≈ 1.89 Hz. Upsampling adds no information.
 - `Brake` is boolean ✅ → measure braking by deceleration derived from speed.
   Speed is in whole km/h, Throttle in whole %.
 - Rows whose `Source` is not `'car'`/`'pos'` are not measurements (FastF1 3.8.3

@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+title: "ApexTrace: driving signatures from low-rate public Formula 1 telemetry"
+authors:
+  - family-names: Zaman
+    given-names: Sadman
+    affiliation: "Bangladesh University of Engineering and Technology (BUET)"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/SadMan-ZaMaN/ApexTrace"
+abstract: >-
+  A signal-processing study of public Formula 1 timing data (about 3.77 samples per
+  second): measurement error of corner features on synthetic laps, a track coordinate
+  from a complementary filter, corner features for every qualifying session of
+  2023-2025, and preregistered tests of repeatability, teammate identification on
+  held-out sessions, and whether a driving signature follows a driver to a new team.
+keywords:
+  - signal processing
+  - telemetry
+  - Formula 1
+  - driver identification
+  - preregistration

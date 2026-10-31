@@ -83,7 +83,8 @@ python -m venv .venv
 
 The Overview, Corner lab and Driver vs car pages work from the committed results. The Lap compare page also needs
 the raw lap samples, which are not in the repository: `experiments/08_download_openf1.py` and
-`experiments/09_build_dataset.py` download and rebuild them from OpenF1 (about an hour, rate-limited).
+`experiments/09_build_dataset.py` download and rebuild them from OpenF1 (the logged download took 68 minutes:
+OpenF1 limits the request rate).
 
 ## Repository map
 
@@ -102,11 +103,19 @@ Qualifying laps only; a public feed at about 3.77 Hz with an on/off brake signal
 too coarse to see racing lines; five team changers in the final test, so H4 could only pass if all five agreed. The
 report lists these and more.
 
+## Licence and citation
+
+- **Code** (`src/`, `app/`, `experiments/`, `tests/`) and documentation: [MIT](LICENSE).
+- **Derived data and figures** (`results/`, `docs/images/`): [CC BY-NC-SA 4.0](results/LICENSE.md), the licence under
+  which OpenF1 publishes its data. Non-commercial use, with credit, under the same licence.
+- **Bundled:** D3 (ISC licence) and the Barlow typeface (SIL Open Font License), with their licence files in `app/static/`.
+- **Citing:** [CITATION.cff](CITATION.cff) (GitHub's "Cite this repository" button reads it).
+
 ## Notices
 
 ApexTrace is an independent, non-commercial student project (BUET, CSE). It is unofficial and is not associated in
 any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1 and related marks are trade marks of Formula One
-Licensing B.V. Data come from [OpenF1](https://openf1.org) and [FastF1](https://github.com/theOehrly/Fast-F1) (what was downloaded, when and how: [docs/sources.md](docs/sources.md)). The web app
-bundles D3 (ISC licence) and the Barlow typeface (SIL Open Font License).
+Licensing B.V. Data come from [OpenF1](https://openf1.org) and [FastF1](https://github.com/theOehrly/Fast-F1) (what was downloaded,
+when and how: [docs/sources.md](docs/sources.md)); the author does not own the underlying Formula 1 timing data.
 
 *This README is generated: edit `docs/templates/README.md.j2` and run `experiments/17_write_docs.py`.*

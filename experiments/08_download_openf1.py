@@ -12,7 +12,8 @@ request), so the script can be stopped and restarted: finished requests are
 never repeated. 2025 is never requested (frozen test set;
 qualifying_sessions refuses it).
 
-Run from the repo root (takes ~1.5 hours the first time):
+Run from the repo root (the logged run took 68 minutes, ~92 s per session, set by
+OpenF1's rate limit; see the "seconds" column of the log):
     .venv\\Scripts\\python.exe experiments\\08_download_openf1.py
 Output:
     results/08_download/download_log.csv  one row per session

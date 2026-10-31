@@ -364,3 +364,9 @@ gives the baseline it will be compared with.
 For the same reason the 2025 test was planned first: if I see the data, my choices
 can bend towards what it shows. I read only the rule texts, cited by FIA issue number,
 because the rules changed several times between 2024 and 2026.
+
+**Q: Why two licences?**
+The code is mine, so I chose MIT: anyone may reuse it with credit. The data files are
+built from OpenF1 data, which OpenF1 shares under CC BY-NC-SA 4.0 (non-commercial, with
+credit, same licence for anything made from it), so my derived files follow that
+licence. I don't own Formula 1's timing data, and the notice says so.

@@ -84,6 +84,7 @@ def collect_numbers():
     dev_clean, _ = clean(load_dataset())
     final_clean, _ = clean(pd.read_csv(RESULTS / "final" / "dataset_2025.csv.gz"))
     sessions_2025 = pd.read_csv(RESULTS / "final" / "sessions_2025.csv")
+    download_log = pd.read_csv(RESULTS / "08_download" / "download_log.csv")
     headline = load("app/headline.json")["data"]
     n["data"].update({
         "sessions_dev": dataset["sessions"], "sessions_dev_with_data": dataset["sessions_with_data"],
@@ -99,6 +100,9 @@ def collect_numbers():
         "drivers_dev": dataset["drivers"], "corners_dev": dataset["corners"], "features": len(dataset["features"]),
         "laps_dev": thousands(dataset["laps"]), "raw_samples_millions": f(headline["raw_samples"] / 1e6, 2),
         "drivers_total": headline["drivers"],
+        # the logged 2023-2024 download: OpenF1's rate limit sets the pace
+        "download_minutes": f(download_log["seconds"].sum() / 60, 0),
+        "download_per_session_s": f(download_log["seconds"].median(), 0),
     })
 
     # --- OpenF1 = the same feed as FastF1 (validation on 2024 Abu Dhabi)

@@ -796,3 +796,26 @@ baseline; a proposed split into energy-sensitive features (entry/exit speed, ful
 throttle, corner time) and driver-control-point features (brake onset, minimum speed
 and its position, throttle pickup); how to type 2026 corners; a synthetic check of the
 brake-onset estimator with a coasting phase.
+
+---
+
+## 2026-11-01 — Day 7: licence, citation file, README and report polish
+
+**Licence:** MIT for the code (`LICENSE`); CC BY-NC-SA 4.0 for derived data and figures
+(`results/LICENSE.md`), because that is OpenF1's licence for its data (decisions.md).
+`CITATION.cff` added and validated.
+
+**Polish, from a full read of the report and README:**
+- "the official live-timing feed through two public interfaces" → read through two
+  free, **unofficial** interfaces.
+- 2023–2024 sessions: "47 sessions" → 47 listed, 46 with data (the 2023 Imola weekend
+  was cancelled), as the 2025 sentence already did for Baku.
+- The lap rules now name "not an out or in lap".
+- **Download time measured, not guessed:** the README and report said "about an hour",
+  while the script docstring and `docs/sources.md` said "~1.5 hours". The log
+  (`results/08_download/download_log.csv`, column `seconds`) gives 68 minutes for 47
+  sessions, median 92 s per session. The docs now take the number from the log (new
+  `data.download_minutes` in `17_write_docs.py`).
+- A blank line produced by a template comment under "2. Related work" removed (`-#}`).
+- README gets "Licence and citation"; the report gets a "Licences" paragraph and the
+  data licences in its references; `docs/sources.md` gets a licence table.

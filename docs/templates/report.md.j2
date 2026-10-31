@@ -41,7 +41,7 @@ of team, with an exploratory control. (v) A web application that shows every res
 
 ## 2. Related work
 
-{# Literature figures below (74-91 %, 88 %) are quotations from the cited papers, not results of this project. #}
+{# Literature figures below (74-91 %, 88 %) are quotations from the cited papers, not results of this project. -#}
 **Identifying drivers from vehicle data.** Drivers of road cars can be told apart from in-car sensor data (Enev et
 al., 2016), and a single turn already carries much of the signature: Hallac et al. (2016) identified drivers from one
 turn and found turns more informative than straights, and Chen, Cho and Shin (2017) reached 74–91 % accuracy from one
@@ -71,7 +71,7 @@ not a proof that no such study exists.
 
 ## 3. Data
 
-**Source.** Timing data come from the official live-timing feed through two public interfaces. The pilot used FastF1;
+**Source.** Timing data come from Formula 1's live-timing feed, read through two free, unofficial interfaces. The pilot used FastF1;
 when the F1 archive began refusing requests (HTTP 401) we switched to OpenF1, which serves the same feed. On the
 pilot weekend (2024 Abu Dhabi), the two sources gave identical kept laps for {{ validation.kept_same_q }} of {{ validation.kept_drivers }} drivers in qualifying and
 {{ validation.kept_same_fp2 }} of {{ validation.kept_drivers }} in practice, and brake-onset features within {{ validation.brake_onset_max_diff_m }} m.
@@ -81,9 +81,11 @@ pilot weekend (2024 Abu Dhabi), the two sources gave identical kept laps for {{ 
 between samples, and nothing faster than {{ data.nyquist_hz }} Hz can be resolved. Speed is reported in whole km/h, throttle in
 whole percent, and the brake as on/off. Position (X/Y) is too coarse to show racing-line differences.
 
-**Sessions.** Main qualifying sessions of 2023–2024 for development ({{ data.sessions_dev }} sessions, {{ data.laps_dev }} kept laps, {{ data.drivers_dev }} drivers)
-and of 2025 for the final test ({{ data.sessions_2025 }} sessions; OpenF1 has no lap data for one, so {{ data.sessions_2025_built }} were built). Laps were kept by
-FastF1-style rules (timed, accurate, green flag, not deleted, within 107 % of the best lap of the same stint).
+{# The 2023 Imola weekend was cancelled (flooding); OpenF1 lists its qualifying session with no data (results/08_download/download_log.csv). -#}
+**Sessions.** Main qualifying sessions of 2023–2024 for development ({{ data.sessions_dev }} sessions listed, {{ data.sessions_dev_with_data }} with data
+because the 2023 Imola weekend was cancelled; {{ data.laps_dev }} kept laps, {{ data.drivers_dev }} drivers) and of 2025 for the final test
+({{ data.sessions_2025 }} sessions; OpenF1 has no lap data for one, so {{ data.sessions_2025_built }} were built). Laps were kept by FastF1-style
+rules (timed, accurate, not an out or in lap, green flag, not deleted, within 107 % of the best lap of the same stint).
 Braking zones were detected automatically on each session's fastest kept lap and typed slow (< 120 km/h minimum),
 medium or fast (≥ 200 km/h).
 
@@ -263,9 +265,15 @@ closest related work (Section 2).
 ## Reproducibility
 
 Everything runs from the repository: `pip install -r requirements.txt`, `pip install -e .`, then the numbered scripts
-in `experiments/` (the data download, `08`–`09`, takes about an hour). Tests (`pytest`) use synthetic data only and run on
+in `experiments/` (the logged 2023–2024 download, `08`, took {{ data.download_minutes }} minutes, about {{ data.download_per_session_s }} s per session,
+because OpenF1 limits the request rate). Tests (`pytest`) use synthetic data only and run on
 GitHub Actions. Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
-research log and a decision log record what was done and why, with dates.
+research log and a decision log record what was done and why, with dates, and `docs/sources.md` lists what was
+downloaded from where and when.
+
+**Licences.** The code is under the MIT licence. The derived data files and figures are shared under CC BY-NC-SA 4.0,
+the licence under which OpenF1 publishes its data (`results/LICENSE.md`); the author does not own the underlying
+Formula 1 timing data.
 
 ## References
 
@@ -309,7 +317,8 @@ research log and a decision log record what was done and why, with dates.
   driving styles in a sim-racing setting. *International Conference on Electrical, Computer and Energy Technologies
   (ICECET)*. DOI 10.1109/ICECET55527.2022.9872663.
 - Wilcoxon, F. (1945). Individual comparisons by ranking methods. *Biometrics Bulletin*, 1(6), 80–83.
-- FastF1 (Python package), https://github.com/theOehrly/Fast-F1, and OpenF1 (API), https://openf1.org.
+- FastF1 (Python package, MIT licence), https://github.com/theOehrly/Fast-F1, and OpenF1 (API, data under CC BY-NC-SA 4.0),
+  https://openf1.org.
 
 ## Acknowledgements
 

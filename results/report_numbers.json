@@ -26,7 +26,9 @@
   "features": 11,
   "laps_dev": "4,497",
   "raw_samples_millions": "2.09",
-  "drivers_total": 28
+  "drivers_total": 28,
+  "download_minutes": "68",
+  "download_per_session_s": "92"
  },
  "validation": {
   "q_laps": 261,

@@ -396,3 +396,16 @@ looked like. Where an explainer and the FIA text disagree, the FIA text wins (on
 explainer calls the active-wing switch automatic; B7.1.1(c) says the driver commands
 it). Every rule number cites its issue, because the rules changed between the 2024
 announcement and Issue 17 (April 2026). The notes are in `docs/regulations_2026.md`.
+
+## 2026-11-01 — Licences: MIT for the code, CC BY-NC-SA 4.0 for derived data
+- **Code and documentation: MIT** (`LICENSE`). The simplest common permissive licence,
+  the same as FastF1's, so anyone (a supervisor, another student) can reuse the code.
+- **Derived data and figures (`results/`, `docs/images/`): CC BY-NC-SA 4.0**
+  (`results/LICENSE.md`). OpenF1 publishes its data under this licence, for
+  "educational purposes, personal learning projects, research, and non-commercial fan
+  engagement" (openf1.org, checked 2026-11-01). Its "ShareAlike" term asks that
+  adaptations carry the same licence, and the committed feature tables are built from
+  OpenF1 data, so they follow it. This is the cautious reading; the notice also says the
+  author doesn't own the underlying timing data.
+- **Citation:** `CITATION.cff` (validated with cffconvert 2.0.0 against schema 1.2.0).
+- The licence is the copyright holder's choice: Sadman confirms it by committing.

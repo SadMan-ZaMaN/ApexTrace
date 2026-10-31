@@ -98,7 +98,7 @@ show racing lines) is in `docs/data_report.md`.
 ## 4. Rebuilding the data
 
 ```powershell
-.venv\Scripts\python.exe experiments\08_download_openf1.py   # 2023-2024 from OpenF1, ~1.5 h the first time
+.venv\Scripts\python.exe experiments\08_download_openf1.py   # 2023-2024 from OpenF1: the logged run took 68 min (~92 s per session)
 .venv\Scripts\python.exe experiments\09_build_dataset.py     # dataset + raw samples
 .venv\Scripts\python.exe experiments\10_eda.py               # cleaning rules + EDA figures
 ```
@@ -118,9 +118,17 @@ anything; they use synthetic signals.
 | The 2026 car rules (FIA Sections B and C, the FIA's 2024 announcement) | `docs/regulations_2026.md`, section "Sources" |
 | Software versions | `requirements.txt` (pinned); the web app bundles D3 7.9.0 (ISC licence) and the Barlow typeface (SIL Open Font License) |
 
-## Notices
+## Licences and notices
+
+| What | Licence |
+|---|---|
+| OpenF1 data | CC BY-NC-SA 4.0, for "educational purposes, personal learning projects, research, and non-commercial fan engagement" (openf1.org, checked 2026-11-01) |
+| FastF1 (the library) | MIT |
+| ApexTrace code | MIT (`LICENSE`) |
+| ApexTrace derived data and figures (`results/`, `docs/images/`) | CC BY-NC-SA 4.0, following OpenF1 (`results/LICENSE.md`) |
 
 ApexTrace is an independent, non-commercial student project. It is unofficial and
-is not associated in any way with the Formula 1 companies. FastF1 and OpenF1 are
-unofficial as well. Raw data stay on the local computer; the repository holds only
-small derived results and charts drawn from them.
+is not associated in any way with the Formula 1 companies; FastF1 and OpenF1 are
+unofficial as well, and the author does not own the underlying timing data. Raw data
+stay on the local computer; the repository holds only small derived results and
+charts drawn from them.
