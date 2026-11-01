@@ -409,3 +409,30 @@ announcement and Issue 17 (April 2026). The notes are in `docs/regulations_2026.
   author doesn't own the underlying timing data.
 - **Citation:** `CITATION.cff` (validated with cffconvert 2.0.0 against schema 1.2.0).
 - The licence is the copyright holder's choice: Sadman confirms it by committing.
+
+## 2026-11-02 — H5 design (becomes preregistration Part C)
+Full design: `docs/h5_design.md`. The choices, all made on development data:
+- **Primary comparison:** a driver's 2026 signature vs their own 2025 signature and
+  their 2025 teammate's (both made in the same car). One-sided sign test, p < 0.05.
+  Drivers who changed team for 2026 are included. Why not Part B's comparison (own past
+  vs the new teammate on the same weekends)? It is lopsided towards the teammate. Here
+  both references are a year earlier in the same car, so the null hypothesis is a fair
+  coin.
+- **Both 2025 references are built on the weekends the two teammates shared**, so a
+  teammate with fewer weekends (a noisier signature) can't make the driver's own past
+  look closer for no reason.
+- **Everything 2026 does to a whole team** (new car, energy plan, throttle meaning,
+  corner types) shifts the target equally against both references: it can only
+  dilute, not create, a "yes". So the primary keeps all 30 features and the unchanged
+  corner-type rule; the feature split and the version without throttle are secondary.
+- **Sign test, not a test on distance sizes:** simple, assumption-free, and comparable
+  with the 17 of 20 and 10 of 11 baselines.
+- **Power stated in advance** (`experiments/19_h5_power.py`): with 14–20 drivers the test
+  finds a signature that survives as well as without a rule change (q ≈ 0.85) 85–96 % of
+  the time, but a weakened one (q ≈ 0.7) only 36–53 % of the time. A "no" can't tell
+  "weakened" from "gone".
+- **The secondary H4 on 2026 changers** gets its changers from team names by a fixed map,
+  not from a hand-typed list (the Colapinto lesson). The stayer control is preregistered
+  this time.
+- **Coasting check rule fixed before running:** if brake-onset error with a coasting phase
+  is above 8.4 m (2 × 4.2 m), add a secondary variant without the braking features.

@@ -819,3 +819,29 @@ brake-onset estimator with a coasting phase.
 - A blank line produced by a template comment under "2. Related work" removed (`-#}`).
 - README gets "Licence and citation"; the report gets a "Licences" paragraph and the
   data licences in its references; `docs/sources.md` gets a licence table.
+
+---
+
+## 2026-11-02 — Day 8: H5 design and power
+
+`docs/h5_design.md` (draft of Part C) and `experiments/19_h5_power.py`, development data only.
+
+**Design in one line:** for each driver in both 2025 and 2026, is the 2026 signature
+closer to their own 2025 signature than to their 2025 teammate's (same car, built on the
+weekends they shared)? One-sided sign test. The reasoning is in the design file. Anything
+the new car does to a whole team can only push this towards 50/50.
+
+**Measured today:**
+- Baselines without a rule change: 17 of 20 (0.85, exact 95 % interval 0.62–0.97) for
+  2023 → 2024; 10 of 11 (0.91, 0.59–1.00) for the 2024 → 2025 stayers.
+- At most 21 drivers can take part: all 21 drivers with ≥ 5 dry 2025 weekends had a
+  teammate sharing ≥ 5 weekends.
+- Power (new `signatures.sign_test_threshold` / `sign_test_power`, tested against a
+  worked example and 20,000 simulated studies, and checked to fail on two off-by-one
+  versions): n = 14–20 → 0.85–0.96 at q = 0.85, 0.36–0.53 at q = 0.7. Power isn't
+  monotone in n (18 drivers need 13, p = 0.048; 20 need 15) because the test counts
+  whole drivers.
+
+**Changed in the plan:** Day 10 is now the synthetic coasting check, which Part C needs.
+The teammate-relative features move to the exploratory days. The README's experiment
+range is now computed by `17_write_docs.py`.

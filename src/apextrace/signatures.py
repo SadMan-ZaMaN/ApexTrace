@@ -88,3 +88,38 @@ def sign_test_p(successes, trials):
     from math import comb
 
     return float(sum(comb(trials, k) for k in range(successes, trials + 1)) / 2 ** trials)
+
+
+def sign_test_threshold(trials, alpha=0.05):
+    """The fewest successes out of `trials` that the one-sided sign test calls significant (p < alpha).
+
+    None if even all `trials` aren't enough. This is what the preregistration
+    states in advance: how many drivers must go the driver's way.
+    Example: 10 trials -> 9 (9 of 10: p = 11/1024 = 0.011; 8 of 10: p = 56/1024 = 0.055).
+    4 trials -> None (4 of 4: p = 1/16 = 0.0625).
+    """
+    for successes in range(trials + 1):
+        if sign_test_p(successes, trials) < alpha:
+            return successes
+    return None
+
+
+def sign_test_power(trials, success_probability, alpha=0.05):
+    """Power: the chance that the sign test comes out significant, if each driver
+    independently goes the driver's way with `success_probability`.
+
+    Power = P(at least the threshold number of successes) under a binomial with
+    that probability. At success_probability = 0.5 (no signature) it equals the
+    test's real false-positive rate, which is at most alpha.
+    Example: 10 drivers, each 80 % likely to be closer to their own past: the test
+    needs 9 of 10, P(9 or 10) = 10 * 0.8^9 * 0.2 + 0.8^10 = 0.376.
+    """
+    from math import comb
+
+    threshold = sign_test_threshold(trials, alpha)
+    if threshold is None:
+        return 0.0
+    power = 0.0
+    for k in range(threshold, trials + 1):
+        power += comb(trials, k) * success_probability ** k * (1 - success_probability) ** (trials - k)
+    return float(power)

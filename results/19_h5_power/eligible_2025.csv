@@ -1,0 +1,22 @@
+driver,team_2025,weekends_with_team,teammate,shared_weekends,eligible
+ALB,Williams,22,SAI,22,True
+ALO,Aston Martin,22,STR,21,True
+ANT,Mercedes,22,RUS,21,True
+BEA,Haas F1 Team,21,OCO,21,True
+BOR,Kick Sauber,21,HUL,21,True
+COL,Alpine,16,GAS,16,True
+DOO,Alpine,6,GAS,6,True
+GAS,Alpine,22,COL,16,True
+HAD,Racing Bulls,21,LAW,19,True
+HAM,Ferrari,22,LEC,22,True
+HUL,Kick Sauber,22,BOR,21,True
+LAW,Racing Bulls,20,HAD,19,True
+LEC,Ferrari,22,HAM,22,True
+NOR,McLaren,22,PIA,22,True
+OCO,Haas F1 Team,22,BEA,21,True
+PIA,McLaren,22,NOR,22,True
+RUS,Mercedes,21,ANT,21,True
+SAI,Williams,22,ALB,22,True
+STR,Aston Martin,21,ALO,21,True
+TSU,Red Bull Racing,19,VER,19,True
+VER,Red Bull Racing,22,TSU,19,True

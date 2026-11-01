@@ -184,6 +184,11 @@ how 2026 corners are typed (section 4).
 - **Measurement checks first:** item 3 above on synthetic laps; the sampling check and
   the throttle caveat written into Part C.
 
+**Answered on 2026-11-02 in [`docs/h5_design.md`](h5_design.md)** (section 4): all 30
+features stay in the primary test, the feature split and the no-throttle version are
+secondary, corner types keep the same rule, and the coasting check has a decision rule
+fixed before it runs.
+
 ---
 
 ## Sources (all accessed 2026-10-31)

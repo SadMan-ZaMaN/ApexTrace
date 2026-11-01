@@ -247,6 +247,12 @@ def collect_numbers():
         "line_error_s_s": f(offset["q3_gap_error"]["median_abs_error_s_projected"], 3),
     }
     n["prereg"] = {"part_a": pilot["preregistration_commit"][:7], "part_b": final["preregistration_commit"][:7]}
+
+    # --- the repository: the highest experiment number, so the README never lists a stale range
+    experiment_numbers = []
+    for script in (REPO_ROOT / "experiments").glob("[0-9][0-9]_*.py"):
+        experiment_numbers.append(int(script.name[:2]))
+    n["repo"] = {"last_experiment": f"{max(experiment_numbers):02d}"}
     return n
 
 

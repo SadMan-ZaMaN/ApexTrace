@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from apextrace.signatures import distance, distance_table, own_rank, season_signatures, sign_test_p, standardise
+from apextrace.signatures import (distance, distance_table, own_rank, season_signatures, sign_test_p, sign_test_power,
+                                  sign_test_threshold, standardise)
 
 
 def test_distance_ignores_missing_features():
@@ -16,6 +17,34 @@ def test_sign_test():
     assert sign_test_p(5, 5) == pytest.approx(1 / 32)
     assert sign_test_p(4, 5) == pytest.approx(6 / 32)
     assert sign_test_p(0, 5) == pytest.approx(1.0)
+
+
+def test_sign_test_threshold_is_the_fewest_significant_successes():
+    assert sign_test_threshold(10) == 9      # 9 of 10: p = 0.011; 8 of 10: p = 0.055
+    assert sign_test_threshold(20) == 15     # 15 of 20: p = 0.021; 14 of 20: p = 0.058
+    assert sign_test_threshold(5) == 5       # only 5 of 5 (p = 1/32)
+    assert sign_test_threshold(4) is None    # even 4 of 4 gives p = 1/16
+
+
+def test_sign_test_power_matches_the_worked_example():
+    assert sign_test_power(10, 0.8) == pytest.approx(10 * 0.8 ** 9 * 0.2 + 0.8 ** 10)
+    assert sign_test_power(4, 0.99) == 0.0
+    # with no signature (a coin flip per driver) "power" is the real false-positive rate
+    assert sign_test_power(10, 0.5) == pytest.approx(sign_test_p(9, 10))
+    assert sign_test_power(10, 0.5) < 0.05
+
+
+def test_sign_test_power_agrees_with_simulated_studies():
+    """The full path: simulate many studies of 16 drivers, run the sign test on each,
+    count how often it is significant. That share must match the formula."""
+    rng = np.random.default_rng(8)
+    drivers, probability, studies = 16, 0.75, 20000
+    significant = 0
+    for _ in range(studies):
+        successes = int(np.sum(rng.random(drivers) < probability))
+        if sign_test_p(successes, drivers) < 0.05:
+            significant += 1
+    assert significant / studies == pytest.approx(sign_test_power(drivers, probability), abs=0.015)
 
 
 def test_every_session_counts_once_in_a_signature():

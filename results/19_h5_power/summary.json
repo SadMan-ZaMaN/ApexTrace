@@ -1,0 +1,122 @@
+{
+ "min_weekends": 5,
+ "baselines": [
+  {
+   "label": "2023 -> 2024, all drivers in both seasons",
+   "successes": 17,
+   "trials": 20,
+   "share": 0.85,
+   "ci95_low": 0.6210731734546862,
+   "ci95_high": 0.9679290628145363,
+   "sign_test_p": 0.0012884140014648438
+  },
+  {
+   "label": "2024 -> 2025, drivers who stayed in their team",
+   "successes": 10,
+   "trials": 11,
+   "share": 0.9090909090909091,
+   "ci95_low": 0.5872200830116174,
+   "ci95_high": 0.9977010277861857,
+   "sign_test_p": 0.005859375
+  }
+ ],
+ "drivers_2025_with_min_weekends": 21,
+ "eligible_upper_bound": 21,
+ "power_table": [
+  {
+   "drivers": 8,
+   "needed": 7,
+   "power_at_0.6": 0.106,
+   "power_at_0.7": 0.255,
+   "power_at_0.8": 0.503,
+   "power_at_0.85": 0.657,
+   "power_at_0.9": 0.813
+  },
+  {
+   "drivers": 10,
+   "needed": 9,
+   "power_at_0.6": 0.046,
+   "power_at_0.7": 0.149,
+   "power_at_0.8": 0.376,
+   "power_at_0.85": 0.544,
+   "power_at_0.9": 0.736
+  },
+  {
+   "drivers": 12,
+   "needed": 10,
+   "power_at_0.6": 0.083,
+   "power_at_0.7": 0.253,
+   "power_at_0.8": 0.558,
+   "power_at_0.85": 0.736,
+   "power_at_0.9": 0.889
+  },
+  {
+   "drivers": 14,
+   "needed": 11,
+   "power_at_0.6": 0.124,
+   "power_at_0.7": 0.355,
+   "power_at_0.8": 0.698,
+   "power_at_0.85": 0.853,
+   "power_at_0.9": 0.956
+  },
+  {
+   "drivers": 16,
+   "needed": 12,
+   "power_at_0.6": 0.167,
+   "power_at_0.7": 0.45,
+   "power_at_0.8": 0.798,
+   "power_at_0.85": 0.921,
+   "power_at_0.9": 0.983
+  },
+  {
+   "drivers": 18,
+   "needed": 13,
+   "power_at_0.6": 0.209,
+   "power_at_0.7": 0.534,
+   "power_at_0.8": 0.867,
+   "power_at_0.85": 0.958,
+   "power_at_0.9": 0.994
+  },
+  {
+   "drivers": 20,
+   "needed": 15,
+   "power_at_0.6": 0.126,
+   "power_at_0.7": 0.416,
+   "power_at_0.8": 0.804,
+   "power_at_0.85": 0.933,
+   "power_at_0.9": 0.989
+  }
+ ],
+ "changer_thresholds": [
+  {
+   "changers": 3,
+   "needed": null,
+   "smallest_possible_p": 0.125
+  },
+  {
+   "changers": 4,
+   "needed": null,
+   "smallest_possible_p": 0.0625
+  },
+  {
+   "changers": 5,
+   "needed": 5,
+   "smallest_possible_p": 0.03125
+  },
+  {
+   "changers": 6,
+   "needed": 6,
+   "smallest_possible_p": 0.015625
+  },
+  {
+   "changers": 7,
+   "needed": 7,
+   "smallest_possible_p": 0.0078125
+  },
+  {
+   "changers": 8,
+   "needed": 7,
+   "smallest_possible_p": 0.00390625
+  }
+ ]
+}
