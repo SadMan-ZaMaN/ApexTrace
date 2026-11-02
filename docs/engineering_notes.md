@@ -100,3 +100,19 @@ After changing an analysis: re-run its experiment script, then
   `test_compare_returns_both_laps_and_a_correct_gap`. The same mistake survived in the
   overview's live gap until 2026-10-20 (it read +0.05..+0.47 s instead of
   −0.06..+0.22 s); any new gap readout must use `d`.
+- **2026-11-03 — When comparing a driver with a teammate's signature, leave both of
+  them out of the spread used for the z-scores, and build both references on the
+  weekends they shared.** Found while testing the H5 comparison
+  (`signatures.own_vs_past_teammate`) on synthetic laps where the signature is ONLY the
+  car (the answer must be a fair coin, 0.5):
+  - Full-season references with a teammate who drove 5 of 12 weekends: 0.71–0.79
+    "own closer" (the teammate's signature is noisier, so it sits farther away).
+  - Shared weekends, but the pair inside the spread: 0.43 over 1,500 trials (5 standard
+    errors low). The noisy teammate inflates the spread of the feature where it is
+    farthest out, which shrinks the distance on exactly that feature.
+  - Both fixes: 0.493 and 0.497.
+  Guarded by `test_shared_weekends_and_leaving_the_pair_out_keep_the_coin_fair` (checked
+  to fail on both broken versions) and
+  `test_full_season_references_fake_a_yes_when_a_teammate_drove_few_weekends`. The
+  frozen H4 results (2025) used the older full-reference spread and are not re-run;
+  how much this moves the development numbers is measured in experiment 20.

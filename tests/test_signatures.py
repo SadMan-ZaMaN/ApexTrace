@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from apextrace.signatures import (distance, distance_table, own_rank, season_signatures, sign_test_p, sign_test_power,
-                                  sign_test_threshold, standardise)
+from apextrace.signatures import (distance, distance_table, own_rank, own_vs_past_teammate, season_signatures,
+                                  sign_test_p, sign_test_power, sign_test_threshold, standardise)
 
 
 def test_distance_ignores_missing_features():
@@ -97,3 +97,101 @@ def test_without_a_personal_signature_ranks_are_random():
     laps = season_of_laps(rng, personal, noise=0.8)
     own = ranks(laps, [f"f{i}" for i in range(6)], names)
     assert 6.5 < np.mean(own) < 14.5
+
+
+# ---------------------------------------------------------------- H5: own past vs past teammate
+
+FEATURES = [f"f{i}" for i in range(10)]
+
+
+def h5_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=None, noise=1.0, car_sd=1.0):
+    """Two seasons of synthetic laps: every lap = car + the driver's personal offset + noise.
+
+    Reference season 2025: each team has a lead driver (A) on every weekend and a second
+    driver (B) on the first `teammate_weekends` weekends (all of them if None).
+    Target season 2026: a NEW car for every team (redrawn), the lead driver again, and B
+    again if B drove the full reference season, otherwise a newcomer (N) who has no past.
+    Personal offsets are kept from one season to the next; personal_sd = 0 means the
+    signature is only the car.
+    """
+    if teammate_weekends is None:
+        teammate_weekends = weekends
+    rows = []
+    for team in range(teams):
+        lead, second, newcomer = f"A{team}", f"B{team}", f"N{team}"
+        personal = {name: rng.normal(0, personal_sd, len(FEATURES)) for name in (lead, second, newcomer)}
+        seasons = {2025: [lead, second], 2026: [lead, second if teammate_weekends == weekends else newcomer]}
+        for year, drivers in seasons.items():
+            car = rng.normal(0, car_sd, len(FEATURES))
+            for weekend in range(weekends):
+                for name in drivers:
+                    if year == 2025 and name == second and weekend >= teammate_weekends:
+                        continue
+                    for lap in range(2):
+                        values = car + personal[name] + rng.normal(0, noise, len(FEATURES))
+                        rows.append({"year": year, "session_key": year * 100 + weekend, "driver": name,
+                                     "team": f"T{team}", "lap": lap, **dict(zip(FEATURES, values))})
+    return pd.DataFrame(rows)
+
+
+def share_own_closer(seed, studies, shared_weekends_only=True, **season_options):
+    rng = np.random.default_rng(seed)
+    wins, trials = 0, 0
+    for _ in range(studies):
+        laps = h5_seasons(rng, **season_options)
+        table = own_vs_past_teammate(laps, 2025, 2026, FEATURES, shared_weekends_only=shared_weekends_only)
+        included = table[table["included"]]
+        wins += int(included["own_closer"].sum())
+        trials += len(included)
+    return wins / trials
+
+
+def test_h5_finds_a_personal_signature_through_a_new_car():
+    """Personal offsets as large as the car differences, and a completely new car in 2026:
+    the driver's 2026 signature is still nearer their own 2025 one than the teammate's."""
+    assert share_own_closer(seed=91, studies=10, personal_sd=1.0) > 0.85
+
+
+def test_h5_is_a_fair_coin_when_the_signature_is_only_the_car():
+    """No personal offsets: both 2025 references are the same car plus noise, so a driver
+    is closer to their own past about half the time (the sign test's null hypothesis)."""
+    assert 0.40 < share_own_closer(seed=92, studies=30, personal_sd=0.0) < 0.60
+
+
+FEW_WEEKENDS_TEAMMATE = {"personal_sd": 0.0, "teammate_weekends": 5, "noise": 2.0, "car_sd": 0.3}
+
+
+def test_full_season_references_fake_a_yes_when_a_teammate_drove_few_weekends():
+    """Only the car, but every team's second driver drove just 5 of 12 reference weekends
+    and left. With full-season references the lead driver's own past (12 weekends) is less
+    noisy than the teammate's (5), so "own closer" wins far too often: a fake "yes".
+    (Seeds 93-98 gave 0.71-0.79; a fair coin over 150 trials stays below 0.61 with 99.6 %.)"""
+    assert share_own_closer(seed=93, studies=30, shared_weekends_only=False, **FEW_WEEKENDS_TEAMMATE) > 0.65
+
+
+def test_shared_weekends_and_leaving_the_pair_out_keep_the_coin_fair():
+    """The same world with the H5 rules: both references on the 5 shared weekends, and the
+    spread for the z-scores taken from the OTHER drivers. 360 trials; a fair coin lands in
+    0.5 +- 0.07 (2.7 standard errors). Fails if the pair is part of the spread (0.36-0.42
+    on small grids: the noisy teammate inflates the spread where it differs most) or if
+    full-season references are used (about 0.7)."""
+    share = share_own_closer(seed=93, studies=120, teams=3, **FEW_WEEKENDS_TEAMMATE)
+    assert 0.43 < share < 0.57
+
+
+def test_h5_teammate_is_the_one_with_the_most_shared_weekends():
+    """X drove all 10 weekends; Y the first 3, then Z the last 7 -> X's teammate is Z.
+    W drove alone for another team -> left out, with the reason."""
+    rows = []
+    for weekend in range(10):
+        drivers = [("X", "T"), ("Y" if weekend < 3 else "Z", "T"), ("W", "U")]
+        for name, team in drivers:
+            rows.append({"year": 2025, "session_key": weekend, "driver": name, "team": team, "f0": 0.0})
+    for weekend in range(6):
+        for name in ("X", "W"):
+            rows.append({"year": 2026, "session_key": 100 + weekend, "driver": name, "team": "T", "f0": 0.0})
+    table = own_vs_past_teammate(pd.DataFrame(rows), 2025, 2026, ["f0"]).set_index("driver")
+    assert table.loc["X", "teammate"] == "Z"
+    assert table.loc["X", "shared_weekends"] == 7
+    assert not table.loc["W", "included"]
+    assert "no teammate" in table.loc["W", "reason"]

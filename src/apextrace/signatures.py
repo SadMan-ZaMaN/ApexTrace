@@ -74,6 +74,89 @@ def distance_table(targets, references, feature_columns):
     return table
 
 
+def most_weekends_team(laps, driver):
+    """The team a driver drove for on the most weekends (alphabetically first on a tie).
+
+    Example: 19 weekends for one team and 2 for another -> the first team.
+    """
+    weekends = laps[laps["driver"] == driver].groupby("team")["session_key"].nunique()
+    return weekends.idxmax()
+
+
+def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min_sessions=5,
+                         shared_weekends_only=True):
+    """H5's comparison: is a driver's target-season signature closer to their OWN
+    reference-season signature than to their reference-season TEAMMATE's?
+
+    Both references were made in the same car, so if the signature were only the
+    car, the target would be equally close to both: a coin flip per driver. That
+    holds for drivers who later changed team too, so everyone in both seasons can
+    take part (docs/h5_design.md).
+
+    The two references are built only on the weekends the teammates SHARED in the
+    reference season (shared_weekends_only=True). Why: a signature averaged over
+    fewer weekends is noisier, and a noisier reference sits farther from everything.
+    With 20 weekends against 5, the teammate's noise is sqrt(20/5) = 2 times larger,
+    and the driver's own past would look closer for no real reason.
+    shared_weekends_only=False uses each driver's full-season signature instead;
+    it exists only to show that bias in the tests.
+
+    The teammate is the other driver of the driver's most-driven reference team with
+    the most shared weekends (alphabetical on a tie).
+
+    Everything is z-scored (standardise) with the spread of the OTHER drivers'
+    full-season reference signatures: the driver and the teammate are left out. Why:
+    a teammate with few weekends has a noisy signature that is often far out on some
+    feature. If that signature were part of the spread, it would inflate the spread of
+    exactly that feature, which shrinks the distance on it: the teammate would look
+    closer than it is. Found on synthetic laps with only the car (5 of 12 weekends):
+    0.43 "own closer" over 1,500 trials instead of 0.5; with the pair left out, 0.5.
+
+    Returns one row per driver who has >= min_sessions weekends in both seasons, with
+    `included` = False and a `reason` when no teammate shared >= min_sessions weekends.
+    Example: distances 0.8 to the own past and 1.1 to the teammate's -> own_closer.
+    """
+    reference_laps = laps[laps["year"] == reference_year]
+    target_laps = laps[laps["year"] == target_year]
+    reference_all = season_signatures(reference_laps, feature_columns, min_sessions).xs(reference_year, level="year")
+    targets = season_signatures(target_laps, feature_columns, min_sessions).xs(target_year, level="year")
+
+    rows = []
+    for driver in sorted(set(targets.index) & set(reference_all.index)):
+        team = most_weekends_team(reference_laps, driver)
+        row = {"driver": driver, "team_reference": team, "team_target": most_weekends_team(target_laps, driver),
+               "weekends_target": int(targets.loc[driver, "sessions"])}
+        team_laps = reference_laps[reference_laps["team"] == team]
+        own_weekends = set(team_laps.loc[team_laps["driver"] == driver, "session_key"])
+        teammate, shared = None, set()
+        for other in sorted(team_laps["driver"].unique()):
+            if other == driver:
+                continue
+            common = own_weekends & set(team_laps.loc[team_laps["driver"] == other, "session_key"])
+            if len(common) > len(shared):
+                teammate, shared = other, common
+        if len(shared) < min_sessions:
+            rows.append({**row, "included": False, "reason": f"no teammate shared {min_sessions} weekends"})
+            continue
+
+        if shared_weekends_only:
+            pair = team_laps[team_laps["driver"].isin([driver, teammate]) & team_laps["session_key"].isin(shared)]
+            references = season_signatures(pair, feature_columns, min_sessions).xs(reference_year, level="year")
+        else:
+            references = reference_all
+        if teammate not in references.index:
+            rows.append({**row, "included": False, "reason": f"teammate has fewer than {min_sessions} weekends"})
+            continue
+        others = reference_all.drop(index=[driver, teammate], errors="ignore")
+        references_z = standardise(references, feature_columns, others)
+        target = standardise(targets.loc[[driver]], feature_columns, others).loc[driver, feature_columns]
+        d_own = distance(target, references_z.loc[driver, feature_columns])
+        d_mate = distance(target, references_z.loc[teammate, feature_columns])
+        rows.append({**row, "included": True, "reason": "", "teammate": teammate, "shared_weekends": len(shared),
+                     "distance_own": d_own, "distance_teammate": d_mate, "own_closer": bool(d_own < d_mate)})
+    return pd.DataFrame(rows)
+
+
 def own_rank(distances, driver):
     """Rank (1 = closest) of the driver's own reference signature among all reference drivers."""
     row = distances.loc[driver].sort_values()
