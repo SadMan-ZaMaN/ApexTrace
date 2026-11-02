@@ -15,6 +15,13 @@ Pairs:
 Each pair also runs once with full-season references (shared_weekends_only=False), to
 show what the shared-weekend rule changes on real data.
 
+Secondary versions (docs/h5_design.md section 4), same rules, fewer features:
+  control points    brake onset, minimum speed, slowest point, throttle pickup (12 columns)
+  energy-sensitive  entry speed, exit speed, full throttle, corner time (12 columns)
+  no throttle       all but throttle pickup and full throttle (24 columns)
+Without a rule change, they show how much of the signature each group carries; for 2026
+the hypothesis is that the control points carry over better.
+
 These are the baselines for H5: how often a signature "survives" when the rules don't
 change. Power if 2026 had the same per-driver rate is computed too.
 
@@ -42,6 +49,9 @@ RAW_COLUMNS = ["session_key", "driver", "lap", "speed_kmh", "throttle_pct", "bra
 PAIRS = [(2023, 2024), (2024, 2025)]
 MIN_WEEKENDS = 5
 POWER_DRIVERS = [14, 16, 18, 20, 21]
+CONTROL_POINTS = ["brake_onset_m", "min_speed_kmh", "apex_m", "throttle_pickup_m"]
+ENERGY_SENSITIVE = ["entry_speed_kmh", "exit_speed_kmh", "full_throttle_m", "corner_time_s"]
+THROTTLE = ["throttle_pickup_m", "full_throttle_m"]
 # Only drivers below the line and team changers are labelled (the CSV has everyone);
 # a label that would touch a neighbour goes to the left of its point
 LABEL_LEFT = {"MAG"}
@@ -72,6 +82,24 @@ def summarise(table):
     return {"drivers": trials, "own_closer": successes, "share": successes / trials,
             "ci95_low": float(interval.low), "ci95_high": float(interval.high),
             "sign_test_p": sign_test_p(successes, trials)}
+
+
+def columns_of(features, names):
+    """The lap-vector columns ("<feature>_rel__<corner type>") that belong to the named features."""
+    columns = []
+    for column in features:
+        if column.split("_rel__")[0] in names:
+            columns.append(column)
+    return columns
+
+
+def variants(features):
+    """The secondary feature sets: name -> columns."""
+    every_feature = sorted({column.split("_rel__")[0] for column in features})
+    without_throttle = [name for name in every_feature if name not in THROTTLE]
+    return {"control points": columns_of(features, CONTROL_POINTS),
+            "energy-sensitive": columns_of(features, ENERGY_SENSITIVE),
+            "no throttle": columns_of(features, without_throttle)}
 
 
 def figure(tables):
@@ -136,6 +164,10 @@ def main():
                   "full_season_references": summarise(full_season)}
         result["power_if_2026_had_this_rate"] = {
             str(n): round(sign_test_power(n, result["all"]["share"]), 3) for n in POWER_DRIVERS}
+        result["variants"] = {}
+        for name, columns in variants(features).items():
+            variant = own_vs_past_teammate(laps, reference_year, target_year, columns, MIN_WEEKENDS)
+            result["variants"][name] = {"columns": len(columns), **summarise(variant)}
         summary["pairs"][label] = result
 
         a = result["all"]
@@ -148,6 +180,9 @@ def main():
         if result["excluded"]:
             print(f"  excluded: {result['excluded']}")
         print("  power if 2026 had this rate:", result["power_if_2026_had_this_rate"])
+        for name, v in result["variants"].items():
+            print(f"  {name} ({v['columns']} columns): {v['own_closer']} of {v['drivers']} "
+                  f"({v['share']:.2f}, 95 % {v['ci95_low']:.2f}-{v['ci95_high']:.2f}), p = {v['sign_test_p']:.4f}")
         print(included[["driver", "team_reference", "team_target", "teammate", "shared_weekends", "distance_own",
                         "distance_teammate", "own_closer"]].round(3).to_string(index=False))
 

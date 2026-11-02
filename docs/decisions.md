@@ -436,3 +436,17 @@ Full design: `docs/h5_design.md`. The choices, all made on development data:
   this time.
 - **Coasting check rule fixed before running:** if brake-onset error with a coasting phase
   is above 8.4 m (2 × 4.2 m), add a secondary variant without the braking features.
+
+## 2026-11-03 — H5: the z-score spread leaves the pair out; secondary versions stay secondary
+- **Changed in the H5 procedure:** the spread used for the z-scores comes from the OTHER
+  drivers' reference signatures, not all of them. With the pair inside, a noisy
+  part-season teammate inflates the spread where it differs most and looks closer than
+  it is: 0.43 instead of 0.5 on car-only synthetic laps (1,500 drivers). Found by the
+  synthetic tests before any real data was run through the new function.
+- **Primary unchanged otherwise** (all 30 features, sign test). On development data the
+  12-column groups are weaker than all 30 (control points 0.75 and 0.75; energy-sensitive
+  0.70 and 0.69; all 30: 0.80 and 0.94), so splitting the primary would cost power.
+- **Secondary versions kept as planned:** feature groups side by side (no test of the
+  difference), and no-throttle (17 of 20 and 15 of 16: nothing lost without throttle).
+- The frozen H4 results used the older spread and are not re-run. The H4 development
+  number under the H5 rules is 16 of 20 (it was 17 of 20).

@@ -845,3 +845,41 @@ the new car does to a whole team can only push this towards 50/50.
 **Changed in the plan:** Day 10 is now the synthetic coasting check, which Part C needs.
 The teammate-relative features move to the exploratory days. The README's experiment
 range is now computed by `17_write_docs.py`.
+
+---
+
+## 2026-11-03 — Day 9: the H5 comparison, a scaling bias, and the development baselines
+
+**Part 1: the function and its tests.** `signatures.own_vs_past_teammate`: the target-season
+signature vs the driver's own reference-season signature and the reference-season
+teammate's, both built on their shared weekends. Synthetic laps (car + personal offset
++ noise, a new car in the target season):
+- A personal signature is found through a new car (> 0.85).
+- A car-only world is a fair coin.
+- Full-season references fake a "yes" when the teammate drove 5 of 12 weekends
+  (0.71–0.79 over six seeds).
+
+**A bias the tests found that the design hadn't predicted:** even with shared weekends,
+car-only gave 0.43 over 1,500 drivers (−5.3 standard errors). The teammate's noisy
+signature was part of the spread used for the z-scores, so it shrank the distance on the
+feature where it was farthest out. Leaving the pair out of the spread: 0.493 (asymmetric
+teammate) and 0.497 (full-season teammates). Both new tests fail on both broken versions.
+Logged in engineering_notes.md.
+
+**Part 2: development run** (`experiments/20_h5_development.py`), all 30 features:
+- 2023 → 2024: 16 of 20 own past closer (0.80, 0.56–0.94), p = 0.006. The H4-style
+  number was 17 of 20.
+- 2024 → 2025: 15 of 16 (0.94, 0.70–1.00), p = 0.0003, including 5 of 6 team changers
+  (all but HAM).
+- Full-season references would give 16 of 20 and 14 of 16.
+- Power at these rates with 14–21 drivers: 0.70–0.89 (at 0.80), ≥ 0.99 (at 0.94).
+
+**Part 3: secondary versions:** control points 15/20 and 12/16; energy-sensitive 14/20
+and 11/16; no throttle 17/20 and 15/16. The groups are weaker than all 30 (fewer
+features); control points are a little ahead, but within noise.
+
+**Interpretation, development only:** the changers' 5 of 6 is not a contradiction of the
+frozen H4 "no" (2 of 5). H4 asked "own past or NEW teammate?"; this asks "own past or OLD
+teammate?". A style that moves towards the new car but keeps more of its own past than
+the old teammate's gives exactly this pair of answers. This is a hypothesis for the
+2026 write-up, not a result.

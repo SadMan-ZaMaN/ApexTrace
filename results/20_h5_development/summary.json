@@ -35,6 +35,35 @@
     "18": 0.867,
     "20": 0.804,
     "21": 0.891
+   },
+   "variants": {
+    "control points": {
+     "columns": 12,
+     "drivers": 20,
+     "own_closer": 15,
+     "share": 0.75,
+     "ci95_low": 0.5089541282920425,
+     "ci95_high": 0.9134285308985655,
+     "sign_test_p": 0.020694732666015625
+    },
+    "energy-sensitive": {
+     "columns": 12,
+     "drivers": 20,
+     "own_closer": 14,
+     "share": 0.7,
+     "ci95_low": 0.4572108177237109,
+     "ci95_high": 0.8810684095942722,
+     "sign_test_p": 0.057659149169921875
+    },
+    "no throttle": {
+     "columns": 24,
+     "drivers": 20,
+     "own_closer": 17,
+     "share": 0.85,
+     "ci95_low": 0.6210731734546862,
+     "ci95_high": 0.9679290628145363,
+     "sign_test_p": 0.0012884140014648438
+    }
    }
   },
   "2024 -> 2025": {
@@ -78,6 +107,35 @@
     "18": 0.999,
     "20": 0.999,
     "21": 1.0
+   },
+   "variants": {
+    "control points": {
+     "columns": 12,
+     "drivers": 16,
+     "own_closer": 12,
+     "share": 0.75,
+     "ci95_low": 0.4762291801038724,
+     "ci95_high": 0.9273379617471178,
+     "sign_test_p": 0.0384063720703125
+    },
+    "energy-sensitive": {
+     "columns": 12,
+     "drivers": 16,
+     "own_closer": 11,
+     "share": 0.6875,
+     "ci95_low": 0.4133793635486413,
+     "ci95_high": 0.8898300452828826,
+     "sign_test_p": 0.1050567626953125
+    },
+    "no throttle": {
+     "columns": 24,
+     "drivers": 16,
+     "own_closer": 15,
+     "share": 0.9375,
+     "ci95_low": 0.6976792615654681,
+     "ci95_high": 0.998418888277234,
+     "sign_test_p": 0.0002593994140625
+    }
    }
   }
  }
