@@ -158,7 +158,8 @@ how 2026 corners are typed (section 4).
    makes the kink smaller: deceleration changes from "already slowing" to "braking"
    instead of from "accelerating" to "braking". How much this adds to the 4.2 m
    error measured on synthetic laps in Phase 2 can be measured on synthetic laps with
-   a coasting phase, before Part C.
+   a coasting phase, before Part C. **Checked on 2026-11-04** (`experiments/21_coasting_check.py`):
+   worst case 4.89 m, so the estimator still works, but coasting moves its bias by about 4 m.
 4. **Unchanged by the new rules:** the car's dimensions don't enter any feature, and the
    track coordinate comes from X/Y position and integrated speed (Phase 3). Experiment
    18 found that the per-lap position offset does not reach the corner features, so no

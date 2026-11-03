@@ -41,6 +41,11 @@ COAST_DECEL = 1.0         # engine braking + rolling resistance with throttle cl
 BRAKE_BASE = 1.8 * G      # braking grip without downforce
 BRAKE_AERO = 0.003876     # extra braking grip from downforce, times v^2
 
+# Rough 2026 numbers for the coasting check (docs/regulations_2026.md): only used when a
+# corner asks for a pre-braking phase or 2026-like aero; the defaults above are unchanged.
+MASS_2026_KG = 770.0      # FIA 2024: 768 kg minimum with driver and tyres
+ICE_2026_KW = 400.0       # FIA 2024: the engine alone, about 400 kW
+
 # Thresholds from the feature definitions (PROJECT_CONTEXT §10)
 THROTTLE_PICKUP_PCT = 10.0
 FULL_THROTTLE_PCT = 99.0
@@ -58,16 +63,18 @@ CORNER_TYPES = {
 }
 
 
-def braking_decel(v):
+def braking_decel(v, aero_scale=1.0, drag_scale=1.0):
     """Deceleration (m/s^2, positive) with the brake fully on, at speed v (m/s).
 
     Example: v = 90 m/s (324 km/h): 1.8 g + 0.003876 * 8100 + drag 8.8
     = 17.7 + 31.4 + 8.8 = 57.9 m/s^2 = 5.9 g. At 28 m/s (100 km/h): 2.2 g.
+    aero_scale / drag_scale scale the downforce and drag parts (2026-like car:
+    0.7 and 0.45): at 90 m/s, 17.7 + 22.0 + 4.0 = 43.6 m/s^2 = 4.4 g.
     """
-    return BRAKE_BASE + BRAKE_AERO * v * v + DRAG_COEFF * v * v
+    return BRAKE_BASE + aero_scale * BRAKE_AERO * v * v + drag_scale * DRAG_COEFF * v * v
 
 
-def drive_accel(v, throttle_pct):
+def drive_accel(v, throttle_pct, drag_scale=1.0):
     """Forward acceleration (m/s^2, can be negative) at speed v with a given throttle.
 
     Engine force is limited by traction at low speed and by power at high
@@ -77,8 +84,33 @@ def drive_accel(v, throttle_pct):
     = +1.6 m/s^2 (still accelerating slowly at 324 km/h).
     """
     available = min(TRACTION_LIMIT, POWER_PER_MASS / max(v, 1.0))
-    resist = DRAG_COEFF * v * v + COAST_DECEL * (1.0 - throttle_pct / 100.0)
+    resist = drag_scale * DRAG_COEFF * v * v + COAST_DECEL * (1.0 - throttle_pct / 100.0)
     return available * throttle_pct / 100.0 - resist
+
+
+def pre_brake_accel(v, mode, harvest_kw, drag_scale=1.0):
+    """Acceleration (m/s^2) in the seconds just before braking, when the car is already slowing.
+
+    Two 2026 habits (docs/regulations_2026.md), both with the electric motor
+    harvesting, i.e. working as a brake on the rear axle: force = power / speed.
+      "lift":      throttle closed, brake off ("lift and coast"): drag + engine
+                   braking + harvesting.
+      "superclip": throttle still flat, but the motor takes harvest_kw off the
+                   400 kW engine before it reaches the wheels.
+    Example at 83 m/s (300 km/h), 250 kW harvested, mass 770 kg: harvesting alone
+    is 250000 / (770 * 83) = 3.9 m/s^2. "lift" with 2022-25 drag (7.5 m/s^2) and
+    1.0 engine braking: -(7.5 + 1.0 + 3.9) = -12.4 m/s^2 (1.3 g).
+    "superclip": engine 400000 / (770 * 83) = 6.3, minus 3.9 and 7.5 = -5.2 m/s^2.
+    """
+    v = max(v, 1.0)
+    drag = drag_scale * DRAG_COEFF * v * v
+    harvest = harvest_kw * 1000.0 / (MASS_2026_KG * v)
+    if mode == "lift":
+        return -(drag + COAST_DECEL + harvest)
+    if mode == "superclip":
+        engine = min(TRACTION_LIMIT, ICE_2026_KW * 1000.0 / (MASS_2026_KG * v))
+        return engine - harvest - drag
+    raise ValueError(f"unknown pre-braking mode {mode!r}")
 
 
 def random_corner_params(corner_type, rng):
@@ -101,7 +133,7 @@ def random_corner_params(corner_type, rng):
     }
 
 
-def start_speed_for_entry(entry_ms, straight_s):
+def start_speed_for_entry(entry_ms, straight_s, drag_scale=1.0):
     """The speed to start the straight at, so that full throttle for straight_s ends at entry_ms.
 
     Simulates the straight and corrects the starting guess by the miss,
@@ -112,7 +144,7 @@ def start_speed_for_entry(entry_ms, straight_s):
     for _ in range(5):
         v = start
         for _ in range(int(round(straight_s / DT))):
-            v += drive_accel(v, 100.0) * DT
+            v += drive_accel(v, 100.0, drag_scale) * DT
         start -= v - entry_ms
     return start
 
@@ -122,6 +154,10 @@ def make_true_corner(params):
 
     Phases, in order:
       1. straight:   full throttle for straight_s seconds
+      1b. pre-brake: only if params["pre_brake"] is "lift" or "superclip": the car
+                     already slows for pre_brake_s seconds, harvesting harvest_kw
+                     (pre_brake_accel). The brake is still off; the true brake onset
+                     is the end of this phase.
       2. brake ramp: deceleration builds up linearly over brake_ramp_s
       3. braking:    full braking until the speed is low enough that easing
                      off over taper_s lands near the target apex speed
@@ -142,18 +178,22 @@ def make_true_corner(params):
     apex = params["apex_kmh"] / 3.6
     ramp = params["brake_ramp_s"]
     taper = params["taper_s"]
+    # optional (coasting check): 2026-like aero, and a pre-braking phase
+    aero_scale = params.get("aero_scale", 1.0)
+    drag_scale = params.get("drag_scale", 1.0)
+    pre_brake = params.get("pre_brake")
 
     # Speed at which to start easing off: during a linear taper from full
     # decel to zero the car loses (decel x taper / 2) of speed, and the coast
     # loses a bit more. The decel depends on the release speed itself, so we
     # solve release = apex + loss(release) by repeating the formula a few
     # times (fixed-point iteration; it settles within ~5 rounds).
-    coast_loss = (COAST_DECEL + DRAG_COEFF * apex * apex) * params["coast_s"]
+    coast_loss = (COAST_DECEL + drag_scale * DRAG_COEFF * apex * apex) * params["coast_s"]
     release_speed = apex
     for _ in range(10):
-        release_speed = apex + braking_decel(release_speed) * taper / 2 + coast_loss
+        release_speed = apex + braking_decel(release_speed, aero_scale, drag_scale) * taper / 2 + coast_loss
 
-    v = start_speed_for_entry(entry, params["straight_s"])
+    v = start_speed_for_entry(entry, params["straight_s"], drag_scale)
     t = 0.0
     x = 0.0
 
@@ -167,36 +207,48 @@ def make_true_corner(params):
         # --- decide throttle, brake and acceleration for this phase
         if phase == "straight":
             throttle, brake = 100.0, False
-            a = drive_accel(v, throttle)
+            a = drive_accel(v, throttle, drag_scale)
             if t - phase_start >= params["straight_s"]:
+                if pre_brake is not None:
+                    phase, phase_start = "pre_brake", t
+                    events_t["pre_brake_start"] = t
+                else:
+                    phase, phase_start = "ramp", t
+                    events_t["brake_onset"] = t
+                continue
+        elif phase == "pre_brake":
+            throttle = 100.0 if pre_brake == "superclip" else 0.0
+            brake = False
+            a = pre_brake_accel(v, pre_brake, params["harvest_kw"], drag_scale)
+            if t - phase_start >= params["pre_brake_s"]:
                 phase, phase_start = "ramp", t
                 events_t["brake_onset"] = t
                 continue
         elif phase == "ramp":
             throttle, brake = 0.0, True
             fraction = min((t - phase_start) / ramp, 1.0)
-            a = -fraction * braking_decel(v)
+            a = -fraction * braking_decel(v, aero_scale, drag_scale)
             if t - phase_start >= ramp:
                 phase, phase_start = "braking", t
                 continue
         elif phase == "braking":
             throttle, brake = 0.0, True
-            a = -braking_decel(v)
+            a = -braking_decel(v, aero_scale, drag_scale)
             if v <= release_speed:
                 phase, phase_start = "taper", t
-                full_brake_decel = braking_decel(v)
+                full_brake_decel = braking_decel(v, aero_scale, drag_scale)
                 continue
         elif phase == "taper":
             throttle, brake = 0.0, True
             fraction = 1.0 - (t - phase_start) / taper
-            a = -fraction * full_brake_decel - DRAG_COEFF * v * v
+            a = -fraction * full_brake_decel - drag_scale * DRAG_COEFF * v * v
             if t - phase_start >= taper:
                 phase, phase_start = "coast", t
                 events_t["brake_release"] = t
                 continue
         elif phase == "coast":
             throttle, brake = 0.0, False
-            a = drive_accel(v, 0.0)
+            a = drive_accel(v, 0.0, drag_scale)
             if t - phase_start >= params["coast_s"]:
                 phase, phase_start = "throttle", t
                 events_t["throttle_start"] = t
@@ -204,7 +256,7 @@ def make_true_corner(params):
         else:  # "throttle"
             throttle = 100.0 * (1.0 - math.exp(-(t - phase_start) / params["throttle_tau_s"]))
             brake = False
-            a = drive_accel(v, throttle)
+            a = drive_accel(v, throttle, drag_scale)
             if "full_throttle" not in events_t and throttle >= FULL_THROTTLE_PCT:
                 events_t["full_throttle"] = t
             if "full_throttle" in events_t and t - events_t["full_throttle"] >= params["exit_s"]:
@@ -361,3 +413,63 @@ def lap_with_position_offset(rng, offset_m, drift, scatter_m=3.0, length_m=5000.
     d = true * (1.0 + drift)
     s = true + offset_m + rng.normal(0.0, scatter_m, len(true))
     return s, d
+
+
+# ---------------------------------------------------------------- synthetic seasons of signatures (H5)
+
+SIGNATURE_FEATURES = [f"f{i}" for i in range(10)]
+
+
+def signature_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=None, noise=1.0, car_sd=1.0):
+    """Two seasons of synthetic laps for the H5 comparison: every lap = car + the driver's
+    personal offset + noise, on 10 features (SIGNATURE_FEATURES).
+
+    Reference season 2025: each team has a lead driver (A) on every weekend and a second
+    driver (B) on the first `teammate_weekends` weekends (all of them if None).
+    Target season 2026: a NEW car for every team (redrawn), the lead driver again, and B
+    again if B drove the full reference season, otherwise a newcomer (N) who has no past.
+    Personal offsets are kept from one season to the next; personal_sd = 0 means the
+    signature is only the car, so the H5 comparison must be a fair coin.
+    Example: 5 teams, 12 weekends, 2 laps each -> 480 laps per season.
+    """
+    import pandas as pd
+
+    if teammate_weekends is None:
+        teammate_weekends = weekends
+    rows = []
+    for team in range(teams):
+        lead, second, newcomer = f"A{team}", f"B{team}", f"N{team}"
+        personal = {name: rng.normal(0, personal_sd, len(SIGNATURE_FEATURES)) for name in (lead, second, newcomer)}
+        seasons = {2025: [lead, second], 2026: [lead, second if teammate_weekends == weekends else newcomer]}
+        for year, drivers in seasons.items():
+            car = rng.normal(0, car_sd, len(SIGNATURE_FEATURES))
+            for weekend in range(weekends):
+                for name in drivers:
+                    if year == 2025 and name == second and weekend >= teammate_weekends:
+                        continue
+                    for lap in range(2):
+                        values = car + personal[name] + rng.normal(0, noise, len(SIGNATURE_FEATURES))
+                        rows.append({"year": year, "session_key": year * 100 + weekend, "driver": name,
+                                     "team": f"T{team}", "lap": lap, **dict(zip(SIGNATURE_FEATURES, values))})
+    return pd.DataFrame(rows)
+
+
+def own_closer_share(seed, studies, shared_weekends_only=True, leave_pair_out=True, **season_options):
+    """Run the H5 comparison on `studies` synthetic grids (signature_seasons); returns
+    (share of drivers whose own past is closer, number of drivers).
+
+    With personal_sd = 0 the right answer is 0.5; one standard error over n drivers is
+    sqrt(0.25 / n), e.g. 0.013 for 1,500 drivers.
+    """
+    from apextrace.signatures import own_vs_past_teammate
+
+    rng = np.random.default_rng(seed)
+    wins, trials = 0, 0
+    for _ in range(studies):
+        laps = signature_seasons(rng, **season_options)
+        table = own_vs_past_teammate(laps, 2025, 2026, SIGNATURE_FEATURES, shared_weekends_only=shared_weekends_only,
+                                     leave_pair_out=leave_pair_out)
+        included = table[table["included"]]
+        wins += int(included["own_closer"].sum())
+        trials += len(included)
+    return wins / trials, trials

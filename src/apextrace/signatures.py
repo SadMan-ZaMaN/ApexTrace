@@ -84,7 +84,7 @@ def most_weekends_team(laps, driver):
 
 
 def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min_sessions=5,
-                         shared_weekends_only=True):
+                         shared_weekends_only=True, leave_pair_out=True):
     """H5's comparison: is a driver's target-season signature closer to their OWN
     reference-season signature than to their reference-season TEAMMATE's?
 
@@ -110,7 +110,9 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
     feature. If that signature were part of the spread, it would inflate the spread of
     exactly that feature, which shrinks the distance on it: the teammate would look
     closer than it is. Found on synthetic laps with only the car (5 of 12 weekends):
-    0.43 "own closer" over 1,500 trials instead of 0.5; with the pair left out, 0.5.
+    0.43 "own closer" over 1,500 trials instead of 0.5; with the pair left out, 0.5
+    (experiments/22_h5_null_check.py). leave_pair_out=False keeps the pair in the
+    spread; like shared_weekends_only=False, it exists only to show the bias.
 
     Returns one row per driver who has >= min_sessions weekends in both seasons, with
     `included` = False and a `reason` when no teammate shared >= min_sessions weekends.
@@ -147,7 +149,7 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
         if teammate not in references.index:
             rows.append({**row, "included": False, "reason": f"teammate has fewer than {min_sessions} weekends"})
             continue
-        others = reference_all.drop(index=[driver, teammate], errors="ignore")
+        others = reference_all.drop(index=[driver, teammate], errors="ignore") if leave_pair_out else reference_all
         references_z = standardise(references, feature_columns, others)
         target = standardise(targets.loc[[driver]], feature_columns, others).loc[driver, feature_columns]
         d_own = distance(target, references_z.loc[driver, feature_columns])

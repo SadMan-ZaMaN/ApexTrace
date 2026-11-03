@@ -48,6 +48,10 @@ results/                small outputs (JSON, CSV, PNG); raw Parquet files are gi
   `docs/templates/*.j2`, add any new number to `collect_numbers()` in
   `experiments/17_write_docs.py`, and re-run it. `tests/test_docs.py` fails if the
   documents are stale or edited by hand.
+- **Hand-written documents are checked too:** `tests/test_design_numbers.py` rebuilds every
+  number quoted in `docs/h5_design.md` from the results files. Every "k of n" and every
+  interval in the file must come from a result. Hand-written statistics are
+  cross-checked against SciPy in `tests/test_cross_checks.py`.
 - **Events on raw samples:** smoothing is never applied before locating an event
   (filters shift or smear events; see the Method page and Phase 2).
 - **No random splits** in identification: whole weekends are left out.
@@ -105,12 +109,15 @@ After changing an analysis: re-run its experiment script, then
   weekends they shared.** Found while testing the H5 comparison
   (`signatures.own_vs_past_teammate`) on synthetic laps where the signature is ONLY the
   car (the answer must be a fair coin, 0.5):
-  - Full-season references with a teammate who drove 5 of 12 weekends: 0.71–0.79
-    "own closer" (the teammate's signature is noisier, so it sits farther away).
+  - Full-season references with a teammate who drove 5 of 12 weekends: 0.73 over
+    1,500 drivers, 0.71–0.80 over six small seeds (the teammate's signature is
+    noisier, so it sits farther away).
   - Shared weekends, but the pair inside the spread: 0.43 over 1,500 trials (5 standard
     errors low). The noisy teammate inflates the spread of the feature where it is
     farthest out, which shrinks the distance on exactly that feature.
   - Both fixes: 0.493 and 0.497.
+  All four numbers are reproduced by `experiments/22_h5_null_check.py`
+  (`results/22_h5_null_check/summary.json`).
   Guarded by `test_shared_weekends_and_leaving_the_pair_out_keep_the_coin_fair` (checked
   to fail on both broken versions) and
   `test_full_season_references_fake_a_yes_when_a_teammate_drove_few_weekends`. The

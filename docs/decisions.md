@@ -450,3 +450,44 @@ Full design: `docs/h5_design.md`. The choices, all made on development data:
   difference), and no-throttle (17 of 20 and 15 of 16: nothing lost without throttle).
 - The frozen H4 results used the older spread and are not re-run. The H4 development
   number under the H5 rules is 16 of 20 (it was 17 of 20).
+
+## 2026-11-04 — Coasting check: scenarios fixed BEFORE running
+The rule was fixed on 2026-11-02 (`docs/h5_design.md` §4). The chosen brake-onset estimator
+(speed breakpoint inside the brake off→on interval) is checked on synthetic corners where
+the car is already slowing before the brake goes on. If its root-mean-square error stays at or
+below 8.4 m (twice Phase 2's 4.2 m), nothing changes. If it is larger, Part C adds a
+secondary variant without the three braking features (brake onset, braking distance, mean
+deceleration). The primary test stays the same either way.
+- **The rule is applied to every corner type and every scenario.** Any one above 8.4 m is
+  enough to add the variant. Phase 2 errors: heavy braking 4.2 m, medium 3.4 m, fast 4.2 m.
+  For scale, guessing the middle of the off→on interval (no speed information) gave 6.9–7.7 m.
+- **Scenarios:** 1,000 corners per corner type each, with real-feed sampling and no gaps,
+  exactly as in Phase 2:
+  1. the Phase 2 car, no pre-braking phase (must reproduce Phase 2: a pipeline check);
+  2. lift and coast: throttle closed, brake off, for 0.3–1.0 s before braking, with the
+     motor harvesting 0–350 kW (C5.2.7 allows 350 kW);
+  3. superclipping: full throttle for 0.5–2.0 s before braking, with a 400 kW engine minus
+     100–350 kW harvested by the motor;
+  4. a 2026-like car: downforce × 0.7, drag × 0.45 (the FIA's −30 % / −55 % targets), and
+     no pre-braking phase;
+  5. and 6. the 2026-like car with lift and coast, and with superclipping.
+  Mass for the harvesting deceleration: 770 kg (FIA 2024: 768 kg).
+- These are rough physics, chosen to be in the right range, not a 2026 car model. The
+  question is only whether the estimator still works when the speed is already falling.
+
+## 2026-11-04 — Coasting check: outcome, and how numbers are verified from now on
+- **Outcome** (`experiments/21_coasting_check.py`, rule and scenarios fixed beforehand): the
+  worst brake-onset error is 4.89 m, under the 8.4 m threshold, so **no variant without the
+  braking features is added**. Caveat for the write-up: coasting moves the estimator's
+  bias by 3.9–4.7 m (late → early), so a difference in coasting between teammates would
+  look like a brake-onset difference.
+- **Verification, from today:**
+  - Hand-written documents that quote results are checked by tests:
+    `tests/test_design_numbers.py` for `docs/h5_design.md`. Every "k of n" and every
+    interval in the file must come from a results file, which also catches a mistyped
+    copy of a number quoted more than once.
+  - Statistics are cross-checked against SciPy or a second implementation
+    (`tests/test_cross_checks.py`).
+  - Every research-log entry ends with a "Verified" list.
+  - Part C will be generated from a template like the report, and reviewed with fresh
+    eyes before Sadman commits it.

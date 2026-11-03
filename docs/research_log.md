@@ -883,3 +883,55 @@ frozen H4 "no" (2 of 5). H4 asked "own past or NEW teammate?"; this asks "own pa
 teammate?". A style that moves towards the new car but keeps more of its own past than
 the old teammate's gives exactly this pair of answers. This is a hypothesis for the
 2026 write-up, not a result.
+
+---
+
+## 2026-11-04 — Day 10: the coasting check, and checks on my own numbers
+
+**The question:** in 2026 a car may already be slowing before the brake goes on (lift and
+coast, or superclipping). Does the brake-onset estimator still work? The rule (8.4 m) and
+the six scenarios were written into decisions.md before the run.
+
+**Physics added** (`synthetic.py`, defaults unchanged): an optional pre-braking phase
+(`pre_brake_accel`: "lift" = throttle closed and harvesting; "superclip" = full throttle
+with the motor taking 100–350 kW off a 400 kW engine), and 2026-like aero (downforce × 0.7,
+drag × 0.45). A fingerprint of 15 seeded corners was identical before and after the
+change, so Phase 2's numbers stay valid.
+
+**Result** (`experiments/21_coasting_check.py`, 1,000 corners per cell, 18 cells):
+- Pipeline check: the Phase 2 car gives 4.28 / 3.31 / 4.01 m (Phase 2: 4.21 / 3.44 / 4.23).
+- Worst case: 4.89 m (2026-like car with lift and coast, medium corners), under 8.4 m.
+  Guessing the middle of the off→on interval gives 6.5–7.8 m, so the speed curve still
+  carries information.
+- **Consequence: nothing changes.**
+- **The bias moves:** +2.3…+3.4 m without coasting (the brake force takes a moment to build
+  up), −0.8…−2.4 m with coasting. The same true brake point therefore reads 3.9–4.7 m
+  differently with and without coasting. Coasting by a whole team only dilutes H5; coasting
+  that differs between teammates would look like a brake-onset difference.
+
+**Checks on my own numbers (asked for on 2026-11-03):**
+- `tests/test_cross_checks.py`: the sign test, its power, the exact permutation test,
+  Benjamini–Hochberg and the ICC agree with SciPy on hundreds of inputs, and Holm agrees
+  with a second textbook version. Three deliberate slips (no monotone step in BH, a
+  one-short tail in the sign test, the wrong group size in the ICC) each make a test fail.
+- `tests/test_design_numbers.py`: every number in `docs/h5_design.md` is rebuilt from the
+  results files. The first version only checked that the right phrase appeared somewhere,
+  and a deliberate test showed that a mistyped second copy of "0.56–0.94" would slip
+  through. Now every "k of n" and interval in the file must come from a result, and single
+  mistyped copies of numbers quoted 2–3 times are caught.
+- The synthetic bias numbers from Day 9 (0.43 / 0.493 / 0.497) came from scratch scripts.
+  They are now `experiments/22_h5_null_check.py` (`results/22_h5_null_check/`), which
+  reproduces them exactly.
+- **Correction:** the 2026-11-03 entry says full-season references gave "0.71–0.79 over six
+  seeds". That was measured with the old (biased) scaling. With the current code it is
+  0.71–0.80 (0.73 over 1,500 drivers). Fixed in engineering_notes.md and the test docstring;
+  the 2026-11-03 entry is left as it was written.
+- Two numbers I typed today were wrong before the checks: a docstring said 43.7 m/s² and
+  −5.1 m/s² (the code gives 43.6 and −5.16), and the design file said the bias went from
+  "+2.4" (it is +2.3). All three were corrected before the end of the day.
+
+**Verified:** 137 tests pass; the new tests fail on the broken versions they guard
+against (two for the H5 scaling, three for the statistics, five single-copy typos in the
+design file); both figures were looked at and fixed (dot order, legend placement); every
+number in this entry was read from `results/21_coasting_check/`,
+`results/22_h5_null_check/` or the code, not typed from memory.

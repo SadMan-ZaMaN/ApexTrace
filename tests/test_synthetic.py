@@ -5,8 +5,10 @@ import pytest
 
 from apextrace.synthetic import (
     CORNER_TYPES,
+    braking_decel,
     degrade_like_feed,
     make_true_corner,
+    pre_brake_accel,
     random_corner_params,
 )
 
@@ -64,3 +66,52 @@ def test_each_lap_gets_a_different_sampling_phase():
         samples = degrade_like_feed(truth, REAL_LIKE_INTERVALS, REAL_LIKE_PROBS, rng)
         first_times.add(round(samples["time_s"][0], 6))
     assert len(first_times) == 10
+
+
+# ---------------------------------------------------------------- the coasting check (2026)
+
+def corner_with(pre_brake, pre_brake_s=0.8, harvest_kw=300.0, seed=5, **extra):
+    params = random_corner_params("heavy_braking", np.random.default_rng(seed))
+    params.update({"pre_brake": pre_brake, "pre_brake_s": pre_brake_s, "harvest_kw": harvest_kw, **extra})
+    return params, make_true_corner(params)
+
+
+def phase_samples(truth, start, end):
+    t = truth["time_s"]
+    return (t >= start) & (t < end)
+
+
+@pytest.mark.parametrize("mode, throttle", [("lift", 0.0), ("superclip", 100.0)])
+def test_pre_braking_phase_slows_the_car_with_the_brake_still_off(mode, throttle):
+    """Before the brake goes on, the car already loses speed; the throttle channel shows
+    0 % (lift and coast) or 100 % (superclipping), and the brake channel stays off."""
+    params, truth = corner_with(mode)
+    events = truth["events"]
+    start = events["brake_onset"]["t"] - params["pre_brake_s"]
+    window = phase_samples(truth, start, events["brake_onset"]["t"])
+    assert window.sum() > 0.7 * params["pre_brake_s"] * 500       # the phase exists at 500 Hz
+    assert np.all(truth["throttle_pct"][window] == throttle)
+    assert not truth["brake"][window].any()
+    assert np.all(truth["accel_ms2"][window] < 0)                    # slowing down
+    assert events["entry_speed_kmh"] < params["entry_kmh"] - 5       # slower when the brake goes on
+    # and the braking itself still happens, ending near the planned apex speed
+    assert abs(events["apex"]["speed_kmh"] - params["apex_kmh"]) < 8
+
+
+def test_pre_brake_physics_matches_the_worked_example():
+    assert pre_brake_accel(83.0, "lift", 250.0) == pytest.approx(-12.42, abs=0.01)
+    assert pre_brake_accel(83.0, "superclip", 250.0) == pytest.approx(-5.16, abs=0.01)
+    # harvesting more slows the car more, in both modes
+    assert pre_brake_accel(83.0, "lift", 350.0) < pre_brake_accel(83.0, "lift", 0.0)
+    assert pre_brake_accel(83.0, "superclip", 350.0) < pre_brake_accel(83.0, "superclip", 100.0)
+    with pytest.raises(ValueError):
+        pre_brake_accel(83.0, "coast", 100.0)
+
+
+def test_2026_like_aero_brakes_less_hard():
+    """30 % less downforce and 55 % less drag: about 4.4 g instead of 5.9 g at 324 km/h."""
+    assert braking_decel(90.0, 0.7, 0.45) / 9.81 == pytest.approx(4.44, abs=0.01)
+    params = random_corner_params("heavy_braking", np.random.default_rng(6))
+    default = make_true_corner(params)["events"]["peak_decel_ms2"]
+    params_2026 = {**params, "aero_scale": 0.7, "drag_scale": 0.45}
+    assert make_true_corner(params_2026)["events"]["peak_decel_ms2"] < 0.85 * default
