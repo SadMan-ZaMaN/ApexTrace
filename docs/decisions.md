@@ -491,3 +491,27 @@ deceleration). The primary test stays the same either way.
   - Every research-log entry ends with a "Verified" list.
   - Part C will be generated from a template like the report, and reviewed with fresh
     eyes before Sadman commits it.
+
+## 2026-11-05 — The one-time 2026 script: what goes into Part C
+Built on 2026-11-04/05 (`experiments/23_final_2026.py`, `apextrace/h5_protocol.py`,
+`teams.py`, `quality.feed_check`), tested, and rehearsed on 2024 and 2025. To be written
+into Part C:
+- **Guards:** `FINAL_TEST_2026=1`; Part C written (no placeholder), committed and unchanged;
+  the script and `src/apextrace/` committed and unchanged, so the code that runs is the code
+  that was committed with the plan (new compared with 2025); `results/final_2026/summary.json`
+  must not exist. An attempt that stops early leaves a folder without a summary, and the
+  script then refuses until the attempt is recorded in the deviations file and the folder
+  renamed.
+- **Sessions:** every 2026 main qualifying session that ended at least 24 h before the run.
+  A session whose download fails is listed and skipped.
+- **Order:** download everything → checks → build → analyse (the Baku lesson).
+- **Checks before any feature:**
+  - the feed (`quality.feed_check` on samples inside kept laps: channels, ≤ 1 % empty,
+    values in range with brake 0/100, median interval 0.20–0.28 s, ≥ 95 % on the 40 ms
+    clock, 3.3–4.3 samples/s);
+  - every team name known to `teams.LINEAGE_PATTERNS`.
+  Either failing → stop with no result, and a deviation is logged before anything else.
+- **Team changers** from the data (`teams.team_changers`: most-weekends team, ≥ 5 weekends
+  in both seasons).
+- **H4 on changers:** Part B's comparison with the pair left out of the z-score spread. On
+  2025 this changes no verdict. With Part B's spread the code reproduces the frozen distances.

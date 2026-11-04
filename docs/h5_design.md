@@ -97,7 +97,11 @@ and in the same car, so neither side has a built-in advantage.
 ## 5. Secondary analyses (reported, not decisions)
 
 1. **H4 again, on the 2026 team changers.** Part B's comparison and rules (own 2025 vs
-   the new teammate's 2026, on the same weekends). Changers are found by the script from
+   the new teammate's 2026, on the same weekends), with one change learned on Day 9: the
+   driver and the new teammate are left out of the z-score spread. Run with Part B's
+   spread on 2025, the code reproduces the frozen distances of all 16 drivers to the last
+   stored decimal; with the pair left out, no driver's verdict changes
+   (`results/final_2026_dry_run/2025/`). Changers are found by the script from
    team names, not typed in by hand: in 2025, Colapinto was missed from a hand-typed
    list. A fixed map of renamed teams goes into Part C, and a 2026 team name outside the
    map stops the script before any result. With fewer than 5 changers the sign test
@@ -170,5 +174,5 @@ In words:
 |---|---|---|
 | 9 | **Done (2026-11-03):** the H5 comparison as a tested function, run on 2023 → 2024 and 2024 → 2025 (section 6b). The synthetic tests also found the spread bias (section 3) | development baselines |
 | 10 | **Done (2026-11-04):** synthetic brake-onset check with a coasting phase: all 18 cells at or below 4.89 m, under the 8.4 m threshold (section 4) | estimator error with coasting |
-| 11 | The one-time 2026 script: guards (Part C committed, unchanged, never run), download first and then analyse (the Baku lesson), a sampling check and the team map before any feature. Dry run with 2025 standing in for 2026 | the script, tested |
+| 11 | **Done (2026-11-05):** `experiments/23_final_2026.py` with all results from `h5_protocol.py`. Guards: Part C committed and unchanged, the code committed, never run; phases download → checks → build → analyse. Dry runs reproduce experiment 20 (16 of 20 and 15 of 16) and the frozen 2025 H4 distances; the rebuilt 2024 dataset is bit-identical | the script, tested |
 | 12 | Part C written from this file → **Sadman commits it**; only then may 2026 be loaded | preregistration Part C |

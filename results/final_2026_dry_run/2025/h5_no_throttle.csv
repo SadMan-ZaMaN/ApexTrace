@@ -1,0 +1,17 @@
+driver,team_reference,team_target,weekends_target,included,reason,teammate,shared_weekends,distance_own,distance_teammate,own_closer
+ALB,Williams,Williams,22,True,,SAR,11,0.9100,0.9565,True
+ALO,Aston Martin,Aston Martin,22,True,,STR,22,0.5917,0.6476,True
+COL,Williams,Alpine,16,True,,ALB,8,1.1437,1.2363,True
+GAS,Alpine,Alpine,22,True,,OCO,20,0.9267,1.5945,True
+HAM,Mercedes,Ferrari,22,True,,RUS,22,1.0703,0.9242,False
+HUL,Haas F1 Team,Kick Sauber,22,True,,MAG,21,0.7234,0.9101,True
+LAW,RB,Racing Bulls,22,True,,TSU,5,1.2358,1.7715,True
+LEC,Ferrari,Ferrari,22,True,,SAI,21,0.7595,0.9096,True
+NOR,McLaren,McLaren,22,True,,PIA,22,0.6998,0.7680,True
+OCO,Alpine,Haas F1 Team,22,True,,GAS,20,1.5625,1.8854,True
+PIA,McLaren,McLaren,22,True,,NOR,22,0.7808,0.8163,True
+RUS,Mercedes,Mercedes,21,True,,HAM,22,0.5608,1.1407,True
+SAI,Ferrari,Williams,22,True,,LEC,21,1.2417,1.4248,True
+STR,Aston Martin,Aston Martin,21,True,,ALO,22,0.7797,1.1104,True
+TSU,RB,Red Bull Racing,21,True,,RIC,17,0.7435,1.3290,True
+VER,Red Bull Racing,Red Bull Racing,22,True,,PER,21,0.4749,1.0911,True

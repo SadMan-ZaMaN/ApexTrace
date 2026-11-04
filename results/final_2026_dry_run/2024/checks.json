@@ -1,0 +1,91 @@
+{
+  "feed": {
+    "checks": {
+      "channels present": {
+        "value": "all",
+        "ok": true,
+        "rule": "speed, throttle, brake, n_gear, x, y"
+      },
+      "missing speed": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing throttle": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing brake": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing n_gear": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing x": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing y": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "speed values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "0-400"
+      },
+      "throttle values": {
+        "value": 0.9999435456887494,
+        "ok": true,
+        "rule": "0-100"
+      },
+      "brake values": {
+        "value": 0.9998733220332915,
+        "ok": true,
+        "rule": "only 0 or 100"
+      },
+      "n_gear values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "0-8"
+      },
+      "median interval (s)": {
+        "value": 0.240000000000002,
+        "ok": true,
+        "rule": "0.2-0.28"
+      },
+      "on the 40 ms clock": {
+        "value": 0.9999459240607426,
+        "ok": true,
+        "rule": ">= 0.95"
+      },
+      "samples per second": {
+        "value": 3.7740858587603867,
+        "ok": true,
+        "rule": "3.3-4.3"
+      }
+    },
+    "ok": true
+  },
+  "team_names": [
+    "Alpine",
+    "Aston Martin",
+    "Ferrari",
+    "Haas F1 Team",
+    "Kick Sauber",
+    "McLaren",
+    "Mercedes",
+    "RB",
+    "Red Bull Racing",
+    "Williams"
+  ],
+  "unknown_team_names": [],
+  "lap_tables_checked": 2266
+}

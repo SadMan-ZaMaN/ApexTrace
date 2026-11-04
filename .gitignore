@@ -30,3 +30,6 @@ dist/
 *.parquet
 *.sqlite
 results/**/raw/
+
+# Dry runs of the 2026 script rebuild datasets that are already committed (bit-identical): regenerate them
+results/final_2026_dry_run/**/dataset_*.csv.gz

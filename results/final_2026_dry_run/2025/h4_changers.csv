@@ -1,0 +1,7 @@
+driver,included,reason,team_target,weekends_target,teammate_target,team_reference,distance_own_reference,distance_new_teammate,own_closer
+COL,True,,Alpine,16,GAS,Williams,1.1447,1.6158,True
+HAM,True,,Ferrari,22,LEC,Mercedes,1.1983,1.1016,False
+HUL,True,,Kick Sauber,22,BOR,Haas F1 Team,0.6829,1.3885,True
+OCO,True,,Haas F1 Team,22,BEA,Alpine,1.4407,1.0086,False
+SAI,True,,Williams,22,ALB,Ferrari,1.2750,0.7647,False
+TSU,True,,Red Bull Racing,19,VER,RB,0.8298,1.0175,True

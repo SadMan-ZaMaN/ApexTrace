@@ -1,0 +1,111 @@
+{
+  "h5": {
+    "features": 30,
+    "sets": {
+      "all": {
+        "columns": 30,
+        "drivers": 16,
+        "own_closer": 15,
+        "test_possible": true,
+        "share": 0.9375,
+        "ci95_low": 0.6976792615654681,
+        "ci95_high": 0.998418888277234,
+        "sign_test_p": 0.0002593994140625
+      },
+      "control points": {
+        "columns": 12,
+        "drivers": 16,
+        "own_closer": 12,
+        "test_possible": true,
+        "share": 0.75,
+        "ci95_low": 0.4762291801038724,
+        "ci95_high": 0.9273379617471178,
+        "sign_test_p": 0.0384063720703125
+      },
+      "energy-sensitive": {
+        "columns": 12,
+        "drivers": 16,
+        "own_closer": 11,
+        "test_possible": true,
+        "share": 0.6875,
+        "ci95_low": 0.4133793635486413,
+        "ci95_high": 0.8898300452828826,
+        "sign_test_p": 0.1050567626953125
+      },
+      "no throttle": {
+        "columns": 24,
+        "drivers": 16,
+        "own_closer": 15,
+        "test_possible": true,
+        "share": 0.9375,
+        "ci95_low": 0.6976792615654681,
+        "ci95_high": 0.998418888277234,
+        "sign_test_p": 0.0002593994140625
+      }
+    },
+    "supported": true
+  },
+  "h4": {
+    "changers": {
+      "drivers": 6,
+      "own_closer": 3,
+      "test_possible": true,
+      "share": 0.5,
+      "ci95_low": 0.11811724875702526,
+      "ci95_high": 0.8818827512429748,
+      "sign_test_p": 0.65625
+    },
+    "stayers": {
+      "drivers": 10,
+      "own_closer": 8,
+      "test_possible": true,
+      "share": 0.8,
+      "ci95_low": 0.4439045376923585,
+      "ci95_high": 0.9747892736731666,
+      "sign_test_p": 0.0546875
+    },
+    "changer_names": [
+      "COL",
+      "HAM",
+      "HUL",
+      "OCO",
+      "SAI",
+      "TSU"
+    ],
+    "leave_pair_out": true,
+    "note": "secondary (docs/h5_design.md section 5): reported, not a decision",
+    "fisher_exact_two_sided_p": 0.2994505494505495
+  },
+  "h4_with_part_b_spread": {
+    "changers": {
+      "drivers": 6,
+      "own_closer": 3,
+      "test_possible": true,
+      "share": 0.5,
+      "ci95_low": 0.11811724875702526,
+      "ci95_high": 0.8818827512429748,
+      "sign_test_p": 0.65625
+    },
+    "stayers": {
+      "drivers": 10,
+      "own_closer": 8,
+      "test_possible": true,
+      "share": 0.8,
+      "ci95_low": 0.4439045376923585,
+      "ci95_high": 0.9747892736731666,
+      "sign_test_p": 0.0546875
+    },
+    "changer_names": [
+      "COL",
+      "HAM",
+      "HUL",
+      "OCO",
+      "SAI",
+      "TSU"
+    ],
+    "leave_pair_out": false,
+    "note": "secondary (docs/h5_design.md section 5): reported, not a decision",
+    "fisher_exact_two_sided_p": 0.2994505494505495
+  },
+  "matches_experiment_20": true
+}

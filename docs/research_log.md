@@ -935,3 +935,52 @@ against (two for the H5 scaling, three for the statistics, five single-copy typo
 design file); both figures were looked at and fixed (dot order, legend placement); every
 number in this entry was read from `results/21_coasting_check/`,
 `results/22_h5_null_check/` or the code, not typed from memory.
+
+---
+
+## 2026-11-04/05 — Day 11: the one-time 2026 script, rehearsed on 2024 and 2025
+
+**Part 1, building blocks:**
+- `teams.py`: team lineages by keyword, so renames and sponsors don't matter; unknown names
+  stop the script.
+- `quality.feed_check`: channels, empty values, value ranges, sampling.
+- On real data, the team map finds exactly the six 2024 → 2025 changers, Colapinto
+  included. Bearman (1–1 tie, two 2024 weekends) is not eligible.
+- The feed check FAILED on the real 2023–24 feed at first: 26 % of throttle and brake
+  values were 104, the feed's "no value" marker in the garage. The check now looks only
+  inside kept laps, and both seasons pass.
+- Reference sampling 2023–2025: median 0.240 s in every session, 100 % on the 40 ms clock.
+
+**Part 2, the script:**
+- Four phases, each finished before the next: download → checks → build → analyse.
+- All results come from `h5_protocol.py`.
+- Guards include "the code is committed".
+- 10 tests. Removing any of four guards makes one fail.
+- One of my tests was wrong (it expected a session 23 h old to be included); the code
+  was right.
+
+**Part 3, dry runs:**
+- **2025** (analysis only, from the saved data): H5 15 of 16 = experiment 20, and the
+  secondary sets match (12, 11, 15 of 16).
+- **2025 with Part B's spread:** H4 gives 3 of 6 changers and 8 of 10 stayers, the frozen
+  numbers. All 16 drivers' distances match the frozen files to the last stored decimal
+  (largest difference 0.0000497; the files keep 4 decimals), with the same teammates and
+  the same verdicts.
+- **2025 with the pair left out** (the 2026 rule): the same counts, so no verdict changes.
+- **2024, full path from the cache:** 24 sessions downloaded and checked (feed ok, no
+  unknown team names) and rebuilt. The rebuilt dataset is **bit-identical** to the one
+  from 2026-10-17 (15,129 rows, 12,749 usable, largest feature difference 0.0). H5 gives
+  16 of 20 = experiment 20.
+- **Development observation:** in the H4 comparison (own past vs the CURRENT teammate on
+  the same weekends), the 2023 → 2024 stayers give only 11 of 20, against 8 of 10 for
+  2024 → 2025. That comparison leans towards the teammate, as the design said. It is the
+  baseline the 2026 changers will be read against.
+
+**Verified:**
+- 160 tests pass.
+- The guards were broken four ways and each was caught.
+- The team map and feed check were run on real 2023–2025 data.
+- The 2025 dry run was compared with experiment 20 and the frozen files per driver.
+- The 2024 rebuild was compared row by row with the original dataset.
+- Every number above was read from `results/final_2026_dry_run/`, `results/20_h5_development/`,
+  `results/15_final_exploratory/` or the console output of those runs.
