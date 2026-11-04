@@ -7,6 +7,7 @@ import pytest
 
 from apextrace.synthetic import lap_with_position_offset
 from apextrace.quality import (
+    feed_check,
     distance_to_path,
     event_timing_error_s,
     find_gaps,
@@ -170,3 +171,81 @@ def test_start_offset_ignores_projection_glitches_and_needs_enough_samples():
     glitched[1] += 5000.0                     # a point near the line snapped onto the end of the track
     assert start_offset(glitched, d) == pytest.approx(clean, abs=0.6)
     assert np.isnan(start_offset([10.0, 30.0], [8.0, 27.0]))   # 2 samples: not enough
+
+
+# ---------------------------------------------------------------- the 2026 feed check
+
+def feed_like_development(rng, samples=400, step_choices=(0.16, 0.20, 0.24, 0.28, 0.32, 0.40, 0.44), **changes):
+    """One driver's car and position tables, shaped like OpenF1's and sampled like the
+    2023-2025 feed (40 ms clock, median 0.24 s). `changes` override columns to break it."""
+    import pandas as pd
+
+    weights = np.array([18, 20, 22, 15, 12, 8, 5], dtype=float)
+    steps = rng.choice(step_choices, size=samples, p=weights[:len(step_choices)] / weights[:len(step_choices)].sum())
+    dates = pd.Timestamp("2026-03-07 05:00:00") + pd.to_timedelta(np.cumsum(steps), unit="s")
+    car = pd.DataFrame({"date": dates, "speed": rng.uniform(80, 320, samples),
+                        "throttle": rng.choice([0.0, 35.0, 100.0], samples),
+                        "brake": rng.choice([0, 100], samples), "n_gear": rng.integers(2, 9, samples),
+                        "rpm": rng.uniform(9000, 12000, samples), "drs": 0})
+    for column, values in changes.items():
+        car[column] = values
+    position = pd.DataFrame({"date": dates, "x": rng.normal(0, 500, samples), "y": rng.normal(0, 500, samples)})
+    return car, position
+
+
+def run_feed_check(rng, drivers=3, **changes):
+    cars, positions = [], []
+    for _ in range(drivers):
+        car, position = feed_like_development(rng, **changes)
+        cars.append(car)
+        positions.append(position)
+    return feed_check(cars, positions)
+
+
+def test_feed_like_2023_2025_passes():
+    result = run_feed_check(np.random.default_rng(1))
+    assert result["ok"], result["checks"]
+    assert result["checks"]["median interval (s)"]["value"] == pytest.approx(0.24, abs=0.041)
+
+
+def test_a_faster_feed_fails_the_sampling_checks():
+    """10 samples a second: the features would compute, but their errors were measured at ~3.8."""
+    rng = np.random.default_rng(2)
+    car, position = feed_like_development(rng, step_choices=(0.08, 0.12))
+    result = feed_check([car], [position])
+    assert not result["ok"]
+    assert not result["checks"]["median interval (s)"]["ok"]
+    assert not result["checks"]["samples per second"]["ok"]
+
+
+def test_a_brake_pressure_channel_fails():
+    """If 2026 sends brake pressure (0-100 in steps) instead of on/off, the brake features change meaning."""
+    rng = np.random.default_rng(3)
+    result = run_feed_check(rng, brake=rng.uniform(0, 100, 400))
+    assert not result["ok"]
+    assert not result["checks"]["brake values"]["ok"]
+
+
+def test_a_missing_channel_or_many_empty_values_fail():
+    import pandas as pd
+
+    rng = np.random.default_rng(4)
+    car, position = feed_like_development(rng)
+    result = feed_check([car.drop(columns=["n_gear"])], [position])
+    assert not result["ok"] and result["checks"]["channels present"]["value"] == ["n_gear"]
+    speeds = car["speed"].to_numpy().copy()
+    speeds[:40] = np.nan                                       # 10 % empty
+    result = feed_check([car.assign(speed=pd.Series(speeds))], [position])
+    assert not result["checks"]["missing speed"]["ok"]
+
+
+def test_a_clock_that_is_not_40_ms_fails():
+    """Intervals spread anywhere between 0.15 and 0.45 s: not the 40 ms clock we measured."""
+    import pandas as pd
+
+    rng = np.random.default_rng(5)
+    car, position = feed_like_development(rng)
+    steps = rng.uniform(0.15, 0.45, len(car))
+    car["date"] = pd.Timestamp("2026-03-07 05:00:00") + pd.to_timedelta(np.cumsum(steps), unit="s")
+    result = feed_check([car], [position])
+    assert not result["checks"]["on the 40 ms clock"]["ok"]

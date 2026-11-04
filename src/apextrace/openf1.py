@@ -435,6 +435,38 @@ def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, refere
 
 # ---------------------------------------------------------------- downloading a whole session
 
+def session_feed_tables(session_key, session_end, cache_dir=CACHE_DIR):
+    """The raw car and position samples INSIDE each kept lap of one session, for quality.feed_check.
+
+    Asks for exactly what download_session asked for (one span per driver), so after a
+    download it reads only the cache. Returns (car_tables, position_tables), one table
+    per kept lap, so the time between two laps is never counted as a sampling gap.
+    Why only inside the laps: in the garage and pit lane the feed sends 104 as a
+    "no value" marker for throttle and brake (2024, first 4 sessions: 202,632 throttle
+    samples of 104 outside kept laps, none inside). Those samples are never used.
+    """
+    from apextrace.data_loading import select_laps
+
+    laps = lap_table(session_key, session_end, cache_dir)
+    cars, positions = [], []
+    for driver in sorted(laps["Driver"].unique()) if len(laps) else []:
+        kept, _ = select_laps(laps[laps["Driver"] == driver])
+        if kept.empty:
+            continue
+        span_start, span_end = kept_laps_span(kept)
+        streams = driver_streams(session_key, int(kept["DriverNumber"].iloc[0]), span_start, span_end, cache_dir)
+        if streams is None:
+            continue
+        for _, lap in kept.iterrows():
+            start, end = lap["LapStartDate"], lap["LapStartDate"] + lap["LapTime"]
+            car = streams["car"][(streams["car"]["date"] >= start) & (streams["car"]["date"] <= end)]
+            pos = streams["pos"][(streams["pos"]["date"] >= start) & (streams["pos"]["date"] <= end)]
+            if len(car) >= 2:
+                cars.append(car)
+                positions.append(pos)
+    return cars, positions
+
+
 def download_session(session_key, session_end, workers=3, cache_dir=CACHE_DIR):
     """Download (into the cache) everything one qualifying session needs; returns counts.
 

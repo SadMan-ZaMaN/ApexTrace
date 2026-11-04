@@ -123,3 +123,12 @@ After changing an analysis: re-run its experiment script, then
   `test_full_season_references_fake_a_yes_when_a_teammate_drove_few_weekends`. The
   frozen H4 results (2025) used the older full-reference spread and are not re-run;
   how much this moves the development numbers is measured in experiment 20.
+- **2026-11-04 — Check the feed only inside the laps we measure.** The new feed check
+  (`quality.feed_check`, for the one-time 2026 run) failed on the real 2023 and 2024 feed:
+  26 % of throttle values were outside 0–100 and 26 % of brake values were neither 0 nor
+  100. All of them were **104**, a "no value" marker the feed sends in the garage and pit
+  lane (202,632 throttle samples in the first four 2024 sessions, none inside a kept lap).
+  The helper had passed each driver's whole download span. `openf1.session_feed_tables`
+  now returns one table per kept lap, and both seasons pass (throttle in range 0.9999,
+  brake 0/100 for 0.9997–0.9999). Inside kept laps, 5 of 113,606 brake samples are 104;
+  `brake > 0` counts them as "on".

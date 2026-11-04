@@ -222,3 +222,88 @@ def start_offset(s_m, d_m, window_m=300.0, max_abs_m=50.0):
     if len(differences) < 3:
         return float("nan")
     return float(np.median(differences))
+
+
+# ---------------------------------------------------------------- the 2026 feed check
+
+# What the car feed looked like in every development season (2023, 2024, 2025, measured on
+# 2026-11-04 from the raw samples of all kept laps): median interval 0.240 s in every
+# session, 100 % of intervals on the 40 ms clock, 3.73-3.77 samples per second, brake 0/100.
+# feed_check itself on the raw OpenF1 tables inside kept laps (openf1.session_feed_tables):
+# 2023 and 2024 both pass; throttle in range 0.9999, brake 0 or 100 for 0.9997 / 0.9999.
+# Only samples INSIDE kept laps may be checked: in the garage the feed sends 104 for both.
+FEED_RULES = {
+    "median_interval_s": (0.20, 0.28),     # development: 0.240 in every session
+    "on_40ms_grid_min": 0.95,              # development: 1.000
+    "rate_hz": (3.3, 4.3),                 # development: 3.73-3.77
+    "missing_max": 0.01,                   # share of empty values in a required channel
+    "in_range_min": 0.999,                 # share of values inside the expected range
+}
+CAR_CHANNELS = {"speed": (0, 400), "throttle": (0, 100), "brake": None, "n_gear": (0, 8)}
+POSITION_CHANNELS = ["x", "y"]
+
+
+def feed_check(car_tables, position_tables):
+    """Is a season's feed still the feed the method was built for? Run on the downloaded
+    OpenF1 tables BEFORE any feature is computed (the one-time 2026 script stops otherwise).
+
+    car_tables / position_tables: lists of DataFrames as OpenF1 returns them (one per
+    driver and session), each with a "date" column. Checks, each with its rule:
+      channels present   speed, throttle, brake, n_gear; x, y
+      missing values     at most 1 % empty in each of those
+      values in range    speed 0-400 km/h, throttle 0-100 %, gear 0-8, brake only 0 or 100
+                         (our brake features assume an on/off switch)
+      sampling           median interval 0.20-0.28 s, >= 95 % of intervals below 0.6 s on
+                         the 40 ms clock, 3.3-4.3 samples per second
+    Returns {"checks": {name: {"value", "ok", "rule"}}, "ok": True only if every check is}.
+    Example: a feed at 10 Hz would fail "median interval" (0.10 s) and "rate"; the
+    features would still compute, but their errors were measured for 3.8 Hz.
+    """
+    import pandas as pd
+
+    checks = {}
+    car = pd.concat(car_tables, ignore_index=True) if car_tables else pd.DataFrame()
+    position = pd.concat(position_tables, ignore_index=True) if position_tables else pd.DataFrame()
+
+    missing_channels = [c for c in CAR_CHANNELS if c not in car.columns]
+    missing_channels += [c for c in POSITION_CHANNELS if c not in position.columns]
+    checks["channels present"] = {"value": missing_channels or "all", "ok": not missing_channels,
+                                  "rule": "speed, throttle, brake, n_gear, x, y"}
+    if missing_channels:
+        return {"checks": checks, "ok": False}
+
+    for name in list(CAR_CHANNELS) + POSITION_CHANNELS:
+        table = car if name in CAR_CHANNELS else position
+        share = float(table[name].isna().mean())
+        checks[f"missing {name}"] = {"value": share, "ok": share <= FEED_RULES["missing_max"],
+                                     "rule": f"<= {FEED_RULES['missing_max']}"}
+    for name, value_range in CAR_CHANNELS.items():
+        values = car[name].dropna().to_numpy(dtype=float)
+        if value_range is None:
+            share = float(np.mean((values == 0) | (values == 100)))
+            rule = "only 0 or 100"
+        else:
+            share = float(np.mean((values >= value_range[0]) & (values <= value_range[1])))
+            rule = f"{value_range[0]}-{value_range[1]}"
+        checks[f"{name} values"] = {"value": share, "ok": share >= FEED_RULES["in_range_min"], "rule": rule}
+
+    intervals = []
+    for table in car_tables:
+        times = pd.to_datetime(table["date"]).sort_values()
+        seconds = (times - times.iloc[0]).dt.total_seconds().to_numpy()
+        intervals.extend(sample_intervals(seconds))
+    intervals = np.array(intervals)
+    if len(intervals) < 2:
+        checks["samples"] = {"value": int(len(intervals)), "ok": False, "rule": "at least 2 intervals"}
+        return {"checks": checks, "ok": False}
+    summary = interval_summary(intervals)
+    low, high = FEED_RULES["median_interval_s"]
+    checks["median interval (s)"] = {"value": summary["median_s"], "ok": low <= summary["median_s"] <= high,
+                                     "rule": f"{low}-{high}"}
+    grid = share_on_grid(intervals[intervals < 0.6], 0.04, 0.002)
+    checks["on the 40 ms clock"] = {"value": grid, "ok": grid >= FEED_RULES["on_40ms_grid_min"],
+                                    "rule": f">= {FEED_RULES['on_40ms_grid_min']}"}
+    low, high = FEED_RULES["rate_hz"]
+    checks["samples per second"] = {"value": summary["rate_from_mean_hz"],
+                                    "ok": low <= summary["rate_from_mean_hz"] <= high, "rule": f"{low}-{high}"}
+    return {"checks": checks, "ok": all(check["ok"] for check in checks.values())}
