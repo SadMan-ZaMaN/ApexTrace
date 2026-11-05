@@ -1025,3 +1025,8 @@ equal to experiment 20; the rebuild is still identical; the frozen H4 distances 
 - The numbers test caught the stale development numbers in h5_design.md and one stale number
   in my own new sentence.
 - Part C was read in full after generation.
+
+**Part C committed and pushed:** commit `f653d49` (2026-11-06 01:34 +06:00), on GitHub. After the
+commit, the 2026 script's guards report only "FINAL_TEST_2026 is not 1" and "too early (from
+2026-11-07 00:00 UTC)"; regenerating the documents changes no file (the frozen Part C is
+accepted unchanged); 174 tests pass. No 2026 data has been loaded.
