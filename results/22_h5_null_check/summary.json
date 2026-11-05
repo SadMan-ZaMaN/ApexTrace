@@ -8,6 +8,15 @@
   "noise": 2.0,
   "car_sd": 0.3
  },
+ "setup_laps": {
+  "personal_sd": 0.0,
+  "weekends": 12,
+  "noise": 2.0,
+  "car_sd": 0.3,
+  "laps_lead": 6,
+  "laps_second": 2,
+  "second_continues": false
+ },
  "cases": {
   "A full-season references": {
    "share": 0.7306666666666667,
@@ -32,6 +41,18 @@
    "drivers": 3000,
    "standard_error": 0.009128709291752768,
    "z": -0.32863353450309996
+  },
+  "E all laps, teammate with fewer laps": {
+   "share": 0.734,
+   "drivers": 1500,
+   "standard_error": 0.012909944487358056,
+   "z": 18.12556206025071
+  },
+  "F H5 rules, teammate with fewer laps": {
+   "share": 0.49666666666666665,
+   "drivers": 1500,
+   "standard_error": 0.012909944487358056,
+   "z": -0.25819888974716276
   }
  },
  "A over six small seeds": {
@@ -75,5 +96,13 @@
     "z": 6.368673331236263
    }
   }
+ },
+ "G whole test under the null": {
+  "studies": 300,
+  "drivers_per_study": 20,
+  "false_positive_rate": 0.006666666666666667,
+  "count_variance": 3.063366778149387,
+  "binomial_variance": 5.0,
+  "pairs_split_one_and_one": 0.706
  }
 }

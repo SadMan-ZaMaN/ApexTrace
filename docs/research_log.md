@@ -984,3 +984,44 @@ number in this entry was read from `results/21_coasting_check/`,
 - The 2024 rebuild was compared row by row with the original dataset.
 - Every number above was read from `results/final_2026_dry_run/`, `results/20_h5_development/`,
   `results/15_final_exploratory/` or the console output of those runs.
+
+---
+
+## 2026-11-06 — Day 12: Part C, a fresh-eyes review, and a bias it found
+
+**Part C** is generated from a template: every result number from a results file, every rule
+from the code, frozen once committed. New experiment `24_dry_run_checks.py` saves two checks
+that existed only as console output on Day 11: the rebuild is bit-identical, and the frozen H4
+distances are reproduced. It also stores the SHA-256 fingerprints of the 2025 reference files.
+
+**A tyre-label check** was added while writing the data rules. `clean()` keeps only
+SOFT/MEDIUM/HARD, so a new 2026 label would have dropped every lap without a word. 2024
+passes (no unknown labels, 0 % empty).
+
+**The review** (separate reviewer, read-only, no shared context) found 9 groups of issues; all
+were checked before fixing (decisions.md, 2026-11-06). The main one:
+- **Unequal laps per weekend can fake a "yes".** Car-only, the surviving driver with 6 laps a
+  weekend against a teammate with 2: all laps give 0.734 "own closer" over 1,500 drivers
+  (z = +18); equal laps (the smaller count, each driver's first laps) give 0.497. The rule is
+  now part of H5.
+- With it, development gives 2023 → 2024 16 of 20 (unchanged) and 2024 → 2025 **14 of 16**
+  (was 15 of 16). Secondary: control points 15/20 and 11/16; energy-sensitive 14/20 and 12/16;
+  no throttle 16/20 and 12/16.
+
+**Dependence (case G):** in 300 car-only studies of 20 drivers, the sign test was "significant"
+0.7 % of the time; 71 % of teammate pairs split one-and-one; the count variance was 3.06
+against 5.00. So H5's test is conservative.
+
+**Both dry runs repeated** with every change: 2024 (full path) 16 of 20 and 2025 14 of 16, both
+equal to experiment 20; the rebuild is still identical; the frozen H4 distances still match.
+
+**Verified:**
+- 174 tests pass.
+- Every reviewer claim I acted on was reproduced first: team-name mislabels, the crash with
+  no eligible driver, the lap bias (0.744 vs 0.510 in my own simulation, before case E/F).
+- Six of today's protections were broken on purpose, and each made a test fail: equal laps,
+  renamed finished folder, half-written results, the cutoff wait, the Part C freeze, ambiguous
+  team names.
+- The numbers test caught the stale development numbers in h5_design.md and one stale number
+  in my own new sentence.
+- Part C was read in full after generation.

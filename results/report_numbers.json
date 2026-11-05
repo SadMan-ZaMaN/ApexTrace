@@ -259,6 +259,231 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "23"
+  "last_experiment": "24"
+ },
+ "c": {
+  "written": "2026-11-06",
+  "commits": {
+   "part_a": "ab2510c",
+   "part_b": "225385c"
+  },
+  "disclosure": "\"I know the driver line-up and which drivers changed teams, but not much about results. I know Kimi won this year's F1 title in Mexico.\" None of this is used in the design: team changers are found from the data by a fixed rule (`teams.team_changers`), and no rule depends on any driver's 2026 results.",
+  "script": {
+   "switch": "FINAL_TEST_2026",
+   "cutoff_hours": 24,
+   "min_weekends": 5,
+   "retries": 2,
+   "cutoff": "2026-11-06 00:00 UTC",
+   "run_from": "2026-11-07 00:00 UTC"
+  },
+  "rules": {
+   "slow_below": "120",
+   "fast_from": "200",
+   "min_speed": "40"
+  },
+  "feed": {
+   "median_low": "0.20",
+   "median_high": "0.28",
+   "grid_min": "95",
+   "rate_low": "3.3",
+   "rate_high": "4.3",
+   "missing_max": "1",
+   "in_range_min": "99.9",
+   "ranges": "speed 0–400 km/h, throttle 0–100 %, brake only 0 or 100, gear 0–8"
+  },
+  "feed_2024": {
+   "median": "0.240",
+   "grid": "99.99",
+   "rate": "3.77",
+   "throttle": "99.99",
+   "brake": "99.99"
+  },
+  "compounds": {
+   "known": "HARD, INTERMEDIATE, MEDIUM, SOFT, UNKNOWN, WET",
+   "dry": "HARD, MEDIUM, SOFT",
+   "max_empty": "5"
+  },
+  "lineages": [
+   {
+    "lineage": "Red Bull Racing",
+    "patterns": "red bull racing"
+   },
+   {
+    "lineage": "Racing Bulls",
+    "patterns": "racing bulls\\|alphatauri\\|toro rosso\\|^rb$\\|\\brb f1\\b"
+   },
+   {
+    "lineage": "Sauber / Audi",
+    "patterns": "sauber\\|alfa romeo\\|\\baudi\\b"
+   },
+   {
+    "lineage": "Haas",
+    "patterns": "\\bhaas\\b"
+   },
+   {
+    "lineage": "Ferrari",
+    "patterns": "ferrari"
+   },
+   {
+    "lineage": "Mercedes",
+    "patterns": "mercedes"
+   },
+   {
+    "lineage": "McLaren",
+    "patterns": "mclaren"
+   },
+   {
+    "lineage": "Aston Martin",
+    "patterns": "aston martin"
+   },
+   {
+    "lineage": "Alpine",
+    "patterns": "alpine"
+   },
+   {
+    "lineage": "Williams",
+    "patterns": "williams"
+   },
+   {
+    "lineage": "Cadillac",
+    "patterns": "cadillac"
+   }
+  ],
+  "sets": {
+   "all": 30,
+   "control": 12,
+   "energy": 12,
+   "no_throttle": 24
+  },
+  "names": {
+   "control": "`brake_onset_m`, `min_speed_kmh`, `apex_m`, `throttle_pickup_m`",
+   "energy": "`entry_speed_kmh`, `exit_speed_kmh`, `full_throttle_m`, `corner_time_s`",
+   "throttle": "`throttle_pickup_m`, `full_throttle_m`"
+  },
+  "eligible_upper": 21,
+  "needed": "8 → 7, 9 → 8, 10 → 9, 11 → 9, 12 → 10, 13 → 10, 14 → 11, 15 → 12, 16 → 12, 17 → 13, 18 → 13, 19 → 14, 20 → 15, 21 → 15",
+  "smallest_testable": 5,
+  "q_values": [
+   0.6,
+   0.7,
+   0.8,
+   0.85,
+   0.9
+  ],
+  "power_rows": [
+   {
+    "n": 12,
+    "needed": 10,
+    "powers": [
+     "0.08",
+     "0.25",
+     "0.56",
+     "0.74",
+     "0.89"
+    ]
+   },
+   {
+    "n": 14,
+    "needed": 11,
+    "powers": [
+     "0.12",
+     "0.36",
+     "0.70",
+     "0.85",
+     "0.96"
+    ]
+   },
+   {
+    "n": 16,
+    "needed": 12,
+    "powers": [
+     "0.17",
+     "0.45",
+     "0.80",
+     "0.92",
+     "0.98"
+    ]
+   },
+   {
+    "n": 18,
+    "needed": 13,
+    "powers": [
+     "0.21",
+     "0.53",
+     "0.87",
+     "0.96",
+     "0.99"
+    ]
+   },
+   {
+    "n": 20,
+    "needed": 15,
+    "powers": [
+     "0.13",
+     "0.42",
+     "0.80",
+     "0.93",
+     "0.99"
+    ]
+   },
+   {
+    "n": 21,
+    "needed": 15,
+    "powers": [
+     "0.20",
+     "0.55",
+     "0.89",
+     "0.97",
+     "1.00"
+    ]
+   }
+  ],
+  "changers_needed": "3 changers: no p < 0.05 possible; 4 changers: no p < 0.05 possible; 5 changers: 5 needed; 6 changers: 6 needed; 7 changers: 7 needed; 8 changers: 7 needed",
+  "dev": {
+   "first": {
+    "text": "16 of 20 (0.80, 95 % interval 0.56–0.94)",
+    "control": "15 of 20 (0.75, 95 % interval 0.51–0.91)",
+    "energy": "14 of 20 (0.70, 95 % interval 0.46–0.88)",
+    "no_throttle": "16 of 20 (0.80, 95 % interval 0.56–0.94)"
+   },
+   "power_first": "70–89 %",
+   "second": {
+    "text": "14 of 16 (0.88, 95 % interval 0.62–0.98)",
+    "control": "11 of 16 (0.69, 95 % interval 0.41–0.89)",
+    "energy": "12 of 16 (0.75, 95 % interval 0.48–0.93)",
+    "no_throttle": "12 of 16 (0.75, 95 % interval 0.48–0.93)"
+   },
+   "power_second": "91–99 %"
+  },
+  "h4": {
+   "stayers_first": "11 of 20",
+   "stayers_second": "8 of 10"
+  },
+  "coasting": {
+   "worst": "4.89",
+   "threshold": "8.4",
+   "gap_low": "3.9",
+   "gap_high": "4.7"
+  },
+  "null": {
+   "all_laps": "0.73",
+   "equal_laps": "0.50",
+   "laps_lead": 6,
+   "laps_second": 2,
+   "false_positive": "0.007",
+   "studies": 300,
+   "drivers": 20,
+   "variance": "3.06",
+   "binomial_variance": "5.00",
+   "split": "71",
+   "conservative": true
+  },
+  "dry": {
+   "rows": "15,129",
+   "largest": "0.0",
+   "h5_2024": "16 of 20",
+   "h5_2025": "14 of 16",
+   "h4_drivers": 16
+  }
  }
 }

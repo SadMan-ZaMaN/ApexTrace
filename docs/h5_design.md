@@ -29,7 +29,11 @@ the 30 lap-vector features (10 field-relative corner features × slow/medium/fas
 corners), each weekend counted once.
 - **2026 (the target):** all of the driver's dry 2026 weekends.
 - **2025 (the two references):** the driver and their 2025 teammate, **both built only
-  on the weekends they shared in 2025**. The teammate is the other driver of the
+  on the weekends they shared in 2025**, and on each of those weekends from the same number
+  of laps: the smaller count, each driver's first laps of the session (added 2026-11-06,
+  after the fresh-eyes review: a reference with more laps is less noisy and looks closer;
+  in a car-only world with 6 against 2 laps, all laps gave 0.73 "own closer" instead of
+  0.5). The teammate is the other driver of the
   driver's most-driven 2025 team with the most shared weekends (alphabetical on a tie).
 - Everything is z-scored with the spread of the **other** drivers' 2025 full-season
   signatures: the driver and the teammate are left out. Distance = root-mean-square
@@ -87,7 +91,7 @@ and in the same car, so neither side has a built-in advantage.
 
 | Question | Decision | Why |
 |---|---|---|
-| Baseline without a rule change | **Measured with exactly this procedure (2026-11-03, `experiments/20_h5_development.py`):** 2023 → 2024: 16 of 20 (0.80, exact 95 % interval 0.56–0.94); 2024 → 2025: 15 of 16 (0.94, 0.70–1.00), team changers included. The earlier H4-style numbers were 17 of 20 and 10 of 11 | The bar a "survives" result is compared with |
+| Baseline without a rule change | **Measured with exactly this procedure (`experiments/20_h5_development.py`, re-run on 2026-11-06 with equal laps per shared weekend):** 2023 → 2024: 16 of 20 (0.80, exact 95 % interval 0.56–0.94); 2024 → 2025: 14 of 16 (0.88, 0.62–0.98), team changers included. Before the equal-laps rule, 2024 → 2025 gave one driver more. The earlier H4-style numbers were 17 of 20 and 10 of 11 | The bar a "survives" result is compared with |
 | Which features | **Primary: all 30**, unchanged. Secondary: "control points" (brake onset, minimum speed, slowest point, throttle pickup: 12 columns) vs "energy-sensitive" (entry speed, exit speed, full throttle, corner time: 12 columns), side by side. Braking distance and mean deceleration are in neither group (mostly the car) | The split is a hypothesis from the rules. With about 20 drivers the difference between the groups can't be tested, only shown |
 | Corner types in 2026 | **The same rule as before** (slow < 120 km/h, fast ≥ 200 km/h, per session). Report how many corners of each type 2025 and 2026 have | Changing the method for unseen data would be tuning on the test set. A corner that changes type is a team-common shift: it can only dilute |
 | The throttle caveat | Throttle features stay in the primary. Secondary: the same test without them (24 columns) | If `throttle` means power demand in 2026, the change is shared by teammates: it can only dilute |
@@ -111,7 +115,9 @@ and in the same car, so neither side has a built-in advantage.
    stayed, plus Fisher's exact test of changers vs stayers. In 2025 this was exploratory:
    8 of 10 against 2 of 5, p = 0.25.
 3. The two feature groups, and the version without throttle (section 4).
-4. Each driver's rank of their own 2025 signature among all 2025 signatures.
+4. ~~Each driver's rank of their own 2025 signature among all 2025 signatures.~~ Dropped
+   on 2026-11-06, before Part C: it was never built into `h5_protocol.py`, it adds no
+   decision, and the sign test already asks the same question.
 5. The share of successes with an exact 95 % interval, next to the two baselines.
 
 ## 6. Power: what the test can detect
@@ -140,7 +146,7 @@ In words:
   of them; 8 need 7.
 - **At the measured baselines** (section 4): if 2026 had the 2023 → 2024 rate (0.80), the
   test with 14–21 drivers would find it 70–89 % of the time; at the 2024 → 2025 rate
-  (0.94), 99 % or more.
+  (0.88), 91–99 %.
 
 ## 6b. Development results (no rule change)
 
@@ -148,19 +154,25 @@ In words:
 
 | Features | 2023 → 2024 | 2024 → 2025 |
 |---|---|---|
-| **All 30 (primary)** | **16 of 20** (0.80, 0.56–0.94), p = 0.006 | **15 of 16** (0.94, 0.70–1.00), p = 0.0003 |
-| Control points (12 columns) | 15 of 20 (0.75), p = 0.021 | 12 of 16 (0.75), p = 0.038 |
-| Energy-sensitive (12 columns) | 14 of 20 (0.70), p = 0.058 | 11 of 16 (0.69), p = 0.105 |
-| No throttle (24 columns) | 17 of 20 (0.85), p = 0.001 | 15 of 16 (0.94), p = 0.0003 |
+| **All 30 (primary)** | **16 of 20** (0.80, 0.56–0.94), p = 0.006 | **14 of 16** (0.88, 0.62–0.98), p = 0.002 |
+| Control points (12 columns) | 15 of 20 (0.75), p = 0.021 | 11 of 16 (0.69), p = 0.105 |
+| Energy-sensitive (12 columns) | 14 of 20 (0.70), p = 0.058 | 12 of 16 (0.75), p = 0.038 |
+| No throttle (24 columns) | 16 of 20 (0.80), p = 0.006 | 12 of 16 (0.75), p = 0.038 |
 | Full-season references (not the H5 rule) | 16 of 20 | 14 of 16 |
+
+All rows use equal laps per shared weekend (re-run on 2026-11-06 after the fresh-eyes
+review). Before that rule, the 2024 → 2025 primary count was one driver higher and the
+no-throttle count three higher (the older numbers are in the research log of 2026-11-03):
+some of that came from the lap-count imbalance the review found.
 
 - Each 12-column group is weaker than all 30: fewer features, noisier distances. This is
   why the primary keeps all 30.
-- The control points are a little ahead of the energy-sensitive group in both pairs, but
-  the intervals overlap almost completely. For 2026 they are reported side by side, with
-  no test of the difference.
-- Without the throttle features nothing is lost, so the no-throttle version is a usable
-  check if the 2026 throttle channel means something else.
+- The two groups have no consistent order (control points ahead in 2023 → 2024, behind in
+  2024 → 2025), and the intervals overlap almost completely. For 2026 they are reported side
+  by side, with no test of the difference.
+- Without the throttle features the count stays the same in 2023 → 2024 and drops in
+  2024 → 2025 (12 instead of 14 of 16): the throttle features carry part of the signature, so
+  the no-throttle version is a check, not a replacement.
 - **Team changers, 2024 → 2025 (development observation, not a test):** 5 of 6 changers
   stayed closer to their own 2024 signature than to their *old* teammate's. Hamilton is
   the exception. The frozen H4 test (2 of 5) compared them with their *new* teammate.
@@ -174,5 +186,5 @@ In words:
 |---|---|---|
 | 9 | **Done (2026-11-03):** the H5 comparison as a tested function, run on 2023 → 2024 and 2024 → 2025 (section 6b). The synthetic tests also found the spread bias (section 3) | development baselines |
 | 10 | **Done (2026-11-04):** synthetic brake-onset check with a coasting phase: all 18 cells at or below 4.89 m, under the 8.4 m threshold (section 4) | estimator error with coasting |
-| 11 | **Done (2026-11-05):** `experiments/23_final_2026.py` with all results from `h5_protocol.py`. Guards: Part C committed and unchanged, the code committed, never run; phases download → checks → build → analyse. Dry runs reproduce experiment 20 (16 of 20 and 15 of 16) and the frozen 2025 H4 distances; the rebuilt 2024 dataset is bit-identical | the script, tested |
+| 11 | **Done (2026-11-05):** `experiments/23_final_2026.py` with all results from `h5_protocol.py`. Guards: Part C committed and unchanged, the code committed, never run; phases download → checks → build → analyse. Dry runs reproduce experiment 20 (16 of 20 and 14 of 16 after the equal-laps rule of 2026-11-06) and the frozen 2025 H4 distances; the rebuilt 2024 dataset is bit-identical | the script, tested |
 | 12 | Part C written from this file → **Sadman commits it**; only then may 2026 be loaded | preregistration Part C |

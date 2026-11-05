@@ -5,7 +5,8 @@ import pandas as pd
 import pytest
 
 from apextrace.synthetic import own_closer_share
-from apextrace.signatures import (distance, distance_table, own_rank, own_vs_past_teammate, season_signatures,
+from apextrace.signatures import (distance, distance_table, equal_laps_per_session, own_rank,
+                                  own_vs_past_teammate, season_signatures,
                                   sign_test_p, sign_test_power, sign_test_threshold, standardise)
 
 
@@ -158,12 +159,41 @@ def test_h5_teammate_is_the_one_with_the_most_shared_weekends():
     for weekend in range(10):
         drivers = [("X", "T"), ("Y" if weekend < 3 else "Z", "T"), ("W", "U")]
         for name, team in drivers:
-            rows.append({"year": 2025, "session_key": weekend, "driver": name, "team": team, "f0": 0.0})
+            rows.append({"year": 2025, "session_key": weekend, "driver": name, "team": team, "lap": 1, "f0": 0.0})
     for weekend in range(6):
         for name in ("X", "W"):
-            rows.append({"year": 2026, "session_key": 100 + weekend, "driver": name, "team": "T", "f0": 0.0})
+            rows.append({"year": 2026, "session_key": 100 + weekend, "driver": name, "team": "T", "lap": 1, "f0": 0.0})
     table = own_vs_past_teammate(pd.DataFrame(rows), 2025, 2026, ["f0"]).set_index("driver")
     assert table.loc["X", "teammate"] == "Z"
     assert table.loc["X", "shared_weekends"] == 7
     assert not table.loc["W", "included"]
     assert "no teammate" in table.loc["W", "reason"]
+
+
+FEWER_LAPS_TEAMMATE = {"personal_sd": 0.0, "noise": 2.0, "car_sd": 0.3, "laps_lead": 6, "laps_second": 2,
+                       "second_continues": False}
+
+
+def test_equal_laps_per_session_keeps_each_drivers_first_laps():
+    """Session 1: X has laps 3, 5, 9, 12 and Y laps 4, 7 -> 2 each: X 3, 5 and Y 4, 7.
+    Session 2: X has lap 2, Y laps 1, 6, 8 -> 1 each: X 2 and Y 1."""
+    rows = [(1, "X", 3), (1, "X", 5), (1, "X", 9), (1, "X", 12), (1, "Y", 4), (1, "Y", 7),
+            (2, "X", 2), (2, "Y", 1), (2, "Y", 6), (2, "Y", 8)]
+    pair = pd.DataFrame(rows, columns=["session_key", "driver", "lap"])
+    kept = equal_laps_per_session(pair, "X", "Y")
+    chosen = sorted(zip(kept["session_key"], kept["driver"], kept["lap"]))
+    assert chosen == [(1, "X", 3), (1, "X", 5), (1, "Y", 4), (1, "Y", 7), (2, "X", 2), (2, "Y", 1)]
+
+
+def test_all_laps_fake_a_yes_when_the_driver_who_stays_had_more_laps():
+    """Only the car; the driver who keeps the seat had 6 laps a weekend, the teammate 2 and then
+    left. A weekend mean over 6 laps is less noisy, so the own past looks closer for no reason
+    (found by the fresh-eyes review of Part C; 0.73 over 1,500 drivers in experiment 22, case E)."""
+    assert share_own_closer(seed=5, studies=60, teams=3, equal_laps=False, **FEWER_LAPS_TEAMMATE) > 0.65
+
+
+def test_equal_laps_keep_the_coin_fair_when_the_driver_who_stays_had_more_laps():
+    """The same world with the H5 rule (the same number of laps per shared weekend): a fair
+    coin, 0.5 +- 0.07 over 360 drivers (0.50 over 1,500 in experiment 22, case F)."""
+    share = share_own_closer(seed=5, studies=120, teams=3, **FEWER_LAPS_TEAMMATE)
+    assert 0.43 < share < 0.57

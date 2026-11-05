@@ -23,9 +23,9 @@ from scipy.stats import binomtest, fisher_exact
 
 from apextrace.dataset import add_field_relative, clean
 from apextrace.identification import build_lap_table
-from apextrace.signatures import (distance, own_vs_past_teammate, season_signatures, sign_test_p,
+from apextrace.signatures import (distance, own_vs_past_teammate, season_or_empty, sign_test_p,
                                   sign_test_threshold, standardise)
-from apextrace.teams import team_changers
+from apextrace.teams import lineage, team_changers
 
 MIN_WEEKENDS = 5
 CONTROL_POINTS = ["brake_onset_m", "min_speed_kmh", "apex_m", "throttle_pickup_m"]
@@ -98,7 +98,9 @@ def sign_summary(table):
 def h5_results(laps, reference_year, target_year):
     """H5 primary and secondary results. Returns (tables: name -> per-driver table, summary).
 
-    summary["supported"] is the preregistered decision: primary sign test p < 0.05.
+    summary["verdict"] is the preregistered decision on the primary set: "supported" (sign
+    test p < 0.05), "not supported", or "not testable" (too few drivers for any p < 0.05:
+    with 4 drivers even 4 of 4 gives p = 0.0625). summary["supported"] is True only for the first.
     """
     columns = lap_vector_columns(laps)
     tables, summary = {}, {"features": len(columns), "sets": {}}
@@ -107,8 +109,29 @@ def h5_results(laps, reference_year, target_year):
         tables[name] = table
         summary["sets"][name] = {"columns": len(set_columns), **sign_summary(table)}
     primary = summary["sets"]["all"]
-    summary["supported"] = bool(primary["sign_test_p"] is not None and primary["sign_test_p"] < 0.05)
+    if not primary["test_possible"]:
+        summary["verdict"] = "not testable"
+    elif primary["sign_test_p"] < 0.05:
+        summary["verdict"] = "supported"
+    else:
+        summary["verdict"] = "not supported"
+    summary["supported"] = summary["verdict"] == "supported"
     return tables, summary
+
+
+def corner_type_counts(corners):
+    """How many detected corners of each type a season has, in total and per session.
+
+    Why (docs/h5_design.md section 4): corners are typed by minimum speed, and with less
+    downforce in 2026 some "fast" corners may become "medium". This is reported next to the
+    result, not used in it. Example: 23 sessions with 314 corners -> 13.7 per session.
+    """
+    counts = {}
+    sessions = max(int(corners["session_key"].nunique()), 1)
+    for corner_type in ("slow", "medium", "fast"):
+        total = int((corners["type"] == corner_type).sum())
+        counts[corner_type] = {"corners": total, "per_session": total / sessions}
+    return counts
 
 
 # ---------------------------------------------------------------- H4 on team changers
@@ -126,8 +149,10 @@ def new_teammate_comparison(laps, reference_year, target_year, drivers, feature_
     exactly, kept to reproduce the frozen 2025 numbers.
     """
     reference_laps = laps[laps["year"] == reference_year]
-    target_laps = laps[laps["year"] == target_year]
-    reference_raw = season_signatures(reference_laps, feature_columns, MIN_WEEKENDS).xs(reference_year, level="year")
+    # within the target season, teams are grouped by lineage, so a mid-season rename can't split one
+    target_laps = laps[laps["year"] == target_year].copy()
+    target_laps["lineage"] = [lineage(team) for team in target_laps["team"]]
+    reference_raw = season_or_empty(reference_laps, feature_columns, MIN_WEEKENDS, reference_year)
     rows = []
     for driver in drivers:
         row = {"driver": driver}
@@ -135,9 +160,9 @@ def new_teammate_comparison(laps, reference_year, target_year, drivers, feature_
             rows.append({**row, "included": False, "reason": f"fewer than {MIN_WEEKENDS} weekends in {reference_year}"})
             continue
         own = target_laps[target_laps["driver"] == driver]
-        per_team = own.groupby("team")["session_key"].nunique()
+        per_team = own.groupby("lineage")["session_key"].nunique()
         team, weekends = per_team.idxmax(), int(per_team.max())
-        team_laps = target_laps[target_laps["team"] == team]
+        team_laps = target_laps[target_laps["lineage"] == team]
         driver_sessions = set(team_laps.loc[team_laps["driver"] == driver, "session_key"])
         others = team_laps[(team_laps["driver"] != driver) & team_laps["session_key"].isin(driver_sessions)]
         if weekends < MIN_WEEKENDS or others.empty:
@@ -145,7 +170,7 @@ def new_teammate_comparison(laps, reference_year, target_year, drivers, feature_
             continue
         teammate = others.groupby("driver")["session_key"].nunique().idxmax()
         pair_laps = team_laps[team_laps["driver"].isin([driver, teammate]) & team_laps["session_key"].isin(driver_sessions)]
-        target_raw = season_signatures(pair_laps, feature_columns, MIN_WEEKENDS).xs(target_year, level="year")
+        target_raw = season_or_empty(pair_laps, feature_columns, MIN_WEEKENDS, target_year)
         if teammate not in target_raw.index or driver not in target_raw.index:
             rows.append({**row, "included": False, "reason": f"teammate with fewer than {MIN_WEEKENDS} shared weekends"})
             continue

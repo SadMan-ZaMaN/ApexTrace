@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from apextrace.dataset import add_field_relative, clean, team_season
+from apextrace.dataset import add_field_relative, clean, compound_check, team_season
 from apextrace.features import FEATURES
 
 
@@ -47,3 +47,19 @@ def test_field_relative_subtracts_the_median_at_the_same_corner_and_session():
 
 def test_team_season_label():
     assert list(team_season(pd.DataFrame([row(), row(team="RB", year=2023)]))) == ["McLaren 2024", "RB 2023"]
+
+
+def test_compound_check_accepts_the_labels_of_2023_2025():
+    labels = ["SOFT"] * 50 + ["MEDIUM", "HARD", "INTERMEDIATE", "WET", "UNKNOWN", None]
+    result = compound_check(labels)
+    assert result["ok"] and result["unknown"] == []
+
+
+def test_compound_check_stops_on_a_new_label_or_mostly_empty_labels():
+    """A new label would make clean() drop every lap as 'not dry' without a word."""
+    assert compound_check(["SOFT", "C3", "C4"])["unknown"] == ["C3", "C4"]
+    assert not compound_check(["SOFT", "C3"])["ok"]
+    mostly_empty = ["SOFT"] * 10 + [None] * 5
+    assert compound_check(mostly_empty)["empty_share"] == 5 / 15
+    assert not compound_check(mostly_empty)["ok"]
+    assert not compound_check([])["ok"]

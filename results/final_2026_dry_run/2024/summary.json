@@ -35,14 +35,15 @@
       "no throttle": {
         "columns": 24,
         "drivers": 20,
-        "own_closer": 17,
+        "own_closer": 16,
         "test_possible": true,
-        "share": 0.85,
-        "ci95_low": 0.6210731734546862,
-        "ci95_high": 0.9679290628145363,
-        "sign_test_p": 0.0012884140014648438
+        "share": 0.8,
+        "ci95_low": 0.5633859970033317,
+        "ci95_high": 0.9426660029499672,
+        "sign_test_p": 0.005908966064453125
       }
     },
+    "verdict": "supported",
     "supported": true
   },
   "h4": {
@@ -68,6 +69,36 @@
     "leave_pair_out": true,
     "note": "secondary (docs/h5_design.md section 5): reported, not a decision",
     "fisher_exact_two_sided_p": null
+  },
+  "corner_types": {
+    "2023": {
+      "slow": {
+        "corners": 81,
+        "per_session": 3.6818181818181817
+      },
+      "medium": {
+        "corners": 56,
+        "per_session": 2.5454545454545454
+      },
+      "fast": {
+        "corners": 15,
+        "per_session": 0.6818181818181818
+      }
+    },
+    "2024": {
+      "slow": {
+        "corners": 82,
+        "per_session": 3.4166666666666665
+      },
+      "medium": {
+        "corners": 64,
+        "per_session": 2.6666666666666665
+      },
+      "fast": {
+        "corners": 16,
+        "per_session": 0.6666666666666666
+      }
+    }
   },
   "matches_experiment_20": true
 }

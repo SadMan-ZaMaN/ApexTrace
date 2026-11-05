@@ -63,8 +63,10 @@ def test_power_at_the_measured_baselines(design):
     first = list(pairs["2023 -> 2024"]["power_if_2026_had_this_rate"].values())
     expect(design, f"{round(min(first) * 100)}–{round(max(first) * 100)} %", "20_h5_development power, 2023 -> 2024")
     second = list(pairs["2024 -> 2025"]["power_if_2026_had_this_rate"].values())
-    assert min(second) >= 0.99
-    expect(design, "99 % or more", "20_h5_development power, 2024 -> 2025")
+    if min(second) >= 0.99:
+        expect(design, "99 % or more", "20_h5_development power, 2024 -> 2025")
+    else:
+        expect(design, f"{round(min(second) * 100)}–{round(max(second) * 100)} %", "20_h5_development power, 2024 -> 2025")
 
 
 def test_eligible_drivers_and_no_rule_change_power_inputs(design):

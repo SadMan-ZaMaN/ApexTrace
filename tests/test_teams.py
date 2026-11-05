@@ -60,3 +60,20 @@ def test_team_changers_come_from_the_most_driven_team():
     assert changers.loc["C", "team_target"] == "Racing Bulls"
     assert changers.loc["A", "eligible"] and changers.loc["C", "eligible"]
     assert not changers.loc["D", "eligible"]             # a 1-1 tie can't decide anything: too few weekends
+
+
+def test_a_name_matching_two_lineages_is_ambiguous_not_guessed():
+    """Constructor-style names would otherwise turn a whole team into "changers"."""
+    for name in ["McLaren Mercedes", "Williams Mercedes", "Alpine Mercedes", "Cadillac Ferrari"]:
+        with pytest.raises(ValueError, match="ambiguous"):
+            lineage(name)
+    assert unknown_team_names(["McLaren", "McLaren Mercedes"]) == ["McLaren Mercedes"]
+
+
+def test_a_missing_team_name_stops_cleanly():
+    import math
+
+    for missing in (None, "", math.nan):
+        with pytest.raises(ValueError, match="missing"):
+            lineage(missing)
+    assert unknown_team_names(["Ferrari", None]) == ["<missing>"]

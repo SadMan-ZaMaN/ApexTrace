@@ -420,7 +420,8 @@ def lap_with_position_offset(rng, offset_m, drift, scatter_m=3.0, length_m=5000.
 SIGNATURE_FEATURES = [f"f{i}" for i in range(10)]
 
 
-def signature_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=None, noise=1.0, car_sd=1.0):
+def signature_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=None, noise=1.0, car_sd=1.0,
+                      laps_lead=2, laps_second=2, second_continues=None):
     """Two seasons of synthetic laps for the H5 comparison: every lap = car + the driver's
     personal offset + noise, on 10 features (SIGNATURE_FEATURES).
 
@@ -430,6 +431,10 @@ def signature_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=
     again if B drove the full reference season, otherwise a newcomer (N) who has no past.
     Personal offsets are kept from one season to the next; personal_sd = 0 means the
     signature is only the car, so the H5 comparison must be a fair coin.
+    laps_lead / laps_second: laps per weekend of A and B (a driver knocked out in Q1 has
+    fewer laps than one who reaches Q3). second_continues: whether B drives the target
+    season (default: only if B drove every reference weekend). False models survivorship:
+    the driver with more laps keeps the seat and B, with fewer, leaves.
     Example: 5 teams, 12 weekends, 2 laps each -> 480 laps per season.
     """
     import pandas as pd
@@ -440,21 +445,25 @@ def signature_seasons(rng, personal_sd, teams=5, weekends=12, teammate_weekends=
     for team in range(teams):
         lead, second, newcomer = f"A{team}", f"B{team}", f"N{team}"
         personal = {name: rng.normal(0, personal_sd, len(SIGNATURE_FEATURES)) for name in (lead, second, newcomer)}
-        seasons = {2025: [lead, second], 2026: [lead, second if teammate_weekends == weekends else newcomer]}
+        if second_continues is None:
+            second_continues = teammate_weekends == weekends
+        seasons = {2025: [lead, second], 2026: [lead, second if second_continues else newcomer]}
+        laps_per_weekend = {lead: laps_lead, second: laps_second, newcomer: laps_lead}
         for year, drivers in seasons.items():
             car = rng.normal(0, car_sd, len(SIGNATURE_FEATURES))
             for weekend in range(weekends):
                 for name in drivers:
                     if year == 2025 and name == second and weekend >= teammate_weekends:
                         continue
-                    for lap in range(2):
+                    for lap in range(laps_per_weekend[name]):
                         values = car + personal[name] + rng.normal(0, noise, len(SIGNATURE_FEATURES))
                         rows.append({"year": year, "session_key": year * 100 + weekend, "driver": name,
                                      "team": f"T{team}", "lap": lap, **dict(zip(SIGNATURE_FEATURES, values))})
     return pd.DataFrame(rows)
 
 
-def own_closer_share(seed, studies, shared_weekends_only=True, leave_pair_out=True, **season_options):
+def own_closer_share(seed, studies, shared_weekends_only=True, leave_pair_out=True, equal_laps=True,
+                     **season_options):
     """Run the H5 comparison on `studies` synthetic grids (signature_seasons); returns
     (share of drivers whose own past is closer, number of drivers).
 
@@ -468,7 +477,7 @@ def own_closer_share(seed, studies, shared_weekends_only=True, leave_pair_out=Tr
     for _ in range(studies):
         laps = signature_seasons(rng, **season_options)
         table = own_vs_past_teammate(laps, 2025, 2026, SIGNATURE_FEATURES, shared_weekends_only=shared_weekends_only,
-                                     leave_pair_out=leave_pair_out)
+                                     leave_pair_out=leave_pair_out, equal_laps=equal_laps)
         included = table[table["included"]]
         wins += int(included["own_closer"].sum())
         trials += len(included)

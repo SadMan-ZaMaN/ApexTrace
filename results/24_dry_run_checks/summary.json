@@ -1,0 +1,35 @@
+{
+ "rebuild_2024": {
+  "rows_original": 15129,
+  "rows_rebuilt": 15129,
+  "rows_matched": 15129,
+  "usable_original": 12749,
+  "usable_rebuilt": 12749,
+  "largest_feature_difference": 0.0,
+  "empty_value_mismatches": 0,
+  "identical": true
+ },
+ "frozen_h4_2025": {
+  "changers": {
+   "drivers": 6,
+   "drivers_frozen": 6,
+   "largest_distance_difference": 4.966893152769103e-05,
+   "same_teammates": true,
+   "same_verdicts": true
+  },
+  "stayers": {
+   "drivers": 10,
+   "drivers_frozen": 10,
+   "largest_distance_difference": 4.841342549932737e-05,
+   "same_teammates": true,
+   "same_verdicts": true
+  },
+  "all_match": true
+ },
+ "rounding": 5e-05,
+ "reference_files": {
+  "results/final/dataset_2025.csv.gz": "3742f48a2b5b677ee5d46d16935ae25ca43bef46514ee65b998c3dd9188c4616",
+  "results/final/raw_samples_2025.parquet": "81d0be5066ca8deb54770d945b9de385240b266bb760d24940d595959cd5167d",
+  "results/final/corners_2025.csv": "c41723bc0fb0d3ddccbdc77dc8900a5d2ca18ebff099ef41fe3fc29e2e55ac53"
+ }
+}

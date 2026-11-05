@@ -132,3 +132,13 @@ After changing an analysis: re-run its experiment script, then
   now returns one table per kept lap, and both seasons pass (throttle in range 0.9999,
   brake 0/100 for 0.9997–0.9999). Inside kept laps, 5 of 113,606 brake samples are 104;
   `brake > 0` counts them as "on".
+- **2026-11-06 — Equal laps per shared weekend, not only equal weekends** (found by the
+  fresh-eyes review of Part C). A weekend mean over fewer laps is noisier, and a driver out in
+  Q1 has fewer laps than one in Q3. With the 2025 references on shared weekends but all laps,
+  a car-only synthetic world where the driver who keeps the seat had 6 laps a weekend and the
+  teammate 2 gave 0.734 "own closer" over 1,500 drivers instead of 0.5.
+  `signatures.equal_laps_per_session` keeps, on each shared weekend, the smaller lap count for
+  both drivers (each driver's first laps): 0.497. Guarded by
+  `test_all_laps_fake_a_yes_when_the_driver_who_stays_had_more_laps` and
+  `test_equal_laps_keep_the_coin_fair_when_the_driver_who_stays_had_more_laps` (checked to
+  fail with the rule switched off); `experiments/22_h5_null_check.py` cases E and F.

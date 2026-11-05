@@ -1,25 +1,25 @@
-round,location,session_key,error,laps,kept_laps,kept_laps_with_data
-1,Sakhir,9468,,267,83,83
-2,Jeddah,9476,,316,94,94
-3,Melbourne,9484,,316,97,97
-4,Suzuka,9492,,223,73,73
-5,Shanghai,9664,,280,80,80
-6,Miami,9498,,318,103,103
-7,Imola,9511,,286,76,76
-8,Monaco,9519,,426,137,137
-9,Montréal,9527,,408,124,124
-10,Barcelona,9535,,257,79,79
-11,Spielberg,9541,,320,100,100
-12,Silverstone,9554,,368,129,129
-13,Budapest,9562,,334,99,99
-14,Spa-Francorchamps,9570,,348,128,127
-15,Zandvoort,9578,,290,93,93
-16,Monza,9586,,276,76,76
-17,Baku,9594,,311,73,73
-18,Marina Bay,9602,,276,83,83
-19,Austin,9608,,282,74,74
-20,Mexico City,9621,,289,85,85
-21,São Paulo,9627,,425,106,106
-22,Las Vegas,9640,,347,90,90
-23,Lusail,9646,,374,105,105
-24,Yas Island,9658,,261,79,79
+round,location,session_key,error,attempts,laps,kept_laps,kept_laps_with_data
+1,Sakhir,9468,,1,267,83,83
+2,Jeddah,9476,,1,316,94,94
+3,Melbourne,9484,,1,316,97,97
+4,Suzuka,9492,,1,223,73,73
+5,Shanghai,9664,,1,280,80,80
+6,Miami,9498,,1,318,103,103
+7,Imola,9511,,1,286,76,76
+8,Monaco,9519,,1,426,137,137
+9,Montréal,9527,,1,408,124,124
+10,Barcelona,9535,,1,257,79,79
+11,Spielberg,9541,,1,320,100,100
+12,Silverstone,9554,,1,368,129,129
+13,Budapest,9562,,1,334,99,99
+14,Spa-Francorchamps,9570,,1,348,128,127
+15,Zandvoort,9578,,1,290,93,93
+16,Monza,9586,,1,276,76,76
+17,Baku,9594,,1,311,73,73
+18,Marina Bay,9602,,1,276,83,83
+19,Austin,9608,,1,282,74,74
+20,Mexico City,9621,,1,289,85,85
+21,São Paulo,9627,,1,425,106,106
+22,Las Vegas,9640,,1,347,90,90
+23,Lusail,9646,,1,374,105,105
+24,Yas Island,9658,,1,261,79,79

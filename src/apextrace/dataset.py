@@ -26,6 +26,11 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET_CSV = REPO_ROOT / "results" / "09_dataset" / "dataset.csv.gz"
 
 DRY_COMPOUNDS = {"SOFT", "MEDIUM", "HARD"}
+# Every compound label seen in 2023-2025 (OpenF1 stints): the three dry ones, the two wet ones and
+# "UNKNOWN" (8 rows in 2023). A label outside this set would be dropped as "not dry" without a word,
+# so the one-time 2026 script stops if it sees one (compound_check, before any feature).
+KNOWN_COMPOUNDS = DRY_COMPOUNDS | {"INTERMEDIATE", "WET", "UNKNOWN"}
+MAX_EMPTY_COMPOUND_SHARE = 0.05
 MIN_PLAUSIBLE_SPEED_KMH = 40.0
 LIMITS = {
     "brake_onset_m": (-400.0, 0.0),
@@ -95,3 +100,21 @@ def team_season(data):
     between seasons (AlphaTauri 2023 -> RB 2024) needs no mapping.
     """
     return data["team"].astype(str) + " " + data["year"].astype(str)
+
+
+def compound_check(compounds):
+    """Are the tyre-compound labels the ones the cleaning rules know? Run before any feature.
+
+    Why: `clean` keeps only SOFT, MEDIUM and HARD laps. If a new season labelled tyres
+    differently (say "C3"), every lap would be dropped as "not dry" and a test would quietly
+    run on nothing. Empty labels happen (48 of 2025's rows) and are dropped too, so more
+    than 5 % empty also stops the run.
+    Example: ["SOFT", "SOFT", None, "C3"] -> unknown ["C3"], empty share 0.25 -> not ok.
+    Returns {"unknown": [...], "empty_share": float, "ok": bool}.
+    """
+    labels = pd.Series(list(compounds), dtype=object)
+    empty = labels.isna() | (labels.astype(str).str.strip() == "")
+    unknown = sorted(set(labels[~empty].astype(str)) - KNOWN_COMPOUNDS)
+    empty_share = float(empty.mean()) if len(labels) else 1.0
+    return {"unknown": unknown, "empty_share": empty_share,
+            "ok": bool(len(labels) > 0 and not unknown and empty_share <= MAX_EMPTY_COMPOUND_SHARE)}

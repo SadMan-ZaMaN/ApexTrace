@@ -18,6 +18,7 @@ Run from the repo root:
 """
 
 import json
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -253,7 +254,192 @@ def collect_numbers():
     for script in (REPO_ROOT / "experiments").glob("[0-9][0-9]_*.py"):
         experiment_numbers.append(int(script.name[:2]))
     n["repo"] = {"last_experiment": f"{max(experiment_numbers):02d}"}
+    n["c"] = collect_part_c_numbers(n["prereg"])
     return n
+
+
+# ---------------------------------------------------------------- preregistration Part C (the 2026 test)
+
+def count_text(block):
+    """A sign-test block -> '16 of 20 (0.80, 95 % interval 0.56–0.94)'."""
+    return (f"{block['own_closer']} of {block['drivers']} ({f(block['share'], 2)}, 95 % interval "
+            f"{f(block['ci95_low'], 2)}–{f(block['ci95_high'], 2)})")
+
+
+def collect_part_c_numbers(prereg):
+    """Every number and rule value in preregistration Part C, from results files or from the code
+    itself (the feed rules, the team map, the feature groups, the script's constants), so the plan
+    can't disagree with the code that runs it."""
+    import importlib.util
+
+    from apextrace import corners, dataset, h5_protocol, quality, teams
+    from apextrace.identification import CORNER_TYPES, FEATURE_GROUPS
+    from apextrace.signatures import sign_test_power, sign_test_threshold
+
+    spec = importlib.util.spec_from_file_location("final_2026", REPO_ROOT / "experiments" / "23_final_2026.py")
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+
+    c = {"written": "2026-11-06", "commits": prereg, "disclosure": PART_C_DISCLOSURE,
+         "script": {"switch": script.SWITCH, "cutoff_hours": script.CUTOFF_HOURS,
+                    "min_weekends": h5_protocol.MIN_WEEKENDS, "retries": script.DOWNLOAD_RETRIES,
+                    "cutoff": f"{script.CUTOFF_UTC:%Y-%m-%d %H:%M} UTC",
+                    "run_from": f"{script.CUTOFF_UTC + timedelta(hours=script.CUTOFF_HOURS):%Y-%m-%d %H:%M} UTC"},
+         "rules": {"slow_below": f(corners.SLOW_BELOW_KMH, 0), "fast_from": f(corners.FAST_FROM_KMH, 0),
+                   "min_speed": f(dataset.MIN_PLAUSIBLE_SPEED_KMH, 0)}}
+
+    rules = quality.FEED_RULES
+    c["feed"] = {"median_low": f(rules["median_interval_s"][0], 2), "median_high": f(rules["median_interval_s"][1], 2),
+                 "grid_min": f(rules["on_40ms_grid_min"] * 100, 0), "rate_low": f(rules["rate_hz"][0], 1),
+                 "rate_high": f(rules["rate_hz"][1], 1), "missing_max": f(rules["missing_max"] * 100, 0),
+                 "in_range_min": f(rules["in_range_min"] * 100, 1)}
+    labels = {"speed": ("speed", "km/h"), "throttle": ("throttle", "%"), "n_gear": ("gear", "")}
+    ranges = []
+    for name, value_range in quality.CAR_CHANNELS.items():
+        if value_range is None:
+            ranges.append(f"{name} only 0 or 100")
+        else:
+            label, unit = labels[name]
+            ranges.append(f"{label} {value_range[0]}–{value_range[1]}{(' ' + unit) if unit else ''}")
+    c["feed"]["ranges"] = ", ".join(ranges)
+    checks_2024 = load("final_2026_dry_run/2024/checks.json")["feed"]["checks"]
+    c["feed_2024"] = {"median": f(checks_2024["median interval (s)"]["value"], 3),
+                      "grid": f(checks_2024["on the 40 ms clock"]["value"] * 100, 2),
+                      "rate": f(checks_2024["samples per second"]["value"], 2),
+                      "throttle": f(checks_2024["throttle values"]["value"] * 100, 2),
+                      "brake": f(checks_2024["brake values"]["value"] * 100, 2)}
+    c["compounds"] = {"known": ", ".join(sorted(dataset.KNOWN_COMPOUNDS)), "dry": ", ".join(sorted(dataset.DRY_COMPOUNDS)),
+                      "max_empty": f(dataset.MAX_EMPTY_COMPOUND_SHARE * 100, 0)}
+    # a "|" inside a Markdown table cell would split the cell, so it is escaped
+    c["lineages"] = [{"lineage": lineage, "patterns": pattern.replace("|", "\\|")}
+                     for pattern, lineage in teams.LINEAGE_PATTERNS]
+
+    every_feature = [feature for group in FEATURE_GROUPS.values() for feature in group]
+    columns = [f"{feature}_rel__{corner}" for feature in every_feature for corner in CORNER_TYPES]
+    sets = h5_protocol.feature_sets(columns)
+    c["sets"] = {"all": len(sets["all"]), "control": len(sets["control points"]), "energy": len(sets["energy-sensitive"]),
+                 "no_throttle": len(sets["no throttle"])}
+    c["names"] = {"control": ", ".join(f"`{name}`" for name in h5_protocol.CONTROL_POINTS),
+                  "energy": ", ".join(f"`{name}`" for name in h5_protocol.ENERGY_SENSITIVE),
+                  "throttle": ", ".join(f"`{name}`" for name in h5_protocol.THROTTLE)}
+
+    c["eligible_upper"] = load("19_h5_power/summary.json")["eligible_upper_bound"]
+    needed = []
+    for drivers in range(8, 22):
+        needed.append(f"{drivers} → {sign_test_threshold(drivers)}")
+    c["needed"] = ", ".join(needed)
+    smallest_testable = 1
+    while sign_test_threshold(smallest_testable) is None:
+        smallest_testable += 1
+    c["smallest_testable"] = smallest_testable              # 5: with 4 drivers even 4 of 4 gives p = 0.0625
+    c["q_values"] = [0.6, 0.7, 0.8, 0.85, 0.9]
+    c["power_rows"] = []
+    for drivers in (12, 14, 16, 18, 20, 21):
+        c["power_rows"].append({"n": drivers, "needed": sign_test_threshold(drivers),
+                                "powers": [f(sign_test_power(drivers, q), 2) for q in c["q_values"]]})
+    changers = []
+    for count in range(3, 9):
+        threshold = sign_test_threshold(count)
+        changers.append(f"{count} changers: {'no p < 0.05 possible' if threshold is None else f'{threshold} needed'}")
+    c["changers_needed"] = "; ".join(changers)
+
+    development = load("20_h5_development/summary.json")["pairs"]
+    c["dev"] = {}
+    for key, label in (("first", "2023 -> 2024"), ("second", "2024 -> 2025")):
+        pair = development[label]
+        c["dev"][key] = {"text": count_text(pair["all"]),
+                         "control": count_text(pair["variants"]["control points"]),
+                         "energy": count_text(pair["variants"]["energy-sensitive"]),
+                         "no_throttle": count_text(pair["variants"]["no throttle"])}
+        powers = list(pair["power_if_2026_had_this_rate"].values())
+        if min(powers) >= 0.99:          # "99-100 %" would overstate a rounded 0.996
+            c["dev"][f"power_{key}"] = f"{f(min(powers) * 100, 0)} % or more"
+        else:
+            c["dev"][f"power_{key}"] = f"{f(min(powers) * 100, 0)}–{f(max(powers) * 100, 0)} %"
+
+    dry_2024 = load("final_2026_dry_run/2024/summary.json")
+    dry_2025 = load("final_2026_dry_run/2025/summary.json")
+    stayers = [dry_2024["h4"]["stayers"], dry_2025["h4"]["stayers"]]
+    c["h4"] = {"stayers_first": f"{stayers[0]['own_closer']} of {stayers[0]['drivers']}",
+               "stayers_second": f"{stayers[1]['own_closer']} of {stayers[1]['drivers']}"}
+
+    coasting = load("21_coasting_check/summary.json")
+    table = pd.read_csv(RESULTS / "21_coasting_check" / "error_table.csv")
+    gaps = []
+    for car in ("", "2026-like + "):
+        without = "Phase 2 car" if car == "" else "2026-like car"
+        for corner_type in table["corner_type"].unique():
+            lift = table[(table["scenario"] == f"{car}lift and coast") & (table["corner_type"] == corner_type)]
+            plain = table[(table["scenario"] == without) & (table["corner_type"] == corner_type)]
+            gaps.append(float(plain["chosen_bias_m"].iloc[0] - lift["chosen_bias_m"].iloc[0]))
+    c["coasting"] = {"worst": f(coasting["worst"]["rmse_m"], 2), "threshold": f(coasting["threshold_m"], 1),
+                     "gap_low": f(min(gaps), 1), "gap_high": f(max(gaps), 1)}
+
+    null = load("22_h5_null_check/summary.json")
+    whole = null["G whole test under the null"]
+    c["null"] = {"all_laps": f(null["cases"]["E all laps, teammate with fewer laps"]["share"], 2),
+                 "equal_laps": f(null["cases"]["F H5 rules, teammate with fewer laps"]["share"], 2),
+                 "laps_lead": null["setup_laps"]["laps_lead"], "laps_second": null["setup_laps"]["laps_second"],
+                 "false_positive": f(whole["false_positive_rate"], 3), "studies": whole["studies"],
+                 "drivers": whole["drivers_per_study"], "variance": f(whole["count_variance"], 2),
+                 "binomial_variance": f(whole["binomial_variance"], 2),
+                 "split": f(whole["pairs_split_one_and_one"] * 100, 0),
+                 "conservative": whole["false_positive_rate"] <= 0.05}
+
+    checks = load("24_dry_run_checks/summary.json")
+    primary_2024, primary_2025 = dry_2024["h5"]["sets"]["all"], dry_2025["h5"]["sets"]["all"]
+    c["dry"] = {"rows": thousands(checks["rebuild_2024"]["rows_rebuilt"]),
+                "largest": f(checks["rebuild_2024"]["largest_feature_difference"], 1),
+                "h5_2024": f"{primary_2024['own_closer']} of {primary_2024['drivers']}",
+                "h5_2025": f"{primary_2025['own_closer']} of {primary_2025['drivers']}",
+                "h4_drivers": checks["frozen_h4_2025"]["changers"]["drivers"] + checks["frozen_h4_2025"]["stayers"]["drivers"]}
+    assert checks["rebuild_2024"]["identical"] and checks["frozen_h4_2025"]["all_match"], "a dry-run check failed"
+    assert dry_2024["matches_experiment_20"] and dry_2025["matches_experiment_20"], "a dry run differs from experiment 20"
+    return c
+
+
+# Who saw what of the 2026 season before Part C was written: the author's own words (2026-11-06).
+PART_C_DISCLOSURE = ("\"I know the driver line-up and which drivers changed teams, but not much about results. "
+                     "I know Kimi won this year's F1 title in Mexico.\" None of this is used in the design: team "
+                     "changers are found from the data by a fixed rule (`teams.team_changers`), and no rule depends "
+                     "on any driver's 2026 results.")
+PART_C_TEMPLATE = "preregistration_part_c.md.j2"
+PREREGISTRATION = REPO_ROOT / "docs" / "preregistration.md"
+PART_C_START = ("<!-- Part C below is generated by experiments/17_write_docs.py from "
+                "docs/templates/preregistration_part_c.md.j2: edit the template, not this text. -->")
+PART_C_END = "<!-- end of Part C -->"
+
+
+def committed_part_c():
+    """The Part C block in the last commit (HEAD), or None if Part C isn't committed yet."""
+    import subprocess
+
+    result = subprocess.run(["git", "show", "HEAD:docs/preregistration.md"], cwd=REPO_ROOT, capture_output=True,
+                            text=True, encoding="utf-8")
+    if result.returncode != 0 or PART_C_START not in result.stdout:
+        return None
+    return PART_C_START + result.stdout.replace("\r\n", "\n").split(PART_C_START, 1)[1]
+
+
+def write_part_c(rendered):
+    """Put Part C at the end of docs/preregistration.md. Parts A and B (everything before the
+    Part C marker) are kept exactly as they are; only the Part C block is replaced.
+
+    Once Part C is committed it is FROZEN: if the rendered text would differ from the committed
+    one (say, a development result was re-run), nothing is written and the script stops.
+    A frozen plan can't be rewritten by re-running a script."""
+    block = PART_C_START + "\n\n" + rendered + "\n" + PART_C_END + "\n"
+    frozen = committed_part_c()
+    if frozen is not None and frozen != block:
+        raise SystemExit("Part C is committed and frozen, and the rendered text would differ from it. "
+                         "Nothing was written. Find what changed (a results file or the template); a change "
+                         "to a committed plan is a deviation (docs/preregistration_deviations.md).")
+    text = PREREGISTRATION.read_text(encoding="utf-8").replace("\r\n", "\n")
+    if PART_C_START in text:
+        before = text.split(PART_C_START)[0]
+    else:
+        before = text.rstrip("\n") + "\n\n---\n\n"
+    PREREGISTRATION.write_text(before + block, encoding="utf-8", newline="\n")
 
 
 def main():
@@ -266,6 +452,9 @@ def main():
                   "edit the template, not this file. Every number comes from results/. -->\n")
         output.write_text(notice + text, encoding="utf-8", newline="\n")
         print(f"wrote {output.relative_to(REPO_ROOT)} ({len(text.split())} words)")
+    part_c = environment.get_template(PART_C_TEMPLATE).render(**numbers)
+    write_part_c(part_c)
+    print(f"wrote Part C into {PREREGISTRATION.relative_to(REPO_ROOT)} ({len(part_c.split())} words)")
     with open(RESULTS / "report_numbers.json", "w", encoding="utf-8") as file:
         json.dump(numbers, file, indent=1, ensure_ascii=False)
     print("wrote results/report_numbers.json (every number the documents can use)")

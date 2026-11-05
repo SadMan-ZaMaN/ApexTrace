@@ -515,3 +515,52 @@ into Part C:
   in both seasons).
 - **H4 on changers:** Part B's comparison with the pair left out of the z-score spread. On
   2025 this changes no verdict. With Part B's spread the code reproduces the frozen distances.
+
+## 2026-11-06 — Part C written; what the fresh-eyes review changed
+Part C is generated from `docs/templates/preregistration_part_c.md.j2` by `17_write_docs.py`.
+Every result number in it comes from a results file, and every rule value from the code. Once
+Part C is committed, the generator refuses to rewrite it. A separate reviewer with no shared
+context read the draft, the design and the code, and listed 9 groups of findings. I checked each
+one myself before acting on it:
+- **Equal laps per shared weekend** (the most important). Sharing weekends equalised the noise
+  of the two references, but not the laps within a weekend: a driver out in Q1 has fewer laps
+  than one in Q3. The teammate who keeps a seat tends to have more, so their own past looks
+  closer for no real reason. Measured in a car-only world, 6 against 2 laps: all laps gave
+  0.73 "own closer", equal laps 0.50 (`22_h5_null_check.py`, cases E and F). The rule: on each
+  shared weekend, both references use the smaller lap count, each driver's first laps of the
+  session. Development numbers re-run: 2023 → 2024 still 16 of 20; 2024 → 2025 14 of 16
+  (it was 15).
+- **Dependence between drivers.** Two 2025 teammates are compared against the same two
+  references. Measured (case G): pairs split one-and-one 71 % of the time; 0.7 % false
+  positives in 300 car-only studies. So the H5 sign test is conservative. For H4, two
+  changers in the same new team make their outcomes alike, so its p-value is too small.
+  This is a caveat; H4 is secondary.
+- **Guards:**
+  - The code and pinned files must be identical to the commit that added Part C.
+  - The 2025 reference files are pinned by SHA-256 (`24_dry_run_checks.py`); the raw samples
+    are not in git.
+  - Any `final_2026*/summary.json` blocks a run, so renaming a folder doesn't help.
+  - Results are written only at the end; a folder with any result file counts as a run.
+- **Fixed session cutoff, 2026-11-06 00:00 UTC**, instead of "24 h before the run", so the day
+  of the run can't change the sessions. Failed downloads are retried twice, then the run stops
+  (it no longer silently skips a session).
+- **Smaller fixes:**
+  - The team map stops on an ambiguous or missing name ("McLaren Mercedes" used to become
+    Mercedes).
+  - Tyre labels are checked, so a new label can't silently drop every lap.
+  - H5 has three verdicts (supported, not supported, not testable), and no longer crashes
+    when nobody is eligible.
+  - H4 groups 2026 teams by lineage.
+  - Corner-type counts are reported.
+  - The addendum allowed after a failed check is limited to what that check is about.
+  - The "own rank" secondary analysis was dropped: it was never built, and the sign test
+    already covers it.
+- **Not done, with reasons:**
+  - a "paired-only" sensitivity count: equal laps removes the mechanism it would probe,
+    and the laps per reference are reported for each driver;
+  - "an 11th team shifts the session medians": the field median is a constant per session
+    and corner, the same for every car, so it moves every 2026 signature equally (dilution,
+    not bias).
+- **Disclosure:** Part C now says what the AI assistant could know about 2026 (trained to
+  mid-2026, told not to use it). Sadman must write his own part. Until he does, the
+  placeholder makes the 2026 script refuse to run.

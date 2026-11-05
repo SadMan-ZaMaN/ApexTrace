@@ -14,8 +14,9 @@ one-time 2026 script stops before any result.
 
 import re
 
-# (pattern, lineage), checked in this order; the first pattern found in the lower-cased name wins.
-# "red bull racing" comes before the Racing Bulls patterns so that the two Red Bull teams can't mix.
+# (pattern, lineage). A name must match exactly ONE lineage: none -> unknown, two or more ->
+# ambiguous (e.g. a constructor-style "McLaren Mercedes" matches McLaren and Mercedes), and both stop
+# the 2026 script. "red bull racing" and the Racing Bulls patterns never match the same name.
 LINEAGE_PATTERNS = [
     (r"red bull racing", "Red Bull Racing"),
     (r"racing bulls|alphatauri|toro rosso|^rb$|\brb f1\b", "Racing Bulls"),
@@ -32,29 +33,38 @@ LINEAGE_PATTERNS = [
 
 
 def lineage(team_name):
-    """The lineage of a team name, or ValueError if no pattern matches.
+    """The lineage of a team name; ValueError if no lineage or more than one matches, or if
+    the name is missing.
 
     Examples: "AlphaTauri", "RB" and "Racing Bulls" -> "Racing Bulls";
     "Alfa Romeo", "Kick Sauber" and "Audi" -> "Sauber / Audi";
-    "Oracle Red Bull Racing" -> "Red Bull Racing" (sponsor names don't matter).
+    "Oracle Red Bull Racing" -> "Red Bull Racing" (sponsor names don't matter);
+    "McLaren Mercedes" -> ValueError (McLaren or Mercedes? the code doesn't guess).
     """
+    if team_name is None or (isinstance(team_name, float) and team_name != team_name) or not str(team_name).strip():
+        raise ValueError("missing team name")
     name = str(team_name).strip().lower()
+    matches = set()
     for pattern, team_lineage in LINEAGE_PATTERNS:
         if re.search(pattern, name):
-            return team_lineage
-    raise ValueError(f"unknown team name {team_name!r}: add it to teams.LINEAGE_PATTERNS (and log why)")
+            matches.add(team_lineage)
+    if len(matches) == 1:
+        return matches.pop()
+    if not matches:
+        raise ValueError(f"unknown team name {team_name!r}: add it to teams.LINEAGE_PATTERNS (and log why)")
+    raise ValueError(f"ambiguous team name {team_name!r}: matches {sorted(matches)}")
 
 
 def unknown_team_names(team_names):
-    """The names `lineage` can't place (empty list = all known). The 2026 script checks
-    this before building anything."""
-    unknown = []
-    for name in sorted(set(team_names)):
+    """The names `lineage` can't place: unknown, ambiguous, or missing (shown as "<missing>").
+    Empty list = all known. The 2026 script checks this before building anything."""
+    unknown = set()
+    for name in team_names:
         try:
             lineage(name)
         except ValueError:
-            unknown.append(name)
-    return unknown
+            unknown.add("<missing>" if name is None or str(name).strip() in ("", "nan") else str(name))
+    return sorted(unknown)
 
 
 def team_changers(laps, reference_year, target_year, min_sessions=5):

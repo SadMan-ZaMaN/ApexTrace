@@ -87,5 +87,10 @@
     "Williams"
   ],
   "unknown_team_names": [],
+  "compounds": {
+    "unknown": [],
+    "empty_share": 0.0,
+    "ok": true
+  },
   "lap_tables_checked": 2266
 }

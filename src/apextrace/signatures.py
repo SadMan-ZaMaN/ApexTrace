@@ -83,8 +83,39 @@ def most_weekends_team(laps, driver):
     return weekends.idxmax()
 
 
+def season_or_empty(laps, feature_columns, min_sessions, year):
+    """season_signatures for one year, or an empty table if no driver has min_sessions weekends
+    (so a short or empty season gives "nobody to compare", not a crash)."""
+    signatures = season_signatures(laps, feature_columns, min_sessions)
+    if year not in set(signatures.index.get_level_values("year")):
+        return signatures.iloc[0:0].droplevel("year")
+    return signatures.xs(year, level="year")
+
+
+def equal_laps_per_session(pair, driver, teammate):
+    """Both drivers with the same number of laps in every session: k = the smaller count,
+    and each driver's FIRST k laps (lowest lap numbers).
+
+    Why: a weekend mean over fewer laps is noisier, and a noisier reference sits farther
+    from everything. A driver knocked out in Q1 has ~3 push laps, one who reaches Q3 ~6;
+    with all laps the Q3 driver's own past would look closer for no reason (synthetic,
+    car only, 6 against 2 laps: 0.57-0.62 "own closer" instead of 0.5; review of
+    2026-11-06). The first laps are used because both teammates run them at about the same
+    time of the session, on a similar track, and "first" is a rule, not a choice.
+    Example: own laps 3, 5, 9, 12 and teammate laps 4, 7 -> k = 2: own 3, 5; teammate 4, 7.
+    """
+    kept = []
+    for _, session in pair.groupby("session_key"):
+        own = session[session["driver"] == driver].sort_values("lap")
+        mate = session[session["driver"] == teammate].sort_values("lap")
+        k = min(len(own), len(mate))
+        kept.append(own.head(k))
+        kept.append(mate.head(k))
+    return pd.concat(kept)
+
+
 def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min_sessions=5,
-                         shared_weekends_only=True, leave_pair_out=True):
+                         shared_weekends_only=True, leave_pair_out=True, equal_laps=True):
     """H5's comparison: is a driver's target-season signature closer to their OWN
     reference-season signature than to their reference-season TEAMMATE's?
 
@@ -100,6 +131,11 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
     and the driver's own past would look closer for no real reason.
     shared_weekends_only=False uses each driver's full-season signature instead;
     it exists only to show that bias in the tests.
+
+    On each shared weekend both references use the same number of laps
+    (equal_laps_per_session): the same reason one level down, since a driver out in Q1
+    has fewer laps than one in Q3. equal_laps=False keeps every lap; it exists only to
+    show that bias (experiments/22_h5_null_check.py, case E).
 
     The teammate is the other driver of the driver's most-driven reference team with
     the most shared weekends (alphabetical on a tie).
@@ -120,8 +156,8 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
     """
     reference_laps = laps[laps["year"] == reference_year]
     target_laps = laps[laps["year"] == target_year]
-    reference_all = season_signatures(reference_laps, feature_columns, min_sessions).xs(reference_year, level="year")
-    targets = season_signatures(target_laps, feature_columns, min_sessions).xs(target_year, level="year")
+    reference_all = season_or_empty(reference_laps, feature_columns, min_sessions, reference_year)
+    targets = season_or_empty(target_laps, feature_columns, min_sessions, target_year)
 
     rows = []
     for driver in sorted(set(targets.index) & set(reference_all.index)):
@@ -141,9 +177,15 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
             rows.append({**row, "included": False, "reason": f"no teammate shared {min_sessions} weekends"})
             continue
 
+        lap_counts = {}
         if shared_weekends_only:
             pair = team_laps[team_laps["driver"].isin([driver, teammate]) & team_laps["session_key"].isin(shared)]
-            references = season_signatures(pair, feature_columns, min_sessions).xs(reference_year, level="year")
+            lap_counts = {"laps_own_all": int((pair["driver"] == driver).sum()),
+                          "laps_teammate_all": int((pair["driver"] == teammate).sum())}
+            if equal_laps:
+                pair = equal_laps_per_session(pair, driver, teammate)
+            lap_counts["laps_each_used"] = int((pair["driver"] == driver).sum())
+            references = season_or_empty(pair, feature_columns, min_sessions, reference_year)
         else:
             references = reference_all
         if teammate not in references.index:
@@ -155,7 +197,8 @@ def own_vs_past_teammate(laps, reference_year, target_year, feature_columns, min
         d_own = distance(target, references_z.loc[driver, feature_columns])
         d_mate = distance(target, references_z.loc[teammate, feature_columns])
         rows.append({**row, "included": True, "reason": "", "teammate": teammate, "shared_weekends": len(shared),
-                     "distance_own": d_own, "distance_teammate": d_mate, "own_closer": bool(d_own < d_mate)})
+                     **lap_counts, "distance_own": d_own, "distance_teammate": d_mate,
+                     "own_closer": bool(d_own < d_mate)})
     return pd.DataFrame(rows)
 
 
