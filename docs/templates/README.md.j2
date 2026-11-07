@@ -12,7 +12,8 @@ Can you recognise a Formula 1 driver from the public timing feed alone, and how 
 ApexTrace measures where each driver brakes, how much speed they carry to the slowest point and when they
 get back on the throttle, in every braking zone of every qualifying session from 2023 to 2025. It uses only
 public timing data, sampled about {{ data.rate_hz }} times a second. The 2025 season was locked away from the first day
-and used once, for a preregistered final test.
+and used once, for a preregistered final test; 2026, the first season under new technical rules, was locked away in
+the same way for a second one.
 
 ## Results
 
@@ -22,6 +23,7 @@ and used once, for a preregistered final test.
 | H2 | Do two teammates differ by more than the measurement error? (pilot) | {{ pilot.discoveries }} of {{ pilot.tests }} comparisons | not shown: too few laps, as predicted |
 | H3 | Can corner features tell teammates apart on weekends the model never saw? | 2025: {{ h3.final.ours }} vs {{ h3.final.lap_time }} for lap time, {{ h3.final.wins }} of {{ h3.final.teams }} teams, {{ h3.final.p }} | **supported**, replicated on the held-out season |
 | H4 | Does the style follow drivers who change teams? | 2025: {{ h4.final.own_closer }} of {{ h4.final.changers }} team changers, {{ h4.final.p }} | not supported |
+| H5 | Does the style survive the 2026 rule change? | 2026: {{ h5.all.own }} of {{ h5.all.n }} drivers, {{ h5.all.p }} ({{ h5.needed }} needed) | {{ h5.verdict }}: can't tell weakened from lost |
 
 In plain words:
 
@@ -35,10 +37,15 @@ In plain words:
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
   {{ h4.explore.control_own }} times out of {{ h4.explore.control_n }} in the same comparison, but with five changers the difference can't be told
   from chance ({{ h4.explore.fisher_p }}). The car, or a driver adapting to it, matters a lot.
+- **Nor was it shown to survive the 2026 rule change.** {{ h5.all.own }} of {{ h5.all.n }} drivers' 2026 signatures were closer to their own
+  2025 signature than to their 2025 teammate's; the test needed {{ h5.needed }}. Without a rule change the same comparison gave
+  {{ h5.dev.first.own }} of {{ h5.dev.first.n }} and {{ h5.dev.second.own }} of {{ h5.dev.second.n }}. As stated before the test, this "no" can't tell a signature that weakened from one
+  that was lost: with {{ h5.all.n }} drivers the test had only {{ h5.power_70 }} % power if the true share had dropped to 0.7.
 
-The full write-up is in [docs/report.md](docs/report.md). The test plan was committed before it was run:
-[docs/preregistration.md](docs/preregistration.md) (commits `{{ prereg.part_a }}` and `{{ prereg.part_b }}`), and every deviation
-is in [docs/preregistration_deviations.md](docs/preregistration_deviations.md).
+The full write-up is in [docs/report.md](docs/report.md). The test plans were committed before they were run:
+[docs/preregistration.md](docs/preregistration.md) (commits `{{ prereg.part_a }}` and `{{ prereg.part_b }}`; for 2026, `{{ h5.commits.part_c }}` with
+Addendum 1, `{{ h5.commits.addendum_1 }}`), and every deviation is in
+[docs/preregistration_deviations.md](docs/preregistration_deviations.md).
 
 ## The web app
 
@@ -67,8 +74,10 @@ the telemetry.
   with {{ measure.alignment_m }} m along-track error.
 - **No leakage, honest baselines.** Identification is always leave-one-weekend-out and is compared with lap time,
   simple lap statistics and shuffled labels (which score {{ h3.final.shuffled }}, as they should).
-- **A frozen test set.** 2025 was refused by the code until the preregistration was committed, then run once. A
-  crash before any result, and a team changer missing from the plan, are both reported as deviations.
+- **Frozen test sets.** 2025 was refused by the code until the preregistration was committed, then run once. A
+  crash before any result, and a team changer missing from the plan, are both reported as deviations. 2026 was
+  handled the same way; its first run stopped at a data check before any result (a "no value" marker in the feed),
+  and the fix was written down and committed as an addendum before the second run.
 
 ## Run it
 
@@ -91,7 +100,7 @@ OpenF1 limits the request rate).
 |---|---|
 | `src/apextrace/` | the package: data loading, quality checks, filters, alignment, events, features, statistics, identification, signatures |
 | `experiments/` | numbered scripts `00`–`{{ repo.last_experiment }}`; every number and figure comes from one of them |
-| `results/` | small outputs (JSON, CSV, figures); `results/final/` holds the frozen 2025 test |
+| `results/` | small outputs (JSON, CSV, figures); `results/final/` and `results/final_2026/` hold the frozen 2025 and 2026 tests |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |
 | `docs/` | report, preregistration, deviations, research log, decisions, data report, related work, [data sources](docs/sources.md), 2026 rules notes, [engineering notes](docs/engineering_notes.md) (conventions and bug history) |
@@ -99,8 +108,8 @@ OpenF1 limits the request rate).
 ## Limitations
 
 Qualifying laps only; a public feed at about {{ data.rate_hz }} Hz with an on/off brake signal (no pressure); position data
-too coarse to see racing lines; five team changers in the final test, so H4 could only pass if all five agreed. The
-report lists these and more.
+too coarse to see racing lines; five team changers in the final test, so H4 could only pass if all five agreed;
+{{ h5.all.n }} drivers and a part season ({{ h5.data.built }} sessions with data, up to {{ h5.data.last }}) for H5. The report lists these and more.
 
 ## Licence and citation
 

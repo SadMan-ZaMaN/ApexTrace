@@ -149,3 +149,9 @@ After changing an analysis: re-run its experiment script, then
   `openf1.drop_no_value_samples` (Addendum 1 to Part C) removes those samples in `slice_lap`
   and in the feed check. Guarded by `test_no_marker_reaches_the_features_through_slice_lap`
   (checked to fail with the rule removed).
+- **2026-11-08 — SciPy's `binomtest(...).proportion_ci` follows the test's alternative.** With
+  `alternative="greater"` (our one-sided sign test) it returns a one-sided interval (low, 1.0),
+  not the two-sided exact (Clopper–Pearson) interval our summaries report. Found when the first
+  version of `experiments/27_final_2026_figures.py` disagreed with all six frozen intervals. The
+  interval comes from a separate `alternative="two-sided"` test object. Guarded by
+  `test_every_frozen_block_matches_its_per_driver_table` (checked to fail with the one-sided interval).

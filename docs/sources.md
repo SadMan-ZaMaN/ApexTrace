@@ -52,17 +52,22 @@ lap (`docs/decisions.md`, 2026-10-17).
 | Pilot: 2024 Abu Dhabi qualifying + FP2 | FastF1 | 2 | 2026-10-14/15 | `00_hello_lap.py`, `01_data_pilot.py` | `cache/2024/`, `cache/fastf1_http_cache.sqlite` |
 | Development: all 2023 and 2024 qualifying sessions | OpenF1 | 47 listed, 46 with data (2023 Imola: the weekend was cancelled) | 2026-10-17 | `08_download_openf1.py` | `cache/openf1/` |
 | Final test: all 2025 qualifying sessions | OpenF1 | 24 listed, 23 with data (Baku has no lap rows) | 2026-10-18, once | `14_final_2025.py` | `cache/openf1/` |
-| 2026 | — | **not downloaded**: held out by the code (switch `FINAL_TEST_2026`) until its test plan is committed | — | — | — |
+| Second final test: the 2026 qualifying sessions that ended before 2026-11-06 00:00 UTC (a cutoff fixed in preregistration Part C) | OpenF1 | 21 listed, 19 with data (Sakhir and Jeddah have no lap rows) | 2026-11-07, once (two attempts: `docs/preregistration_deviations.md`) | `23_final_2026.py` | `cache/openf1/` |
 
-Sizes on 2026-10-31: `cache/openf1/` 226 MB, `cache/2024/` 98 MB.
+Before 2026-11-07 no 2026 data was downloaded: the code refused it (switch `FINAL_TEST_2026`)
+until the test plan was committed.
 
-Laps (from `results/08_download/download_log.csv` and `results/final/sessions_2025.csv`):
+Sizes on 2026-11-08: `cache/openf1/` 287 MB, `cache/2024/` 98 MB.
+
+Laps (from `results/08_download/download_log.csv`, `results/final/sessions_2025.csv` and
+`results/final_2026/sessions_2026.csv`):
 
 | Season | Laps in the sessions | Laps kept by the lap-selection rules |
 |---|---|---|
 | 2023 | 7,423 | 2,234 |
 | 2024 | 7,598 | 2,266 |
 | 2025 | 7,129 | 2,092 |
+| 2026 (to the cutoff) | 6,311 | 1,795 (1,764 with usable car data once the "no value" samples were removed) |
 
 A lap is kept if it has a lap time, is not an out lap or in lap, was not deleted, ran
 under green flag only, and is within 107 % of the best lap of its own stint (one set of
@@ -80,15 +85,16 @@ OpenF1 API ──> cache/openf1/*.json.gz              raw answers, one file per
                 └─ results/09_dataset/dataset.csv.gz        one row per (session, driver, lap, corner)
           ──> apextrace.dataset.clean (rules fixed in experiments/10_eda.py)
           ──> experiments/11–13  H1 repeatability, H3 identification, H4 development (2023–2024)
-          ──> experiments/14_final_2025.py ──> results/final/   the one-time 2025 test (frozen)
+          ──> experiments/14_final_2025.py ──> results/final/        the one-time 2025 test (frozen)
+          ──> experiments/23_final_2026.py ──> results/final_2026/   the one-time 2026 test (frozen)
 ```
 
-| Step | 2023–2024 | 2025 | File |
-|---|---|---|---|
-| Rows (driver, lap, corner) | 30,441 | | `results/09_dataset/summary.json` |
-| Usable (car data present, no feed gap in the corner window) | 24,496 | 9,272 | `results/10_eda/summary.json`, `results/final/summary.json` |
-| Dropped: not dry | 2,997 | 400 | same |
-| **Clean rows used** | **21,493** | **8,871** | same |
+| Step | 2023–2024 | 2025 | 2026 | File |
+|---|---|---|---|---|
+| Rows (driver, lap, corner) | 30,441 | | | `results/09_dataset/summary.json` |
+| Usable (car data present, no feed gap in the corner window) | 24,496 | 9,272 | 7,496 | `results/10_eda/summary.json`, `results/final/summary.json`, `results/final_2026/summary.json` |
+| Dropped: not dry | 2,997 | 400 | 3 | same |
+| **Clean rows used** | **21,493** | **8,871** | **7,491** | same |
 
 What the data can and can't support (sampling, gaps, resolution, why position can't
 show racing lines) is in `docs/data_report.md`.
@@ -103,9 +109,10 @@ show racing lines) is in `docs/data_report.md`.
 .venv\Scripts\python.exe experiments\10_eda.py               # cleaning rules + EDA figures
 ```
 
-The 2025 data is downloaded only by `14_final_2025.py`, which has already been run
-and must not be run again (its results are frozen). The tests never download
-anything; they use synthetic signals.
+The 2025 data is downloaded only by `14_final_2025.py`, and the 2026 data only by
+`23_final_2026.py`. Both have already been run, refuse to run again, and must not be
+forced to (their results are frozen). The tests never download anything; they use
+synthetic signals.
 
 ---
 

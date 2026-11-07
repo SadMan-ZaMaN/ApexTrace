@@ -1094,3 +1094,80 @@ in advance (71 % on car-only synthetic data), and it is why the sign test is con
 - Every number above was read from `results/final_2026/summary.json`, `checks.json` and the
   per-driver CSVs, and the console log is kept as `results/final_2026/run_attempt_2.log`.
 - Nothing was re-run or adjusted after the result.
+
+---
+
+## 2026-11-08 — Day 15: the 2026 result in the report and README
+
+**Done:**
+- `experiments/27_final_2026_figures.py` reads only the frozen `results/final_2026/` files. It
+  re-checks every frozen block (H5: four feature sets; H4: changers and stayers) against its
+  per-driver table with SciPy's binomial test, an independent implementation. All six match.
+  It also draws `final_h5.png` (per driver, plus the share with and without a rule change) and
+  counts the teammate pairs as an exploratory description.
+- `17_write_docs.py`: `collect_h5_numbers()` takes every 2026 number from the results files.
+  It asserts four things:
+  - experiment 27 found no mismatch;
+  - the markers diagnosed in attempt 1 equal the markers removed in attempt 2 (6,539);
+  - both attempts kept the same laps;
+  - every driver who was not compared is not compared for the stated reason.
+- Report, generated from the template:
+  - abstract and H5 in the introduction;
+  - data: cutoff, 21 sessions listed and 19 built, 1,795 kept laps, 1,764 with usable car
+    data, 1,751 with a clean corner, and the 104 marker;
+  - methods: the three H5 rules and why, the null check, dependence;
+  - Section 6.5: the table against development, what the "no" means, the figure, the
+    exploratory pairs, H4 on 2026, corner types;
+  - deviation 3, discussion, limitations, conclusion, reproducibility.
+- README: H5 row, plain-words bullet, Part C and Addendum 1 commits, frozen test sets,
+  repository map, limitations.
+- `docs/sources.md`: the 2026 download, laps and cleaning.
+- New `tests/test_final_2026_results.py`, 3 tests: frozen numbers against their tables, the
+  re-check catches each kind of error, and the verdict follows Part C's rule.
+
+**Results as written:**
+- H5 is not supported. 13 of 19 drivers' own past was closer (0.68, 0.43–0.87, p = 0.084,
+  14 needed), against 16 of 20 and 14 of 16 in development.
+- Power with 19 drivers is computed from rates fixed before the run, not from the observed
+  share: 84–98 % at the development rates, 47 % at 0.7.
+- Exploratory pair counts: 9 pairs of 2025 teammates were both compared. 6 split
+  one-and-one, 3 both went to the own past, 0 both to the teammate. The 13 are therefore
+  6 (split pairs) + 6 (3 pairs) + 1 (VER, whose 2025 teammate TSU was not compared).
+- Not compared: BOT, HIR, LIN and PER have no 2025 qualifying data; TSU has 3 weekends in
+  2026.
+
+**Found today:** 30 kept laps lost all usable car data once the 104 samples were removed
+(Shanghai 21, Suzuka 7, Mexico City 1, Monza 1).
+- This is the rule working as written: a lap needs at least 10 car samples, with samples on
+  both sides of its start and end.
+- It is not a deviation, but it had not been reported. It is now in the report.
+- Day 16 will check which drivers lost those laps.
+
+The same distinction already applied to 2023–2024, so the wording was fixed there too:
+- 4,500 laps were kept, 4,499 had data, and 4,497 reached the dataset.
+- The report used to call 4,497 "kept laps"; it now gives both numbers, generated.
+
+**My mistakes today:**
+- The first version of experiment 27 used a one-sided interval. The re-check caught it
+  (all six intervals disagreed); there is an engineering note.
+- A mutation test that did not mutate: making ALB's own distance larger left ALB's "no"
+  valid. It was caught because the test failed on correct code; it now swaps the two
+  distances.
+- I wrote "most of them at Suzuka, Shanghai, Monza 1.1 %". Those are the highest shares per
+  session, not where most markers were. Caught by reading the rendered diff.
+
+**Verified:**
+- 180 tests pass (177 + 3 new).
+- The new re-check test fails with the one-sided interval; the file was restored
+  byte-identical.
+- Regenerating left `docs/preregistration.md` byte-identical (SHA-256 `bc8c2182…`
+  before and after), so Part C and Addendum 1 are untouched.
+- I read the full rendered diff of the report and README. Every 2026 number there comes
+  from `results/` through `collect_h5_numbers()`.
+- I looked at the figure and fixed two faults: the legend colours, and grid lines through the
+  bars.
+- Lap counts were recomputed:
+  - kept laps 1,795: `sessions_2026.csv` and both download logs agree;
+  - lap table 1,751: clean rows grouped by lap.
+- `docs/sources.md` is hand-written; its numbers were copied from `sessions_2026.csv`, the
+  download logs and `summary.json`. The Day 17 audit should check them by script.

@@ -100,6 +100,8 @@ def collect_numbers():
         "clean_total": thousands(repeat["cleaning"]["clean_rows"] + final["cleaning_2025"]["clean_rows"]),
         "drivers_dev": dataset["drivers"], "corners_dev": dataset["corners"], "features": len(dataset["features"]),
         "laps_dev": thousands(dataset["laps"]), "raw_samples_millions": f(headline["raw_samples"] / 1e6, 2),
+        # kept by the lap-selection rules (the download log); laps_dev = those that reached the dataset
+        "laps_dev_kept": thousands(download_log["kept_laps"].sum()),
         "drivers_total": headline["drivers"],
         # the logged 2023-2024 download: OpenF1's rate limit sets the pace
         "download_minutes": f(download_log["seconds"].sum() / 60, 0),
@@ -256,7 +258,139 @@ def collect_numbers():
     n["repo"] = {"last_experiment": f"{max(experiment_numbers):02d}"}
     n["c"] = collect_part_c_numbers(n["prereg"])
     n["a1"] = collect_addendum_1_numbers()
+    n["h5"] = collect_h5_numbers(n["c"])
+    # attempt 1's diagnosis (experiment 25) and attempt 2's removal must count the same marker samples
+    assert n["a1"]["either"] == n["h5"]["data"]["removed"], "markers diagnosed and markers removed differ"
     return n
+
+
+def collect_h5_numbers(c):
+    """The frozen 2026 test (results/final_2026/, run once on 2026-11-07) for the README and the report:
+    H5, H4 on the 2026 team changers, the corner types, the data, and the re-check and exploratory pair
+    counts of experiment 27. Nothing is recomputed here except counts read off the frozen files."""
+    from apextrace.signatures import sign_test_power, sign_test_threshold
+
+    final = load("final_2026/summary.json")
+    checks = load("final_2026/checks.json")
+    attempt_1 = load("final_2026_attempt_1/run_started.json")
+    figures = load("27_final_2026_figures/summary.json")
+    assert figures["all_match"], "experiment 27 found a frozen 2026 number that does not match its table"
+    sessions = pd.read_csv(RESULTS / "final_2026" / "sessions_2026.csv")
+    h5_table = pd.read_csv(RESULTS / "final_2026" / "h5_all.csv")
+    changes = pd.read_csv(RESULTS / "final_2026" / "team_changes.csv")
+
+    def block_numbers(block):
+        return {"own": block["own_closer"], "n": block["drivers"], "share": f(block["share"], 2),
+                "low": f(block["ci95_low"], 2), "high": f(block["ci95_high"], 2), "p": p_text(block["sign_test_p"])}
+
+    sets = final["h5"]["sets"]
+    primary = sets["all"]
+    drivers = primary["drivers"]
+    h5 = {"verdict": final["h5"]["verdict"], "supported": final["h5"]["supported"],
+          "all": block_numbers(primary), "control": block_numbers(sets["control points"]),
+          "energy": block_numbers(sets["energy-sensitive"]), "no_throttle": block_numbers(sets["no throttle"]),
+          "features": final["h5"]["features"], "needed": sign_test_threshold(drivers),
+          "commits": {"part_c": attempt_1["preregistration_commit"][:7],
+                      "addendum_1": final["preregistration_commit"][:7]},
+          "null": c["null"], "smallest_testable": c["smallest_testable"]}
+    assert final["checks_ok"] and h5["verdict"] in ("supported", "not supported", "not testable")
+
+    # the same comparison without a rule change (experiment 20, the numbers Part C quotes)
+    development = load("20_h5_development/summary.json")["pairs"]
+    h5["dev"] = {"first": block_numbers(development["2023 -> 2024"]["all"]),
+                 "second": block_numbers(development["2024 -> 2025"]["all"])}
+
+    # power with this many drivers: at the development rates, and at a weakened rate
+    rates = [development[key]["all"]["share"] for key in ("2023 -> 2024", "2024 -> 2025")]
+    h5["power_dev_low"] = f(sign_test_power(drivers, min(rates)) * 100, 0)
+    h5["power_dev_high"] = f(sign_test_power(drivers, max(rates)) * 100, 0)
+    h5["power_70"] = f(sign_test_power(drivers, 0.7) * 100, 0)
+    h5["power_85"] = f(sign_test_power(drivers, 0.85) * 100, 0)
+    null = load("22_h5_null_check/summary.json")["cases"]
+    h5["null_pair_inside"] = f(null["B pair inside the spread"]["share"], 2)
+
+    # the smallest margin (a near tie), so a reader who counts the bars in the figure is not misled
+    margins = (h5_table["distance_teammate"] - h5_table["distance_own"]).abs()
+    tie = h5_table.loc[margins.idxmin()]
+    h5["tie_driver"], h5["tie_margin"] = tie["driver"], f(margins.min(), 3)
+
+    # which 2026 drivers were not compared, and why (the rule: at least MIN_WEEKENDS in both seasons)
+    from apextrace import h5_protocol
+
+    rows_2026, _ = clean(pd.read_csv(RESULTS / "final_2026" / "dataset_2026.csv.gz"))
+    rows_2025, _ = clean(pd.read_csv(RESULTS / "final" / "dataset_2025.csv.gz"))
+    weekends_2026 = rows_2026.groupby("driver")["session_key"].nunique()
+    weekends_2025 = rows_2025.groupby("driver")["session_key"].nunique()
+    no_2025, few_2026 = [], []
+    for driver in sorted(set(weekends_2026.index) - set(h5_table["driver"])):
+        if weekends_2025.get(driver, 0) < h5_protocol.MIN_WEEKENDS:
+            # the report says "no 2025 qualifying data": true only if there is none at all
+            assert weekends_2025.get(driver, 0) == 0, f"{driver} has some 2025 weekends: change the report's wording"
+            no_2025.append(driver)
+        else:
+            assert weekends_2026[driver] < h5_protocol.MIN_WEEKENDS, f"{driver}: not compared for another reason"
+            few_2026.append(f"{driver} with {weekends_2026[driver]}")
+    h5["drivers_2026"] = int(len(weekends_2026))
+    h5["not_compared"] = {"no_2025": ", ".join(no_2025), "few_2026": ", ".join(few_2026),
+                          "min_weekends": h5_protocol.MIN_WEEKENDS}
+
+    # H4 on the 2026 team changers (secondary, descriptive with one changer)
+    h4 = final["h4"]
+    changer = pd.read_csv(RESULTS / "final_2026" / "h4_changers.csv")
+    changer = changer[changer["included"] == True]  # noqa: E712
+    not_eligible = changes[changes["changed"] & ~changes["eligible"]]
+    h5["h4"] = {"changers": block_numbers(h4["changers"]), "stayers": block_numbers(h4["stayers"]),
+                "test_possible": h4["changers"]["test_possible"], "fisher_p": p_text(h4["fisher_exact_two_sided_p"]),
+                "rows": [{"driver": r.driver, "before": r.team_reference, "after": r.team_target,
+                          "teammate": r.teammate_target, "own": f(r.distance_own_reference, 2),
+                          "mate": f(r.distance_new_teammate, 2),
+                          "closer": "own 2025" if r.own_closer else "new teammate"} for r in changer.itertuples()],
+                "not_eligible": [{"driver": r.driver, "before": r.team_reference, "after": r.team_target,
+                                  "weekends": int(r.weekends_target)} for r in not_eligible.itertuples()],
+                "dev_stayers_first": c["h4"]["stayers_first"], "dev_stayers_second": c["h4"]["stayers_second"]}
+
+    corner_types = {}
+    for year, counts in final["corner_types"].items():
+        corner_types[year] = {kind: f(value["per_session"], 2) for kind, value in counts.items()}
+    h5["corners"] = corner_types
+
+    # laps whose car data became unusable once the 104 samples were removed (Addendum 1): a lap needs
+    # at least 10 car samples and samples on both sides of its start and end (openf1.slice_lap).
+    # Attempt 1 counted laps with data WITHOUT the rule, attempt 2 WITH it; same sessions, same laps.
+    log_1 = pd.read_csv(RESULTS / "final_2026_attempt_1" / "download_log.csv").set_index("session_key")
+    log_2 = pd.read_csv(RESULTS / "final_2026" / "download_log.csv").set_index("session_key")
+    assert log_1["kept_laps"].equals(log_2["kept_laps"]), "the two attempts kept different laps"
+    lost = (log_1["kept_laps_with_data"] - log_2["kept_laps_with_data"]).sort_values(ascending=False)
+    assert (lost >= 0).all(), "removing samples can only lose laps"
+    lost_text = []
+    for session_key, count in lost[lost > 0].items():
+        lost_text.append(f"{log_2.loc[session_key, 'location']} {int(count)}")
+
+    built = sessions[sessions["laps"] > 0]
+    removed = sum(s["no_value_removed"] for s in checks["no_value_marker_removed"])
+    samples = sum(s["samples"] for s in checks["no_value_marker_removed"])
+    h5["data"] = {"listed": len(final["sessions"]), "built": int(len(built)),
+                  "empty": " and ".join(sessions.loc[sessions["laps"] == 0, "location"]),
+                  "last": final["sessions"][-1]["location"], "cutoff": final["cutoff_utc"].replace("T", " ")[:16] + " UTC",
+                  "laps_kept": thousands(built["kept_laps"].sum()), "lap_vectors": thousands(final["laps"]),
+                  "laps_with_data": thousands(log_2["kept_laps_with_data"].sum()),
+                  "laps_lost_to_markers": int(lost.sum()), "laps_lost_where": ", ".join(lost_text),
+                  "usable": thousands(final["cleaning"]["usable_rows"]), "clean": thousands(final["cleaning"]["clean_rows"]),
+                  "sessions_clean": int(rows_2026["session_key"].nunique()),
+                  "removed": thousands(removed), "removed_share": f(removed / samples * 100, 2)}
+    assert h5["data"]["clean"] == thousands(len(rows_2026)), "the 2026 cleaning differs from summary.json"
+
+    # EXPLORATORY (experiment 27): how the pairs of 2025 teammates came out, and the drivers whose
+    # 2025 teammate was not compared. The 13 = split pairs + 2 x pairs both "own" + the singles' own.
+    pairs = figures["exploratory_teammate_pairs"]
+    compared = set(h5_table["driver"])
+    singles = h5_table[~h5_table["teammate"].isin(compared)]
+    h5["pairs"] = {"n": pairs["pairs"], "split": pairs["split"], "both_own": pairs["both_own_past"],
+                   "both_own_drivers": 2 * pairs["both_own_past"], "both_mate": pairs["both_teammate"],
+                   "singles": ", ".join(f"{r.driver} (2025 teammate {r.teammate})" for r in singles.itertuples()),
+                   "singles_own": int(singles["own_closer"].sum())}
+    assert (pairs["split"] + 2 * pairs["both_own_past"] + h5["pairs"]["singles_own"]) == primary["own_closer"]
+    return h5
 
 
 def collect_addendum_1_numbers():

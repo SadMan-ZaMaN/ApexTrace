@@ -26,6 +26,7 @@
   "features": 11,
   "laps_dev": "4,497",
   "raw_samples_millions": "2.09",
+  "laps_dev_kept": "4,500",
   "drivers_total": 28,
   "download_minutes": "68",
   "download_per_session_s": "92"
@@ -259,7 +260,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "26"
+  "last_experiment": "27"
  },
  "c": {
   "written": "2026-11-06",
@@ -505,5 +506,171 @@
   "dry_checks_ok": true,
   "dry_h5": "16 of 20",
   "dry_h5_same": true
+ },
+ "h5": {
+  "verdict": "not supported",
+  "supported": false,
+  "all": {
+   "own": 13,
+   "n": 19,
+   "share": "0.68",
+   "low": "0.43",
+   "high": "0.87",
+   "p": "p = 0.084"
+  },
+  "control": {
+   "own": 12,
+   "n": 19,
+   "share": "0.63",
+   "low": "0.38",
+   "high": "0.84",
+   "p": "p = 0.18"
+  },
+  "energy": {
+   "own": 13,
+   "n": 19,
+   "share": "0.68",
+   "low": "0.43",
+   "high": "0.87",
+   "p": "p = 0.084"
+  },
+  "no_throttle": {
+   "own": 12,
+   "n": 19,
+   "share": "0.63",
+   "low": "0.38",
+   "high": "0.84",
+   "p": "p = 0.18"
+  },
+  "features": 30,
+  "needed": 14,
+  "commits": {
+   "part_c": "f653d49",
+   "addendum_1": "ac3a793"
+  },
+  "null": {
+   "all_laps": "0.73",
+   "equal_laps": "0.50",
+   "laps_lead": 6,
+   "laps_second": 2,
+   "false_positive": "0.007",
+   "studies": 300,
+   "drivers": 20,
+   "variance": "3.06",
+   "binomial_variance": "5.00",
+   "split": "71",
+   "conservative": true
+  },
+  "smallest_testable": 5,
+  "dev": {
+   "first": {
+    "own": 16,
+    "n": 20,
+    "share": "0.80",
+    "low": "0.56",
+    "high": "0.94",
+    "p": "p = 0.0059"
+   },
+   "second": {
+    "own": 14,
+    "n": 16,
+    "share": "0.88",
+    "low": "0.62",
+    "high": "0.98",
+    "p": "p = 0.0021"
+   }
+  },
+  "power_dev_low": "84",
+  "power_dev_high": "98",
+  "power_70": "47",
+  "power_85": "95",
+  "null_pair_inside": "0.43",
+  "tie_driver": "HAM",
+  "tie_margin": "0.005",
+  "drivers_2026": 24,
+  "not_compared": {
+   "no_2025": "BOT, HIR, LIN, PER",
+   "few_2026": "TSU with 3",
+   "min_weekends": 5
+  },
+  "h4": {
+   "changers": {
+    "own": 0,
+    "n": 1,
+    "share": "0.00",
+    "low": "0.00",
+    "high": "0.97",
+    "p": "p = 1"
+   },
+   "stayers": {
+    "own": 5,
+    "n": 18,
+    "share": "0.28",
+    "low": "0.10",
+    "high": "0.53",
+    "p": "p = 0.98"
+   },
+   "test_possible": false,
+   "fisher_p": "p = 1",
+   "rows": [
+    {
+     "driver": "HAD",
+     "before": "Racing Bulls",
+     "after": "Red Bull Racing",
+     "teammate": "VER",
+     "own": "1.36",
+     "mate": "0.99",
+     "closer": "new teammate"
+    }
+   ],
+   "not_eligible": [
+    {
+     "driver": "TSU",
+     "before": "Red Bull Racing",
+     "after": "Racing Bulls",
+     "weekends": 3
+    }
+   ],
+   "dev_stayers_first": "11 of 20",
+   "dev_stayers_second": "8 of 10"
+  },
+  "corners": {
+   "2025": {
+    "slow": "3.17",
+    "medium": "2.74",
+    "fast": "0.87"
+   },
+   "2026": {
+    "slow": "3.84",
+    "medium": "2.47",
+    "fast": "0.58"
+   }
+  },
+  "data": {
+   "listed": 21,
+   "built": 19,
+   "empty": "Sakhir and Jeddah",
+   "last": "Mexico City",
+   "cutoff": "2026-11-06 00:00 UTC",
+   "laps_kept": "1,795",
+   "lap_vectors": "1,751",
+   "laps_with_data": "1,764",
+   "laps_lost_to_markers": 30,
+   "laps_lost_where": "Shanghai 21, Suzuka 7, Mexico City 1, Monza 1",
+   "usable": "7,496",
+   "clean": "7,491",
+   "sessions_clean": 19,
+   "removed": "6,539",
+   "removed_share": "1.13"
+  },
+  "pairs": {
+   "n": 9,
+   "split": 6,
+   "both_own": 3,
+   "both_own_drivers": 6,
+   "both_mate": 0,
+   "singles": "VER (2025 teammate TSU)",
+   "singles_own": 1
+  }
  }
 }

@@ -1,0 +1,23 @@
+{
+  "note": "re-check + figure + EXPLORATORY pair counts; the preregistered decision is results/final_2026/",
+  "recomputed_from_tables": {
+    "h5 all": "matches",
+    "h5 control points": "matches",
+    "h5 energy-sensitive": "matches",
+    "h5 no throttle": "matches",
+    "h4 changers": "matches",
+    "h4 stayers": "matches"
+  },
+  "all_match": true,
+  "needed_of_drivers": {
+    "needed": 14,
+    "drivers": 19
+  },
+  "exploratory_teammate_pairs": {
+    "pairs": 9,
+    "split": 6,
+    "both_own_past": 3,
+    "both_teammate": 0,
+    "drivers_without_their_teammate": 1
+  }
+}
