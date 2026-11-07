@@ -1,0 +1,227 @@
+{
+ "note": "Diagnosis of the failed feed check of the 2026 run, attempt 1. Only the two failing channels.",
+ "samples_inside_kept_laps": 576625,
+ "throttle_out_of_range_values": {
+  "104.0": 5808
+ },
+ "brake_out_of_range_values": {
+  "104.0": 6496
+ },
+ "share_by_tenth_of_lap": [
+  0.125,
+  0.056,
+  0.056,
+  0.111,
+  0.06,
+  0.032,
+  0.098,
+  0.186,
+  0.162,
+  0.114
+ ],
+ "sessions": [
+  {
+   "session": "Melbourne",
+   "session_key": 11230,
+   "samples": 30944,
+   "throttle_out_of_range": 2,
+   "brake_not_0_or_100": 31,
+   "samples_with_either": 31,
+   "share_with_either": 0.001001809720785936
+  },
+  {
+   "session": "Shanghai",
+   "session_key": 11241,
+   "samples": 34829,
+   "throttle_out_of_range": 2484,
+   "brake_not_0_or_100": 2763,
+   "samples_with_either": 2775,
+   "share_with_either": 0.07967498349076918
+  },
+  {
+   "session": "Suzuka",
+   "session_key": 11249,
+   "samples": 36533,
+   "throttle_out_of_range": 2786,
+   "brake_not_0_or_100": 3022,
+   "samples_with_either": 3044,
+   "share_with_either": 0.08332192811978212
+  },
+  {
+   "session": "Sakhir",
+   "session_key": 11257,
+   "samples": 0,
+   "throttle_out_of_range": 0,
+   "brake_not_0_or_100": 0,
+   "samples_with_either": 0,
+   "share_with_either": null
+  },
+  {
+   "session": "Jeddah",
+   "session_key": 11265,
+   "samples": 0,
+   "throttle_out_of_range": 0,
+   "brake_not_0_or_100": 0,
+   "samples_with_either": 0,
+   "share_with_either": null
+  },
+  {
+   "session": "Miami Gardens",
+   "session_key": 11276,
+   "samples": 33728,
+   "throttle_out_of_range": 19,
+   "brake_not_0_or_100": 28,
+   "samples_with_either": 30,
+   "share_with_either": 0.0008894686907020872
+  },
+  {
+   "session": "Montr\u00e9al",
+   "session_key": 11287,
+   "samples": 34549,
+   "throttle_out_of_range": 18,
+   "brake_not_0_or_100": 31,
+   "samples_with_either": 31,
+   "share_with_either": 0.0008972763321659093
+  },
+  {
+   "session": "Monte Carlo",
+   "session_key": 11295,
+   "samples": 40552,
+   "throttle_out_of_range": 0,
+   "brake_not_0_or_100": 0,
+   "samples_with_either": 0,
+   "share_with_either": 0.0
+  },
+  {
+   "session": "Barcelona",
+   "session_key": 11303,
+   "samples": 20220,
+   "throttle_out_of_range": 2,
+   "brake_not_0_or_100": 14,
+   "samples_with_either": 15,
+   "share_with_either": 0.000741839762611276
+  },
+  {
+   "session": "Spielberg",
+   "session_key": 11311,
+   "samples": 22582,
+   "throttle_out_of_range": 22,
+   "brake_not_0_or_100": 27,
+   "samples_with_either": 27,
+   "share_with_either": 0.0011956425471614561
+  },
+  {
+   "session": "Silverstone",
+   "session_key": 11322,
+   "samples": 26074,
+   "throttle_out_of_range": 0,
+   "brake_not_0_or_100": 4,
+   "samples_with_either": 4,
+   "share_with_either": 0.00015340952673161004
+  },
+  {
+   "session": "Spa-Francorchamps",
+   "session_key": 11330,
+   "samples": 34504,
+   "throttle_out_of_range": 33,
+   "brake_not_0_or_100": 45,
+   "samples_with_either": 46,
+   "share_with_either": 0.0013331787618826802
+  },
+  {
+   "session": "Budapest",
+   "session_key": 11338,
+   "samples": 21820,
+   "throttle_out_of_range": 1,
+   "brake_not_0_or_100": 6,
+   "samples_with_either": 6,
+   "share_with_either": 0.00027497708524289643
+  },
+  {
+   "session": "Zandvoort",
+   "session_key": 11349,
+   "samples": 28576,
+   "throttle_out_of_range": 3,
+   "brake_not_0_or_100": 4,
+   "samples_with_either": 4,
+   "share_with_either": 0.00013997760358342665
+  },
+  {
+   "session": "Monza",
+   "session_key": 11357,
+   "samples": 30455,
+   "throttle_out_of_range": 312,
+   "brake_not_0_or_100": 325,
+   "samples_with_either": 327,
+   "share_with_either": 0.010737153176818257
+  },
+  {
+   "session": "Madrid",
+   "session_key": 11365,
+   "samples": 28950,
+   "throttle_out_of_range": 1,
+   "brake_not_0_or_100": 5,
+   "samples_with_either": 5,
+   "share_with_either": 0.00017271157167530224
+  },
+  {
+   "session": "Baku",
+   "session_key": 11373,
+   "samples": 34692,
+   "throttle_out_of_range": 41,
+   "brake_not_0_or_100": 55,
+   "samples_with_either": 57,
+   "share_with_either": 0.0016430300933932896
+  },
+  {
+   "session": "Kuala Lumpur",
+   "session_key": 11730,
+   "samples": 26974,
+   "throttle_out_of_range": 4,
+   "brake_not_0_or_100": 8,
+   "samples_with_either": 8,
+   "share_with_either": 0.0002965818936753911
+  },
+  {
+   "session": "Marina Bay",
+   "session_key": 11384,
+   "samples": 34097,
+   "throttle_out_of_range": 63,
+   "brake_not_0_or_100": 97,
+   "samples_with_either": 98,
+   "share_with_either": 0.0028741531513036336
+  },
+  {
+   "session": "Austin",
+   "session_key": 11392,
+   "samples": 30334,
+   "throttle_out_of_range": 11,
+   "brake_not_0_or_100": 24,
+   "samples_with_either": 24,
+   "share_with_either": 0.0007911914023867607
+  },
+  {
+   "session": "Mexico City",
+   "session_key": 11400,
+   "samples": 26212,
+   "throttle_out_of_range": 6,
+   "brake_not_0_or_100": 7,
+   "samples_with_either": 7,
+   "share_with_either": 0.0002670532580497482
+  }
+ ],
+ "development_throttle_marker": {
+  "2023": {
+   "samples": 717945,
+   "throttle_104": 106
+  },
+  "2024": {
+   "samples": 725799,
+   "throttle_104": 41
+  },
+  "2025": {
+   "samples": 641982,
+   "throttle_104": 44
+  }
+ }
+}

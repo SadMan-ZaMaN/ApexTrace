@@ -564,3 +564,14 @@ one myself before acting on it:
 - **Disclosure:** Part C now says what the AI assistant could know about 2026 (trained to
   mid-2026, told not to use it). Sadman must write his own part. Until he does, the
   placeholder makes the 2026 script refuse to run.
+
+## 2026-11-07 — Addendum 1 to Part C: the "no value" marker inside laps
+The one-time 2026 run stopped at the feed check (attempt 1): about 1.1 % of throttle and brake
+samples inside kept laps were 104, mostly in Shanghai and Suzuka; in 2023–2025 it had been
+0.006–0.015 %. It is the feed's known "no value" marker, nothing new. Decided with Sadman:
+treat it as a missing sample (`openf1.drop_no_value_samples`, in `slice_lap` and the feed
+check), and change nothing else. Why this and not the alternatives:
+`docs/preregistration_deviations.md` (2026-11-07). The addendum text is generated from
+`experiments/25_feed_check_2026_diagnosis.py` and `26_addendum_1_dry_run_check.py`, and is
+frozen once committed, like Part C. Its dry runs go to new folders (`*_addendum_1`), so the
+evidence quoted by Part C stays as committed.

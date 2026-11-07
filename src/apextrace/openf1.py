@@ -351,15 +351,33 @@ def kept_laps_span(kept, margin_s=5.0):
     return starts.min() - pd.Timedelta(margin_s, unit="s"), ends.max() + pd.Timedelta(margin_s, unit="s")
 
 
+NO_VALUE = 104   # OpenF1's "no value" marker for throttle and brake
+
+
+def drop_no_value_samples(car):
+    """Remove the car samples whose throttle or brake is 104, the feed's "no value" marker.
+
+    Why (Addendum 1 to preregistration Part C, 2026-11-07): 104 is not a measurement. In the
+    garage it is everywhere; inside kept laps it was 0.006-0.015 % of samples in 2023-2025 but
+    about 1 % in 2026 (8 % in two sessions). Left in, the features would read it as "full
+    throttle" (above 99 %) and "brake on". A removed sample is treated like a feed dropout:
+    if it leaves a gap above 0.6 s in a corner window, that (lap, corner) is dropped as before.
+    Example: throttle 100, 104, 0 and brake 0, 0, 100 -> the middle sample is removed.
+    """
+    keep = (car["throttle"] != NO_VALUE) & (car["brake"] != NO_VALUE)
+    return car[keep]
+
+
 def slice_lap(streams, lap_start, lap_end, pad_s=2.0):
     """One lap (plus pad_s on each side) cut out of a driver's streams, as arrays.
 
     Times are seconds from lap_start, the same reference for both streams.
     Brake comes as 0/100 in OpenF1; it becomes True/False here. X, Y are
     converted from decimetres to metres. Returns None if the lap isn't covered.
+    Car samples carrying the "no value" marker 104 are removed first (drop_no_value_samples).
     """
     pad = pd.Timedelta(pad_s, unit="s")
-    car = streams["car"]
+    car = drop_no_value_samples(streams["car"])
     pos = streams["pos"]
     car = car[(car["date"] >= lap_start - pad) & (car["date"] <= lap_end + pad)]
     pos = pos[(pos["date"] >= lap_start - pad) & (pos["date"] <= lap_end + pad)]
@@ -435,7 +453,7 @@ def lap_samples_on_track(session_key, driver_number, lap_start, lap_time, refere
 
 # ---------------------------------------------------------------- downloading a whole session
 
-def session_feed_tables(session_key, session_end, cache_dir=CACHE_DIR):
+def session_feed_tables(session_key, session_end, cache_dir=CACHE_DIR, drop_no_value=True):
     """The raw car and position samples INSIDE each kept lap of one session, for quality.feed_check.
 
     Asks for exactly what download_session asked for (one span per driver), so after a
@@ -444,6 +462,8 @@ def session_feed_tables(session_key, session_end, cache_dir=CACHE_DIR):
     Why only inside the laps: in the garage and pit lane the feed sends 104 as a
     "no value" marker for throttle and brake (2024, first 4 sessions: 202,632 throttle
     samples of 104 outside kept laps, none inside). Those samples are never used.
+    drop_no_value=True removes the 104 marker inside laps too, exactly as the features do
+    (drop_no_value_samples); False returns the raw samples (to count the markers).
     """
     from apextrace.data_loading import select_laps
 
@@ -460,6 +480,8 @@ def session_feed_tables(session_key, session_end, cache_dir=CACHE_DIR):
         for _, lap in kept.iterrows():
             start, end = lap["LapStartDate"], lap["LapStartDate"] + lap["LapTime"]
             car = streams["car"][(streams["car"]["date"] >= start) & (streams["car"]["date"] <= end)]
+            if drop_no_value:
+                car = drop_no_value_samples(car)
             pos = streams["pos"][(streams["pos"]["date"] >= start) & (streams["pos"]["date"] <= end)]
             if len(car) >= 2:
                 cars.append(car)

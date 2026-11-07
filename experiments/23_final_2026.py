@@ -23,8 +23,9 @@ Phases, each finished before the next starts (the Baku lesson: download first, t
   1. download every 2026 main qualifying session that ended before CUTOFF_UTC; failed
      downloads are retried twice, and a session that still fails STOPS the run (no result);
   2. checks BEFORE any feature: the feed (quality.feed_check, only samples inside kept
-     laps), the team names (teams.unknown_team_names) and the tyre-compound labels
-     (dataset.compound_check). Any failing -> STOP, no result;
+     laps, after removing the "no value" marker 104 as Addendum 1 says), the team names
+     (teams.unknown_team_names) and the tyre-compound labels (dataset.compound_check).
+     Any failing -> STOP, no result;
   3. build the 2026 dataset from the cache (session_build, exactly as for 2023-2025);
   4. analyse (h5_protocol), entirely in memory; every result file is written at the end,
      summary.json last.
@@ -66,6 +67,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS = REPO_ROOT / "results"
 OUT_DIR = RESULTS / "final_2026"
 DRY_RUN_DIR = RESULTS / "final_2026_dry_run"
+# Addendum 1 (2026-11-07) changed the code, so its dry runs go to new folders: the old ones stay
+# exactly as Part C quotes them.
+DRY_RUN_SUFFIX = "_addendum_1"
 PREREGISTRATION = "docs/preregistration.md"
 THIS_SCRIPT = "experiments/23_final_2026.py"
 PACKAGE = "src/apextrace"
@@ -220,9 +224,13 @@ def kept_lap_compounds(session):
 def run_checks(sessions):
     """Phase 2, before any feature: the feed, the team names and the tyre-compound labels.
     Returns (ok, report)."""
-    cars, positions, team_names, compounds = [], [], [], []
+    cars, positions, team_names, compounds, markers = [], [], [], [], []
     for _, session in sessions.iterrows():
         session_cars, session_positions = session_feed_tables(int(session["session_key"]), session["date_end"])
+        raw_cars, _ = session_feed_tables(int(session["session_key"]), session["date_end"], drop_no_value=False)
+        raw_samples, kept_samples = sum(len(c) for c in raw_cars), sum(len(c) for c in session_cars)
+        markers.append({"location": session["location"], "samples": raw_samples,
+                        "no_value_removed": raw_samples - kept_samples})
         cars.extend(session_cars)
         positions.extend(session_positions)
         for _, team in drivers_of(int(session["session_key"])).values():
@@ -233,7 +241,7 @@ def run_checks(sessions):
     tyres = compound_check(compounds)
     known_names = sorted({str(name) for name in team_names if str(name) not in unknown})
     report = {"feed": feed, "team_names": known_names, "unknown_team_names": unknown,
-              "compounds": tyres, "lap_tables_checked": len(cars)}
+              "compounds": tyres, "lap_tables_checked": len(cars), "no_value_marker_removed": markers}
     return bool(feed["ok"] and not unknown and tyres["ok"]), report
 
 
@@ -354,7 +362,7 @@ def real_run():
 
 
 def dry_run(target_year):
-    out_dir = DRY_RUN_DIR / str(target_year)
+    out_dir = DRY_RUN_DIR / f"{target_year}{DRY_RUN_SUFFIX}"
     out_dir.mkdir(parents=True, exist_ok=True)
     reference_year = target_year - 1
     expected = json.loads((RESULTS / "20_h5_development" / "summary.json").read_text(encoding="utf-8"))

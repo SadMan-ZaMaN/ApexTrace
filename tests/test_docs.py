@@ -29,7 +29,8 @@ def test_generated_documents_match_the_results():
     numbers = writer.collect_numbers()
     environment = Environment(loader=FileSystemLoader(writer.TEMPLATES), undefined=StrictUndefined,
                               keep_trailing_newline=True, autoescape=False)
-    outputs = list(writer.OUTPUTS.items()) + [(writer.PART_C_TEMPLATE, writer.PREREGISTRATION)]
+    outputs = list(writer.OUTPUTS.items()) + [(writer.PART_C_TEMPLATE, writer.PREREGISTRATION),
+                                              (writer.ADDENDUM_1_TEMPLATE, writer.PREREGISTRATION)]
     for template_name, output in outputs:
         rendered = environment.get_template(template_name).render(**numbers)
         committed = normalise(output.read_text(encoding="utf-8"))
@@ -79,9 +80,27 @@ def test_a_committed_part_c_is_never_rewritten(monkeypatch, tmp_path):
     copy.write_text("# Preregistration\n\n## Part A\n## Part B\n", encoding="utf-8")
     committed = writer.PART_C_START + "\n\nthe committed plan\n\n" + writer.PART_C_END + "\n"
     monkeypatch.setattr(writer, "PREREGISTRATION", copy)
-    monkeypatch.setattr(writer, "committed_part_c", lambda: committed)
+    monkeypatch.setattr(writer, "committed_block",
+                        lambda start, end: committed if start == writer.PART_C_START else None)
     with pytest.raises(SystemExit, match="frozen"):
         writer.write_part_c("a different plan\n")
     assert "a different plan" not in copy.read_text(encoding="utf-8")
     writer.write_part_c("the committed plan\n")          # the same text is allowed: nothing changes
     assert "the committed plan" in copy.read_text(encoding="utf-8")
+
+
+def test_an_addendum_after_part_c_survives_regenerating_part_c(monkeypatch, tmp_path):
+    """Each generated block is replaced only between its own markers: writing Part C again must
+    keep the addendum that follows it, and writing the addendum must keep Part C."""
+    writer = load_writer()
+    copy = tmp_path / "preregistration.md"
+    copy.write_text("# Preregistration\n\n## Part A\n## Part B\n", encoding="utf-8")
+    monkeypatch.setattr(writer, "PREREGISTRATION", copy)
+    monkeypatch.setattr(writer, "committed_block", lambda start, end: None)
+    writer.write_part_c("the plan\n")
+    writer.write_addendum_1("the addendum\n")
+    writer.write_part_c("the plan\n")
+    text = copy.read_text(encoding="utf-8")
+    assert text.count("the plan") == 1 and text.count("the addendum") == 1
+    assert text.index("the plan") < text.index("the addendum")
+    assert text.count(writer.PART_C_START) == 1 and text.count(writer.ADDENDUM_1_START) == 1

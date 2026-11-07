@@ -1030,3 +1030,35 @@ equal to experiment 20; the rebuild is still identical; the frozen H4 distances 
 commit, the 2026 script's guards report only "FINAL_TEST_2026 is not 1" and "too early (from
 2026-11-07 00:00 UTC)"; regenerating the documents changes no file (the frozen Part C is
 accepted unchanged); 174 tests pass. No 2026 data has been loaded.
+
+---
+
+## 2026-11-07 — Day 13: the one-time 2026 run, attempt 1 stops at the feed check
+
+**The run** started at 08:41 UTC after commit `f653d49`, with all guards passed. It downloaded
+21 sessions with no errors. Phase 2 then stopped it:
+- **Failed:** throttle in range 98.99 % and brake 0/100 98.87 % (rule ≥ 99.9 %).
+- **Passed:** everything else. Sampling was as in 2023–2025 (median 0.240 s, 99.98 % on the
+  40 ms clock, 3.74 samples/s), all 11 team names were known (with Audi and Cadillac), and
+  all tyre labels were known.
+- **No feature or result** was computed.
+
+**Diagnosis** (`25_feed_check_2026_diagnosis.py`, the two failing channels only): every
+out-of-range value is 104, the "no value" marker:
+- 5,808 throttle and 6,496 brake samples of 576,625 (1.13 % with one or both);
+- Suzuka 8.3 %, Shanghai 8.0 %, Monza 1.1 %, others ≤ 0.29 %;
+- in 2023–2025 it was 0.015 / 0.006 / 0.007 %.
+The features would have read it as full throttle and brake on. Sakhir and Jeddah have no
+kept laps in OpenF1.
+
+**Addendum 1** (agreed with Sadman): 104 inside a kept lap is a missing sample, removed before
+the features and before the check. Rehearsed on 2024: 92 samples removed, 18 of 15,129 rows
+changed, usable 12,749 → 12,736, checks passed, H5 16 of 20 as before.
+
+**Verified:**
+- 177 tests pass. The new rule's test fails when the rule is removed from `slice_lap`.
+- Generating the addendum left Part C byte-identical (the diff is only the 45 addendum lines).
+- The attempt folder had no result file before it was renamed `final_2026_attempt_1`.
+- I corrected one figure of mine: the deviation record first quoted per-session shares from a
+  scratch measure (the mean over the two channels); it now uses the saved measure (samples
+  with either marker).

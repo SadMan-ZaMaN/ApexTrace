@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from apextrace import openf1
-from apextrace.openf1 import deleted_lap_times, flag_intervals, lap_table, track_status
+from apextrace.openf1 import deleted_lap_times, drop_no_value_samples, flag_intervals, lap_table, slice_lap, track_status
 from apextrace.track import clip_to_lap
 
 
@@ -124,3 +124,28 @@ def test_session_without_laps_is_skipped_not_crashed(monkeypatch):
     rows, corners, summary, raw = build_session(2025, 17, {"session_key": 9900, "date_end": end, "location": "Baku"})
     assert rows == [] and corners == [] and raw.empty
     assert summary["note"] == "no laps"
+
+
+def test_the_no_value_marker_104_is_removed_not_measured():
+    """Addendum 1 to Part C: throttle or brake 104 is the feed's "no value" marker."""
+    car = pd.DataFrame({"throttle": [100, 104, 0, 55], "brake": [0, 0, 100, 104], "speed": [300, 301, 200, 150]})
+    kept = drop_no_value_samples(car)
+    assert list(kept["speed"]) == [300, 200]
+
+
+def test_no_marker_reaches_the_features_through_slice_lap():
+    """The full path: a lap's samples go through slice_lap before any feature; none is 104, and
+    the brake channel built from them is only real on/off values."""
+    start = pd.Timestamp("2026-03-07 05:00:00")
+    times = start + pd.to_timedelta(np.arange(-2.0, 80.0, 0.24), unit="s")
+    throttle = np.full(len(times), 100.0)
+    brake = np.zeros(len(times))
+    throttle[50:53] = 104          # three "no value" samples inside the lap
+    brake[120] = 104
+    car = pd.DataFrame({"date": times, "speed": 250.0, "throttle": throttle, "brake": brake, "n_gear": 7})
+    pos = pd.DataFrame({"date": times, "x": 0.0, "y": 0.0})
+    lap = slice_lap({"car": car, "pos": pos}, start, start + pd.Timedelta(78, unit="s"))
+    assert 104 not in lap["throttle_pct"]
+    assert len(lap["car_time_s"]) == len(car[(car["date"] >= start - pd.Timedelta(2, unit="s"))
+                                             & (car["date"] <= start + pd.Timedelta(80, unit="s"))]) - 4
+    assert not lap["brake"].any()  # the only "brake on" in the raw data was the marker

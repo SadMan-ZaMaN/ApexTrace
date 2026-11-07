@@ -142,3 +142,10 @@ After changing an analysis: re-run its experiment script, then
   `test_all_laps_fake_a_yes_when_the_driver_who_stays_had_more_laps` and
   `test_equal_laps_keep_the_coin_fair_when_the_driver_who_stays_had_more_laps` (checked to
   fail with the rule switched off); `experiments/22_h5_null_check.py` cases E and F.
+- **2026-11-07 — The "no value" marker 104 also appears INSIDE laps in 2026.** In 2023–2025 it
+  was 0.006–0.015 % of throttle samples inside kept laps; in 2026, 1.13 % of samples (8 % in
+  Shanghai and Suzuka), which stopped the one-time run at its feed check (attempt 1, before
+  any result). The features read throttle 104 as full throttle and brake 104 as "on".
+  `openf1.drop_no_value_samples` (Addendum 1 to Part C) removes those samples in `slice_lap`
+  and in the feed check. Guarded by `test_no_marker_reaches_the_features_through_slice_lap`
+  (checked to fail with the rule removed).

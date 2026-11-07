@@ -87,3 +87,54 @@ always computed the right p-values; only the reported "minimum possible p"
 column and the sentence in the preregistration were wrong. The preregistered
 conclusion still holds: Benjamini–Hochberg over 27 tests found **0
 discoveries**, and could not have found one with these lap counts.
+
+## 2026-11-07 — Part C: the one-time 2026 run stopped at the feed check (attempt 1, no result produced)
+
+**What happened:** the run (`experiments/23_final_2026.py`) started on 2026-11-07 at 08:41 UTC,
+after commit `f653d49` (Part C and the code; all guards passed). Phase 1 downloaded all 21
+sessions that ended before the fixed cutoff (2026-11-06 00:00 UTC), with no download error.
+Phase 2 stopped the run, as Part C prescribes. Two value-range checks failed:
+- **throttle in 0–100:** 98.99 % of samples (rule: at least 99.9 %);
+- **brake only 0 or 100:** 98.87 % (same rule).
+
+Every other check passed:
+- all channels present, none empty;
+- speed and gear in range;
+- median sample interval 0.240 s; 99.98 % of intervals on the 40 ms clock; 3.74 samples
+  per second;
+- all 11 team names known (including Audi and Cadillac);
+- all tyre labels known, none empty.
+
+**What had been seen at that point:** no feature and no result. `results/final_2026/` holds
+only `run_started.json`, `download_log.csv` and `checks.json`. The console showed the phase
+lines and the STOP.
+
+**Diagnosis** (`experiments/25_feed_check_2026_diagnosis.py`, `results/25_feed_check_2026_diagnosis/`):
+reads only the two failing channels, inside kept laps, as the check did.
+- Every out-of-range value is **104**, the feed's "no value" marker (until now seen in the
+  garage and pit lane): 5,808 throttle and 6,496 brake samples of 576,625. 6,539 samples
+  (1.13 %) have one or both.
+- No other new value appears: no brake pressure, no throttle above 100 other than 104.
+- It is concentrated in a few sessions (share of samples with one or both markers): Suzuka
+  8.3 %, Shanghai 8.0 %, Monza 1.1 %, every other session at most 0.29 %.
+- In 2023, 2024 and 2025 the marker was in 0.015 %, 0.006 % and 0.007 % of throttle samples
+  inside kept laps.
+- Separately: Sakhir and Jeddah have no kept laps in OpenF1 (0 samples). The build step
+  skips sessions without laps, as it did for Baku in 2025.
+
+**Why it matters:** the feature code reads a throttle of 104 as "above 99 %" (full throttle)
+and a brake of 104 as "on". Left in, these samples would move throttle and braking events
+in the affected sessions.
+
+**Decided with Sadman (2026-11-07):** Addendum 1 to Part C (`docs/preregistration.md`).
+Inside a kept lap, a sample with throttle or brake 104 is a missing sample, removed before
+features, like a feed dropout. The feed check runs on the same cleaned samples with its rules
+unchanged. Rejected alternatives:
+- dropping the affected sessions (Part C forbids changing the sessions);
+- lowering the 99.9 % threshold (arbitrary after seeing the data, and the wrong values would
+  stay in the features);
+- giving up H5 (the marker is known, not a changed feed).
+Rehearsed on 2024 (experiment 26). The folder of this attempt was renamed
+`results/final_2026_attempt_1/`; it keeps `run_started.json`, `download_log.csv`, `checks.json`
+and the console log `run_attempt_1.log`. The run is repeated with the same fixed cutoff after
+the addendum is committed.

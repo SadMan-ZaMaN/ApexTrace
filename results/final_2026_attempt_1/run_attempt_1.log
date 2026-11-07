@@ -1,0 +1,24 @@
+﻿phase 1: download 21 sessions (ended before 2026-11-06 00:00 UTC)
+  download R01 Melbourne             103 kept laps 
+  download R02 Shanghai               98 kept laps 
+  download R03 Suzuka                107 kept laps 
+  download R04 Sakhir                  0 kept laps 
+  download R05 Jeddah                  0 kept laps 
+  download R06 Miami Gardens         101 kept laps 
+  download R07 Montréal              124 kept laps 
+  download R08 Monte Carlo           144 kept laps 
+  download R09 Barcelona              72 kept laps 
+  download R10 Spielberg              90 kept laps 
+  download R11 Silverstone            78 kept laps 
+  download R12 Spa-Francorchamps      87 kept laps 
+  download R13 Budapest               74 kept laps 
+  download R14 Zandvoort             102 kept laps 
+  download R15 Monza                  98 kept laps 
+  download R16 Madrid                 83 kept laps 
+  download R17 Baku                   88 kept laps 
+  download R18 Kuala Lumpur           74 kept laps 
+  download R19 Marina Bay             96 kept laps 
+  download R20 Austin                 85 kept laps 
+  download R21 Mexico City            91 kept laps 
+phase 2: checks before any feature
+STOP: the feed, the team names or the tyre labels failed the checks (results/final_2026/checks.json). No result was produced; follow Part C (log a deviation before anything else).

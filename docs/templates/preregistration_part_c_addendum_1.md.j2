@@ -1,0 +1,41 @@
+## Addendum 1 to Part C (2026-11-07): the feed's "no value" marker inside laps
+
+**Why there is an addendum.** The one-time run stopped at the feed check before any feature or
+result was computed (attempt 1; `docs/preregistration_deviations.md`, 2026-11-07). Part C says
+that an addendum may then change **only** what the failed check is about, and must be committed
+before anything else is run. This is it.
+
+**What the check found** (`experiments/25_feed_check_2026_diagnosis.py`, which reads only the two
+failing channels inside kept laps, as the check did): every throttle value outside 0–100 and every
+brake value that is not 0 or 100 is **104**, the feed's "no value" marker, until now seen in the
+garage and pit lane. There were {{ a1.throttle }} throttle and {{ a1.brake }} brake samples of
+{{ a1.samples }}; {{ a1.either }} samples ({{ a1.either_share }} %) had one or both. No other new
+value appears. The marker is concentrated in a few sessions ({{ a1.worst }} of their samples; every
+other session at most {{ a1.rest }} %). In the development seasons it was in {{ a1.development }} of
+the throttle samples inside kept laps. ({{ a1.empty_sessions }} have no kept laps in OpenF1; the build
+skips sessions without laps, as it did for Baku in 2025. This is not part of the change.)
+
+**Why it has to be handled.** The feature code reads a throttle of 104 as "above 99 %" (full
+throttle) and a brake of 104 as "on". Left in, these samples would move throttle and braking events.
+
+**The change.**
+- Inside a kept lap, a car sample whose throttle or brake is 104 is a **missing sample**. It is
+  removed before any feature is computed (`openf1.drop_no_value_samples`, used by `openf1.slice_lap`),
+  exactly like a feed dropout. The existing rule that drops a (lap, corner) pair when its corner
+  window has a gap above 0.6 s applies unchanged.
+- The feed check runs on the same cleaned samples, with all its rules unchanged, so any
+  out-of-range value other than 104 still stops the run. The number of samples removed is
+  reported for each session (`checks.json`).
+
+**Not changed:** the features, the tests, the decision rule, the sessions, the cutoff, and the 2025
+reference season (it stays as built and pinned; the marker was too rare there to matter).
+
+**Rehearsed** (`23_final_2026.py --dry-run 2024`, `experiments/26_addendum_1_dry_run_check.py`): with
+the rule, 2024 went through every phase from the cache, and the checks
+{{ "passed" if a1.dry_checks_ok else "FAILED" }}. {{ a1.dry_removed }} marker samples were removed, {{ a1.dry_changed }}
+of {{ a1.dry_rows }} (driver, lap, corner) rows changed against the development dataset (usable rows
+{{ a1.dry_usable_original }} → {{ a1.dry_usable_rebuilt }}), and H5 gave {{ a1.dry_h5 }}
+{%- if a1.dry_h5_same %}, the same as in development{% else %}, **not** the same as in development{% endif %}.
+
+**The repeated run:** the folder of attempt 1 is renamed `final_2026_attempt_1`, and the run is
+repeated with the same fixed cutoff (2026-11-06 00:00 UTC), the same sessions and this rule.

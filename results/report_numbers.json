@@ -259,7 +259,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "24"
+  "last_experiment": "26"
  },
  "c": {
   "written": "2026-11-06",
@@ -485,5 +485,25 @@
    "h5_2025": "14 of 16",
    "h4_drivers": 16
   }
+ },
+ "a1": {
+  "samples": "576,625",
+  "throttle": "5,808",
+  "brake": "6,496",
+  "either": "6,539",
+  "either_share": "1.13",
+  "worst": "Suzuka 8.3 %, Shanghai 8.0 %, Monza 1.1 %",
+  "rest": "0.29",
+  "development": "2023 0.015 %, 2024 0.006 %, 2025 0.007 %",
+  "empty_sessions": "Sakhir and Jeddah",
+  "other_values": true,
+  "dry_rows": "15,129",
+  "dry_changed": "18",
+  "dry_usable_original": "12,749",
+  "dry_usable_rebuilt": "12,736",
+  "dry_removed": "92",
+  "dry_checks_ok": true,
+  "dry_h5": "16 of 20",
+  "dry_h5_same": true
  }
 }
