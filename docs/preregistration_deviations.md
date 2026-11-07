@@ -138,3 +138,11 @@ Rehearsed on 2024 (experiment 26). The folder of this attempt was renamed
 `results/final_2026_attempt_1/`; it keeps `run_started.json`, `download_log.csv`, `checks.json`
 and the console log `run_attempt_1.log`. The run is repeated with the same fixed cutoff after
 the addendum is committed.
+
+## 2026-11-07 — Part C: attempt 2 completed (no further deviation)
+
+After Addendum 1 was committed (`ac3a793`), the run was repeated with the same fixed cutoff and
+the same 21 sessions. All checks passed (6,539 marker samples removed, as the addendum says); 19
+sessions were built (Sakhir and Jeddah have no laps in OpenF1, skipped as Part C's build rule
+says); the analysis ran as preregistered and wrote `results/final_2026/` (see its README). No
+other deviation. Afterwards the script refuses to run again, even with the switch set.

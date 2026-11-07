@@ -1,0 +1,22 @@
+round,location,session_key,error,attempts,laps,kept_laps,kept_laps_with_data
+1,Melbourne,11230,,1,359,103,103
+2,Shanghai,11241,,1,325,98,77
+3,Suzuka,11249,,1,324,107,100
+4,Sakhir,11257,,1,0,0,0
+5,Jeddah,11265,,1,0,0,0
+6,Miami Gardens,11276,,1,324,101,101
+7,Montréal,11287,,1,456,124,124
+8,Monte Carlo,11295,,1,484,144,144
+9,Barcelona,11303,,1,255,72,72
+10,Spielberg,11311,,1,290,90,89
+11,Silverstone,11322,,1,309,78,78
+12,Spa-Francorchamps,11330,,1,269,87,87
+13,Budapest,11338,,1,299,74,74
+14,Zandvoort,11349,,1,377,102,102
+15,Monza,11357,,1,307,98,97
+16,Madrid,11365,,1,312,83,83
+17,Baku,11373,,1,373,88,88
+18,Kuala Lumpur,11730,,1,239,74,74
+19,Marina Bay,11384,,1,363,96,96
+20,Austin,11392,,1,280,85,85
+21,Mexico City,11400,,1,366,91,90

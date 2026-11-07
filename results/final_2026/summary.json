@@ -1,0 +1,228 @@
+{
+  "h5": {
+    "features": 30,
+    "sets": {
+      "all": {
+        "columns": 30,
+        "drivers": 19,
+        "own_closer": 13,
+        "test_possible": true,
+        "share": 0.6842105263157895,
+        "ci95_low": 0.4344984311538491,
+        "ci95_high": 0.8742393641270167,
+        "sign_test_p": 0.08353424072265625
+      },
+      "control points": {
+        "columns": 12,
+        "drivers": 19,
+        "own_closer": 12,
+        "test_possible": true,
+        "share": 0.631578947368421,
+        "ci95_low": 0.38357792331440527,
+        "ci95_high": 0.8371141278449004,
+        "sign_test_p": 0.1796417236328125
+      },
+      "energy-sensitive": {
+        "columns": 12,
+        "drivers": 19,
+        "own_closer": 13,
+        "test_possible": true,
+        "share": 0.6842105263157895,
+        "ci95_low": 0.4344984311538491,
+        "ci95_high": 0.8742393641270167,
+        "sign_test_p": 0.08353424072265625
+      },
+      "no throttle": {
+        "columns": 24,
+        "drivers": 19,
+        "own_closer": 12,
+        "test_possible": true,
+        "share": 0.631578947368421,
+        "ci95_low": 0.38357792331440527,
+        "ci95_high": 0.8371141278449004,
+        "sign_test_p": 0.1796417236328125
+      }
+    },
+    "verdict": "not supported",
+    "supported": false
+  },
+  "h4": {
+    "changers": {
+      "drivers": 1,
+      "own_closer": 0,
+      "test_possible": false,
+      "share": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.975,
+      "sign_test_p": 1.0
+    },
+    "stayers": {
+      "drivers": 18,
+      "own_closer": 5,
+      "test_possible": true,
+      "share": 0.2777777777777778,
+      "ci95_low": 0.0969492125255593,
+      "ci95_high": 0.5348019655830561,
+      "sign_test_p": 0.98455810546875
+    },
+    "changer_names": [
+      "HAD"
+    ],
+    "leave_pair_out": true,
+    "note": "secondary (docs/h5_design.md section 5): reported, not a decision",
+    "fisher_exact_two_sided_p": 1.0
+  },
+  "corner_types": {
+    "2025": {
+      "slow": {
+        "corners": 73,
+        "per_session": 3.1739130434782608
+      },
+      "medium": {
+        "corners": 63,
+        "per_session": 2.739130434782609
+      },
+      "fast": {
+        "corners": 20,
+        "per_session": 0.8695652173913043
+      }
+    },
+    "2026": {
+      "slow": {
+        "corners": 73,
+        "per_session": 3.8421052631578947
+      },
+      "medium": {
+        "corners": 47,
+        "per_session": 2.473684210526316
+      },
+      "fast": {
+        "corners": 11,
+        "per_session": 0.5789473684210527
+      }
+    }
+  },
+  "preregistration_commit": "ac3a793ff1a220ff28a21e4f533a4c6d18426596 2026-11-07 15:35:36 +0600",
+  "code_commit": "ac3a793ff1a220ff28a21e4f533a4c6d18426596",
+  "started_utc": "2026-11-07T09:36:59.048308",
+  "cutoff_utc": "2026-11-06T00:00:00",
+  "sessions": [
+    {
+      "session_key": "11230",
+      "location": "Melbourne",
+      "date_end": "2026-03-07 06:00:00"
+    },
+    {
+      "session_key": "11241",
+      "location": "Shanghai",
+      "date_end": "2026-03-14 08:00:00"
+    },
+    {
+      "session_key": "11249",
+      "location": "Suzuka",
+      "date_end": "2026-03-28 07:00:00"
+    },
+    {
+      "session_key": "11257",
+      "location": "Sakhir",
+      "date_end": "2026-04-11 17:00:00"
+    },
+    {
+      "session_key": "11265",
+      "location": "Jeddah",
+      "date_end": "2026-04-18 18:00:00"
+    },
+    {
+      "session_key": "11276",
+      "location": "Miami Gardens",
+      "date_end": "2026-05-02 21:00:00"
+    },
+    {
+      "session_key": "11287",
+      "location": "Montr\u00e9al",
+      "date_end": "2026-05-23 21:00:00"
+    },
+    {
+      "session_key": "11295",
+      "location": "Monte Carlo",
+      "date_end": "2026-06-06 15:00:00"
+    },
+    {
+      "session_key": "11303",
+      "location": "Barcelona",
+      "date_end": "2026-06-13 15:00:00"
+    },
+    {
+      "session_key": "11311",
+      "location": "Spielberg",
+      "date_end": "2026-06-27 15:00:00"
+    },
+    {
+      "session_key": "11322",
+      "location": "Silverstone",
+      "date_end": "2026-07-04 16:00:00"
+    },
+    {
+      "session_key": "11330",
+      "location": "Spa-Francorchamps",
+      "date_end": "2026-07-18 15:00:00"
+    },
+    {
+      "session_key": "11338",
+      "location": "Budapest",
+      "date_end": "2026-07-25 15:00:00"
+    },
+    {
+      "session_key": "11349",
+      "location": "Zandvoort",
+      "date_end": "2026-08-22 15:00:00"
+    },
+    {
+      "session_key": "11357",
+      "location": "Monza",
+      "date_end": "2026-09-05 15:00:00"
+    },
+    {
+      "session_key": "11365",
+      "location": "Madrid",
+      "date_end": "2026-09-12 15:00:00"
+    },
+    {
+      "session_key": "11373",
+      "location": "Baku",
+      "date_end": "2026-09-25 13:00:00"
+    },
+    {
+      "session_key": "11730",
+      "location": "Kuala Lumpur",
+      "date_end": "2026-10-03 09:00:00"
+    },
+    {
+      "session_key": "11384",
+      "location": "Marina Bay",
+      "date_end": "2026-10-10 14:00:00"
+    },
+    {
+      "session_key": "11392",
+      "location": "Austin",
+      "date_end": "2026-10-24 22:00:00"
+    },
+    {
+      "session_key": "11400",
+      "location": "Mexico City",
+      "date_end": "2026-10-31 22:00:00"
+    }
+  ],
+  "cleaning": {
+    "usable_rows": 7496,
+    "dropped_not_dry": 3,
+    "dropped_min_speed_below_40": 2,
+    "set_missing_brake_onset_m": 12,
+    "set_missing_mean_decel_ms2": 130,
+    "set_missing_apex_m": 101,
+    "set_missing_throttle_pickup_m": 76,
+    "clean_rows": 7491
+  },
+  "laps": 1751,
+  "checks_ok": true
+}

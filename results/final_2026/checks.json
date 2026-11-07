@@ -1,0 +1,204 @@
+{
+  "feed": {
+    "checks": {
+      "channels present": {
+        "value": "all",
+        "ok": true,
+        "rule": "speed, throttle, brake, n_gear, x, y"
+      },
+      "missing speed": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing throttle": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing brake": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing n_gear": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing x": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "missing y": {
+        "value": 0.0,
+        "ok": true,
+        "rule": "<= 0.01"
+      },
+      "speed values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "0-400"
+      },
+      "throttle values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "0-100"
+      },
+      "brake values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "only 0 or 100"
+      },
+      "n_gear values": {
+        "value": 1.0,
+        "ok": true,
+        "rule": "0-8"
+      },
+      "median interval (s)": {
+        "value": 0.240000000000002,
+        "ok": true,
+        "rule": "0.2-0.28"
+      },
+      "on the 40 ms clock": {
+        "value": 0.9998311945385214,
+        "ok": true,
+        "rule": ">= 0.95"
+      },
+      "samples per second": {
+        "value": 3.707677591625814,
+        "ok": true,
+        "rule": "3.3-4.3"
+      }
+    },
+    "ok": true
+  },
+  "team_names": [
+    "Alpine",
+    "Aston Martin",
+    "Audi",
+    "Cadillac",
+    "Ferrari",
+    "Haas F1 Team",
+    "McLaren",
+    "Mercedes",
+    "Racing Bulls",
+    "Red Bull Racing",
+    "Williams"
+  ],
+  "unknown_team_names": [],
+  "compounds": {
+    "unknown": [],
+    "empty_share": 0.0,
+    "ok": true
+  },
+  "lap_tables_checked": 1793,
+  "no_value_marker_removed": [
+    {
+      "location": "Melbourne",
+      "samples": 30944,
+      "no_value_removed": 31
+    },
+    {
+      "location": "Shanghai",
+      "samples": 34829,
+      "no_value_removed": 2775
+    },
+    {
+      "location": "Suzuka",
+      "samples": 36533,
+      "no_value_removed": 3044
+    },
+    {
+      "location": "Sakhir",
+      "samples": 0,
+      "no_value_removed": 0
+    },
+    {
+      "location": "Jeddah",
+      "samples": 0,
+      "no_value_removed": 0
+    },
+    {
+      "location": "Miami Gardens",
+      "samples": 33728,
+      "no_value_removed": 30
+    },
+    {
+      "location": "Montr\u00e9al",
+      "samples": 34549,
+      "no_value_removed": 31
+    },
+    {
+      "location": "Monte Carlo",
+      "samples": 40552,
+      "no_value_removed": 0
+    },
+    {
+      "location": "Barcelona",
+      "samples": 20220,
+      "no_value_removed": 15
+    },
+    {
+      "location": "Spielberg",
+      "samples": 22582,
+      "no_value_removed": 27
+    },
+    {
+      "location": "Silverstone",
+      "samples": 26074,
+      "no_value_removed": 4
+    },
+    {
+      "location": "Spa-Francorchamps",
+      "samples": 34504,
+      "no_value_removed": 46
+    },
+    {
+      "location": "Budapest",
+      "samples": 21820,
+      "no_value_removed": 6
+    },
+    {
+      "location": "Zandvoort",
+      "samples": 28576,
+      "no_value_removed": 4
+    },
+    {
+      "location": "Monza",
+      "samples": 30455,
+      "no_value_removed": 327
+    },
+    {
+      "location": "Madrid",
+      "samples": 28950,
+      "no_value_removed": 5
+    },
+    {
+      "location": "Baku",
+      "samples": 34692,
+      "no_value_removed": 57
+    },
+    {
+      "location": "Kuala Lumpur",
+      "samples": 26974,
+      "no_value_removed": 8
+    },
+    {
+      "location": "Marina Bay",
+      "samples": 34097,
+      "no_value_removed": 98
+    },
+    {
+      "location": "Austin",
+      "samples": 30334,
+      "no_value_removed": 24
+    },
+    {
+      "location": "Mexico City",
+      "samples": 26212,
+      "no_value_removed": 7
+    }
+  ]
+}

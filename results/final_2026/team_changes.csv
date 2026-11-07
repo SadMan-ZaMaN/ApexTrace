@@ -1,0 +1,21 @@
+driver,team_reference,team_target,weekends_reference,weekends_target,eligible,changed
+ALB,Williams,Williams,22,19,True,False
+ALO,Aston Martin,Aston Martin,22,19,True,False
+ANT,Mercedes,Mercedes,22,19,True,False
+BEA,Haas F1 Team,Haas F1 Team,21,18,True,False
+BOR,Kick Sauber,Audi,21,19,True,False
+COL,Alpine,Alpine,16,18,True,False
+GAS,Alpine,Alpine,22,19,True,False
+HAD,Racing Bulls,Red Bull Racing,21,15,True,True
+HAM,Ferrari,Ferrari,22,19,True,False
+HUL,Kick Sauber,Audi,22,19,True,False
+LAW,Racing Bulls,Racing Bulls,22,19,True,False
+LEC,Ferrari,Ferrari,22,19,True,False
+NOR,McLaren,McLaren,22,19,True,False
+OCO,Haas F1 Team,Haas F1 Team,22,18,True,False
+PIA,McLaren,McLaren,22,19,True,False
+RUS,Mercedes,Mercedes,21,19,True,False
+SAI,Williams,Williams,22,18,True,False
+STR,Aston Martin,Aston Martin,21,17,True,False
+TSU,Red Bull Racing,Racing Bulls,21,3,False,True
+VER,Red Bull Racing,Red Bull Racing,22,18,True,False

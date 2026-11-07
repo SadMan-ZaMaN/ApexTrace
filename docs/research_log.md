@@ -1062,3 +1062,35 @@ changed, usable 12,749 → 12,736, checks passed, H5 16 of 20 as before.
 - I corrected one figure of mine: the deviation record first quoted per-session shares from a
   scratch measure (the mean over the two channels); it now uses the saved measure (samples
   with either marker).
+
+---
+
+## 2026-11-07 — Day 13–14: the one-time 2026 test, attempt 2 (after Addendum 1)
+
+**Run:** after commit `ac3a793`, with the same cutoff and the same 21 sessions. All checks
+passed (6,539 marker samples removed). 19 sessions were built, giving 1,751 laps and 7,491
+clean rows.
+
+**H5 (primary): not supported.** 13 of 19 drivers own past closer (0.68, 95 % 0.43–0.87),
+p = 0.084; 14 were needed.
+- Development without a rule change: 16 of 20 and 14 of 16.
+- Secondary sets: control points 12, energy-sensitive 13, no throttle 12 of 19.
+- As preregistered, this "no" can't tell a weakened signature from a lost one.
+
+**H4 (secondary):** only one eligible 2026 team changer (HAD), so it is descriptive (0 of 1).
+TSU (Red Bull Racing → Racing Bulls) has 3 weekends in 2026, so he is not eligible. Stayers
+gave 5 of 18 (in development: 11 of 20, 8 of 10).
+
+**Corner types per session**, 2025 → 2026: slow 3.17 → 3.84, medium 2.74 → 2.47, fast
+0.87 → 0.58. That is the direction expected with less downforce (descriptive).
+
+**Seen in the per-driver table (to be looked at only as exploratory):** of the 9 pairs of
+2025 teammates both compared, 6 split one-and-one. That is the negative dependence measured
+in advance (71 % on car-only synthetic data), and it is why the sign test is conservative.
+
+**Verified:**
+- The guards passed for attempt 2, and afterwards the script refuses to run even with the
+  switch set ("already been run").
+- Every number above was read from `results/final_2026/summary.json`, `checks.json` and the
+  per-driver CSVs, and the console log is kept as `results/final_2026/run_attempt_2.log`.
+- Nothing was re-run or adjusted after the result.

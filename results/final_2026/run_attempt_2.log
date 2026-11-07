@@ -1,0 +1,54 @@
+﻿phase 1: download 21 sessions (ended before 2026-11-06 00:00 UTC)
+  download R01 Melbourne             103 kept laps 
+  download R02 Shanghai               98 kept laps 
+  download R03 Suzuka                107 kept laps 
+  download R04 Sakhir                  0 kept laps 
+  download R05 Jeddah                  0 kept laps 
+  download R06 Miami Gardens         101 kept laps 
+  download R07 Montréal              124 kept laps 
+  download R08 Monte Carlo           144 kept laps 
+  download R09 Barcelona              72 kept laps 
+  download R10 Spielberg              90 kept laps 
+  download R11 Silverstone            78 kept laps 
+  download R12 Spa-Francorchamps      87 kept laps 
+  download R13 Budapest               74 kept laps 
+  download R14 Zandvoort             102 kept laps 
+  download R15 Monza                  98 kept laps 
+  download R16 Madrid                 83 kept laps 
+  download R17 Baku                   88 kept laps 
+  download R18 Kuala Lumpur           74 kept laps 
+  download R19 Marina Bay             96 kept laps 
+  download R20 Austin                 85 kept laps 
+  download R21 Mexico City            91 kept laps 
+phase 2: checks before any feature
+phase 3: build
+  build R01 Melbourne            usable  382 
+  build R02 Shanghai             usable  302 
+  build R03 Suzuka               usable  263 
+  build R04 Sakhir               usable    0 no laps
+  build R05 Jeddah               usable    0 no laps
+  build R06 Miami Gardens        usable  438 
+  build R07 Montréal             usable  442 
+  build R08 Monte Carlo          usable  516 
+  build R09 Barcelona            usable  265 
+  build R10 Spielberg            usable  421 
+  build R11 Silverstone          usable  259 
+  build R12 Spa-Francorchamps    usable  321 
+  build R13 Budapest             usable  427 
+  build R14 Zandvoort            usable  450 
+  build R15 Monza                usable  345 
+  build R16 Madrid               usable  388 
+  build R17 Baku                 usable  382 
+  build R18 Kuala Lumpur         usable  352 
+  build R19 Marina Bay           usable  723 
+  build R20 Austin               usable  410 
+  build R21 Mexico City          usable  410 
+phase 4: analyse
+
+H5 (primary): own past closer for 13 of 19, sign test p = 0.08353424072265625 -> not supported
+   all               13 of 19
+   control points    12 of 19
+   energy-sensitive  13 of 19
+   no throttle       12 of 19
+H4 (secondary): changers ['HAD']: 0 of 1; stayers 5 of 18; Fisher p = 1.0
+corner types: {'2025': {'slow': 73, 'medium': 63, 'fast': 20}, '2026': {'slow': 73, 'medium': 47, 'fast': 11}}

@@ -1,0 +1,20 @@
+driver,team_reference,team_target,weekends_target,included,reason,teammate,shared_weekends,laps_own_all,laps_teammate_all,laps_each_used,distance_own,distance_teammate,own_closer
+ALB,Williams,Williams,19,True,,SAI,22,104,111,89,1.6504,1.3017,False
+ALO,Aston Martin,Aston Martin,19,True,,STR,21,103,70,67,1.0416,1.3609,True
+ANT,Mercedes,Mercedes,19,True,,RUS,21,99,114,93,1.1905,1.1401,False
+BEA,Haas F1 Team,Haas F1 Team,18,True,,OCO,21,88,79,61,1.0406,0.8442,False
+BOR,Kick Sauber,Audi,19,True,,HUL,21,81,76,58,1.5431,1.2938,False
+COL,Alpine,Alpine,18,True,,GAS,16,43,67,38,0.4536,1.2547,True
+GAS,Alpine,Alpine,19,True,,COL,16,67,43,38,0.9953,0.9061,False
+HAD,Racing Bulls,Red Bull Racing,15,True,,LAW,19,92,77,70,0.9358,1.3769,True
+HAM,Ferrari,Ferrari,19,True,,LEC,22,115,128,108,1.6744,1.9290,True
+HUL,Kick Sauber,Audi,19,True,,BOR,21,76,81,58,1.4439,2.0692,True
+LAW,Racing Bulls,Racing Bulls,19,True,,HAD,19,77,92,70,1.1066,1.7207,True
+LEC,Ferrari,Ferrari,19,True,,HAM,22,128,115,108,1.1968,1.7212,True
+NOR,McLaren,McLaren,19,True,,PIA,22,126,125,116,0.6346,0.7079,True
+OCO,Haas F1 Team,Haas F1 Team,18,True,,BEA,21,79,88,61,1.3670,1.3198,False
+PIA,McLaren,McLaren,19,True,,NOR,22,125,126,116,0.8458,0.9175,True
+RUS,Mercedes,Mercedes,19,True,,ANT,21,114,99,93,0.8989,0.9685,True
+SAI,Williams,Williams,18,True,,ALB,22,111,104,89,1.2141,1.4869,True
+STR,Aston Martin,Aston Martin,17,True,,ALO,21,70,103,67,2.4256,2.3079,False
+VER,Red Bull Racing,Red Bull Racing,18,True,,TSU,19,103,77,76,1.0258,1.3741,True
