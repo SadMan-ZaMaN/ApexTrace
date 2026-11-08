@@ -42,6 +42,8 @@ In plain words:
   2025 signature than to their 2025 teammate's; the test needed 14. Without a rule change the same comparison gave
   16 of 20 and 14 of 16. As stated before the test, this "no" can't tell a signature that weakened from one
   that was lost: with 19 drivers the test had only 47 % power if the true share had dropped to 0.7.
+  An exploratory check with the car removed (the difference between two teammates on the same weekends) leans towards
+  "weakened": the difference pointed the same way after the rule change for 6 of 8 pairs, less strongly than without one.
 
 The full write-up is in [docs/report.md](docs/report.md). The test plans were committed before they were run:
 [docs/preregistration.md](docs/preregistration.md) (commits `ab2510c` and `225385c`; for 2026, `f653d49` with
@@ -100,7 +102,7 @@ OpenF1 limits the request rate).
 | Folder | What |
 |---|---|
 | `src/apextrace/` | the package: data loading, quality checks, filters, alignment, events, features, statistics, identification, signatures |
-| `experiments/` | numbered scripts `00`–`27`; every number and figure comes from one of them |
+| `experiments/` | numbered scripts `00`–`29`; every number and figure comes from one of them |
 | `results/` | small outputs (JSON, CSV, figures); `results/final/` and `results/final_2026/` hold the frozen 2025 and 2026 tests |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |

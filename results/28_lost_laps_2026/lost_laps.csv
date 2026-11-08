@@ -1,0 +1,31 @@
+session_key,location,driver,lap,data_without_rule,data_with_rule,lost,reason,car_samples,marker_samples
+11241,Shanghai,ANT,14,True,False,True,start or end not bracketed by samples,360.0,16.0
+11241,Shanghai,BEA,10,True,False,True,start or end not bracketed by samples,365.0,34.0
+11241,Shanghai,BOR,8,True,False,True,start or end not bracketed by samples,362.0,56.0
+11241,Shanghai,BOR,11,True,False,True,start or end not bracketed by samples,368.0,100.0
+11241,Shanghai,BOT,8,True,False,True,start or end not bracketed by samples,372.0,32.0
+11241,Shanghai,COL,8,True,False,True,start or end not bracketed by samples,361.0,72.0
+11241,Shanghai,GAS,5,True,False,True,start or end not bracketed by samples,356.0,29.0
+11241,Shanghai,GAS,8,True,False,True,start or end not bracketed by samples,360.0,24.0
+11241,Shanghai,HAD,13,True,False,True,start or end not bracketed by samples,367.0,65.0
+11241,Shanghai,HAD,16,True,False,True,start or end not bracketed by samples,369.0,45.0
+11241,Shanghai,HUL,11,True,False,True,start or end not bracketed by samples,365.0,40.0
+11241,Shanghai,LIN,8,True,False,True,start or end not bracketed by samples,362.0,64.0
+11241,Shanghai,NOR,5,True,False,True,start or end not bracketed by samples,358.0,87.0
+11241,Shanghai,OCO,5,True,False,True,fewer than 10 car samples,372.0,372.0
+11241,Shanghai,OCO,7,True,False,True,fewer than 10 car samples,359.0,359.0
+11241,Shanghai,PER,5,True,False,True,start or end not bracketed by samples,375.0,59.0
+11241,Shanghai,PIA,5,True,False,True,start or end not bracketed by samples,361.0,26.0
+11241,Shanghai,PIA,11,True,False,True,start or end not bracketed by samples,357.0,39.0
+11241,Shanghai,VER,7,True,False,True,start or end not bracketed by samples,356.0,36.0
+11241,Shanghai,VER,13,True,False,True,start or end not bracketed by samples,364.0,50.0
+11241,Shanghai,VER,19,True,False,True,start or end not bracketed by samples,368.0,70.0
+11249,Suzuka,ANT,11,True,False,True,start or end not bracketed by samples,347.0,107.0
+11249,Suzuka,BOT,2,True,False,True,start or end not bracketed by samples,359.0,260.0
+11249,Suzuka,COL,5,True,False,True,start or end not bracketed by samples,358.0,40.0
+11249,Suzuka,LEC,8,True,False,True,start or end not bracketed by samples,345.0,15.0
+11249,Suzuka,OCO,11,True,False,True,start or end not bracketed by samples,371.0,342.0
+11249,Suzuka,OCO,14,True,False,True,start or end not bracketed by samples,358.0,87.0
+11249,Suzuka,SAI,8,True,False,True,start or end not bracketed by samples,371.0,61.0
+11357,Monza,BOR,5,True,False,True,start or end not bracketed by samples,330.0,11.0
+11400,Mexico City,BOR,12,True,False,True,start or end not bracketed by samples,299.0,14.0

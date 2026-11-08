@@ -311,6 +311,47 @@ descriptive. It also means that the "fast" part of a 2026 signature rests on few
    no other deviation. Where the marker samples were many, 30 kept laps lost their usable car data with them (Shanghai 21, Suzuka 7, Mexico City 1, Monza 1):
    a lap needs at least 10 car samples and samples on both sides of its start and end.
 
+### 6.7 Exploratory follow-ups to the 2026 test (not preregistered)
+
+Both were planned in writing before they were run (`docs/decisions.md`, 2026-11-09) and are reported whatever they
+showed. Neither can change the preregistered verdict.
+
+**The laps lost to the marker removal** (`experiments/28_lost_laps_2026.py`). The 30 laps belonged to 22
+driver-sessions, at most 3 for one driver at one session (VER at Shanghai, 7 kept laps); no driver lost a whole
+weekend. 28 of the 30 lost the samples around the lap's start or end, 2 kept fewer than 10
+samples. The two sessions with the most markers also had the lowest share of usable corner passes (Shanghai 0.44, Suzuka 0.49;
+the other sessions 0.54–0.70), which would fit removed samples leaving gaps inside corners (not checked directly). Recomputed from the frozen data
+without Shanghai and Suzuka, H5 is still 13 of 19, and no driver's answer changes. (With all sessions, the
+recomputation reproduces the frozen table: the same answers, and distances that differ by at most 0.00034, because the
+saved dataset has three decimals.)
+
+**Teammate-relative signatures** (`experiments/29_teammate_relative.py`). On the same weekend, two teammates share the
+car, its set-up direction, the track and the weather, so the difference between their weekend means cancels all of
+that, as a differential amplifier rejects a common-mode signal. For every pair who were teammates on at least 5
+shared weekends in both of two seasons, the season mean of that difference (equal laps per weekend, each feature divided
+by the spread of weekend differences of all pairs of the earlier season) was compared between the two seasons by its
+cosine: +1 means the same driver is ahead on the same features, 0 means no common direction.
+
+| Pairs of teammates in both seasons | Cosine > 0 | Median cosine | Split-half median (earlier season) |
+|---|---|---|---|
+| 2023 → 2024 (same rules) | 9 of 10 (p = 0.011) | 0.51 | 0.45 |
+| 2024 → 2025 (same rules) | 2 of 2 (p = 0.25) | 0.45 | 0.28 |
+| 2025 → 2026 (new rules) | 6 of 8 (p = 0.14) | 0.32 | 0.43 |
+
+The p-values are one-sided sign tests, for orientation only. The split-half cosine compares odd with even weekends of
+one season, so each side has half the data; it is a rough reference for how alike a difference is to itself. The
+method's tests (`tests/test_teammate_relative.py`) require, on synthetic seasons where the car is redrawn each season
+and is five times larger than the drivers' offsets, a median cosine above 0.9, and with no driver offset at all, a mean
+within 0.05 of 0.
+
+With the car removed, the difference between two teammates mostly carried over between seasons with the same rules.
+Across the rule change it still pointed the same way for 6 of 8 pairs, but less strongly, and it reversed for
+ALB/SAI and ANT/RUS. That is closer to "weakened" than to "lost", but it is a hint, not a result: 8 pairs, no
+preregistration, and the drivers involved who were in their first full season in 2025 (ANT, BEA, BOR) may have
+changed their difference to the teammate through experience as well as through the rules.
+
+![Teammate-relative signatures: cosine between seasons per pair of teammates](../results/29_teammate_relative/teammate_relative.png)
+
 ## 7. Discussion
 
 **What holds.** Within a team, corner-level telemetry carries a driver signature that generalises to unseen
@@ -333,7 +374,9 @@ test cannot separate from chance. The secondary results point the same way: the 
 mostly closer to their current teammate than to their own 2025 signature, and the 2026 braking zones are slower. Both
 readings from H4 apply again (the new cars shape the measured style, or drivers adapt to them), and the same asymmetry:
 the own signature is a year and a rule change away, the teammate's is from the same weekends. A weakened signature
-cannot be ruled out; the test had 47 % power against a share of 0.7.
+cannot be ruled out; the test had 47 % power against a share of 0.7. The exploratory check with the car removed
+(Section 6.7) leans the same way: the difference between teammates mostly survived the rule change, less strongly than
+without one.
 
 **Limitations.** Qualifying laps only. A 3.77 Hz feed with an on/off brake signal and coarse positions. Corners are
 detected per session, so the same corner can be typed differently in different years. The identification task is
@@ -356,7 +399,7 @@ Low-rate public telemetry supports corner-level features with known errors, and 
 teammate-level driver signature that replicated on a held-out season. They do not beat simple lap statistics, and they
 did not show that style follows a driver into a new car, either after a change of team (2025) or after the 2026 change
 of rules. Next steps: more team changes as seasons accumulate; the rest of 2026 and 2027 as new held-out data, to tell
-a weakened signature from a lost one; features made relative to the teammate on each weekend to remove the car; the
+a weakened signature from a lost one; a preregistered test of the teammate-relative signatures on that new data; the
 cause of the per-lap position offset; a learned sequence model under the same held-out protocol; and a full reading of the
 closest related work (Section 2).
 

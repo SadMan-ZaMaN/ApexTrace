@@ -1,0 +1,83 @@
+{
+  "note": "EXPLORATORY (docs/decisions.md 2026-11-09, E1); cannot change the frozen 2026 verdict",
+  "kept_laps": 1795,
+  "with_data_without_rule": 1794,
+  "with_data_with_rule": 1764,
+  "lost": 30,
+  "matches_download_logs": true,
+  "lost_by_session": {
+    "Shanghai": 21,
+    "Suzuka": 7,
+    "Monza": 1,
+    "Mexico City": 1
+  },
+  "lost_by_reason": {
+    "start or end not bracketed by samples": 28,
+    "fewer than 10 car samples": 2
+  },
+  "drivers_affected": 16,
+  "largest_loss": [
+    {
+      "location": "Shanghai",
+      "driver": "VER",
+      "kept": 7,
+      "with_data": 4,
+      "lost": 3
+    },
+    {
+      "location": "Shanghai",
+      "driver": "BOR",
+      "kept": 4,
+      "with_data": 2,
+      "lost": 2
+    },
+    {
+      "location": "Shanghai",
+      "driver": "GAS",
+      "kept": 6,
+      "with_data": 4,
+      "lost": 2
+    },
+    {
+      "location": "Shanghai",
+      "driver": "HAD",
+      "kept": 7,
+      "with_data": 5,
+      "lost": 2
+    },
+    {
+      "location": "Shanghai",
+      "driver": "PIA",
+      "kept": 6,
+      "with_data": 4,
+      "lost": 2
+    }
+  ],
+  "whole_weekends_lost": [],
+  "usable_share": {
+    "marker_heavy": {
+      "Shanghai": 0.44,
+      "Suzuka": 0.492
+    },
+    "other_sessions_median": 0.62,
+    "other_sessions_min": 0.543,
+    "other_sessions_max": 0.704
+  },
+  "h5_sensitivity": {
+    "reproduced_frozen_table": true,
+    "largest_distance_difference_vs_frozen": 0.000344,
+    "all_sessions": {
+      "own_closer": 13,
+      "drivers": 19
+    },
+    "without_marker_heavy": {
+      "left_out": [
+        "Shanghai",
+        "Suzuka"
+      ],
+      "own_closer": 13,
+      "drivers": 19
+    },
+    "drivers_whose_answer_changed": []
+  }
+}

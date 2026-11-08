@@ -251,3 +251,115 @@ def sign_test_power(trials, success_probability, alpha=0.05):
     for k in range(threshold, trials + 1):
         power += comb(trials, k) * success_probability ** k * (1 - success_probability) ** (trials - k)
     return float(power)
+
+
+# ---------------------------------------------------------------- teammate-relative signatures (exploratory)
+#
+# On one weekend, two teammates share the car, its set-up direction, the track and the
+# weather. Their DIFFERENCE cancels all of that, like a differential amplifier that rejects
+# the common-mode signal and keeps only what differs between its two inputs. If a part of
+# the difference belongs to the drivers, it should point the same way the next season, even
+# in a new car. (docs/decisions.md, 2026-11-09; experiments/29_teammate_relative.py)
+
+def cosine_similarity(a, b):
+    """Cosine of the angle between two vectors, over the entries both have (NaN-safe).
+
+    +1: the same direction (the same driver ahead on the same features), 0: unrelated,
+    -1: reversed. Not centred: centring would subtract each vector's mean and lose the sign
+    of a difference that is the same on every feature.
+    Example: (1, 0) and (1, 1) -> 1 / (1 * 1.414) = 0.707; (1, 2) and (-1, -2) -> -1.
+    """
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    both = np.isfinite(a) & np.isfinite(b)
+    length_a = np.sqrt(np.sum(a[both] ** 2))
+    length_b = np.sqrt(np.sum(b[both] ** 2))
+    if not both.any() or length_a == 0 or length_b == 0:
+        return float("nan")
+    return float(np.sum(a[both] * b[both]) / (length_a * length_b))
+
+
+def shared_weekends(laps, lineage_of):
+    """Every pair of teammates in one season -> the set of sessions they BOTH drove.
+
+    Teammates = the same team lineage on that session (lineage_of maps a team name to its
+    lineage, so a renamed team is still one team). Pairs are (first, second) alphabetically.
+    Example: A and B in team T on sessions 1, 2, 3 and C in team T on session 3 ->
+    {(A, B): {1, 2, 3}, (A, C): {3}, (B, C): {3}}.
+    """
+    pairs = {}
+    for session_key, session in laps.groupby("session_key"):
+        teams = {}
+        for driver, team in session.groupby("driver")["team"].first().items():
+            teams.setdefault(lineage_of(team), []).append(driver)
+        for drivers in teams.values():
+            drivers = sorted(drivers)
+            for i in range(len(drivers)):
+                for j in range(i + 1, len(drivers)):
+                    pairs.setdefault((drivers[i], drivers[j]), set()).add(session_key)
+    return pairs
+
+
+def weekend_differences(laps, driver_a, driver_b, sessions, feature_columns):
+    """One row per shared session: driver_a's weekend mean minus driver_b's, on EQUAL laps.
+
+    Equal laps (equal_laps_per_session): both weekend means are averages over the same number
+    of laps, so they are equally noisy, the same rule as H5.
+    Example: A's laps 10, 10, 40 and B's laps 14, 14 -> equal laps keep A's first two:
+    10 - 14 = -4 (with all laps: 20 - 14 = +6, a difference made by one extra lap).
+    """
+    pair = laps[laps["driver"].isin([driver_a, driver_b]) & laps["session_key"].isin(sessions)]
+    pair = equal_laps_per_session(pair, driver_a, driver_b)
+    means = pair.groupby(["session_key", "driver"])[feature_columns].mean()
+    rows = []
+    for session_key in sorted(sessions):
+        if (session_key, driver_a) in means.index and (session_key, driver_b) in means.index:
+            difference = means.loc[(session_key, driver_a)] - means.loc[(session_key, driver_b)]
+            rows.append({"session_key": session_key, **difference.to_dict()})
+    return pd.DataFrame(rows, columns=["session_key"] + list(feature_columns))
+
+
+def pair_persistence(laps, earlier_year, later_year, feature_columns, lineage_of, min_sessions=5):
+    """For every pair who were teammates in BOTH seasons (>= min_sessions shared weekends in
+    each): does their difference point the same way in the later season?
+
+    Per pair and season: the mean over shared weekends of the weekend differences (A - B,
+    weekend_differences). Each column is divided by the spread (SD) of the weekend differences
+    of all teammate pairs of the EARLIER season (pairs with >= min_sessions shared weekends),
+    so each feature counts in "typical weekend differences". Then the cosine of the two seasons'
+    vectors. Also the split-half cosine inside the earlier season (odd against even shared
+    weekends): how alike the difference is to itself over half a season, a rough reference.
+    Example: a pair whose earlier and later vectors are (1.0, -0.5) and (0.8, -0.6) -> cosine 0.97.
+    """
+    earlier = laps[laps["year"] == earlier_year]
+    later = laps[laps["year"] == later_year]
+    pairs_earlier = shared_weekends(earlier, lineage_of)
+    pairs_later = shared_weekends(later, lineage_of)
+
+    # the spread of weekend differences over all teammate pairs of the earlier season
+    differences_earlier = {}
+    for (a, b), sessions in sorted(pairs_earlier.items()):
+        if len(sessions) >= min_sessions:
+            differences_earlier[(a, b)] = weekend_differences(earlier, a, b, sessions, feature_columns)
+    if not differences_earlier:
+        return pd.DataFrame()               # no pair to take a spread from, so nobody to compare
+    spread = pd.concat(differences_earlier.values())[feature_columns].std(ddof=1).replace(0, np.nan)
+
+    rows = []
+    for pair in sorted(set(pairs_earlier) & set(pairs_later)):
+        a, b = pair
+        if len(pairs_earlier[pair]) < min_sessions or len(pairs_later[pair]) < min_sessions:
+            continue
+        before = differences_earlier[pair]
+        after = weekend_differences(later, a, b, pairs_later[pair], feature_columns)
+        vector_before = before[feature_columns].mean() / spread
+        vector_after = after[feature_columns].mean() / spread
+        odd = before.iloc[0::2][feature_columns].mean() / spread
+        even = before.iloc[1::2][feature_columns].mean() / spread
+        rows.append({"pair": f"{a}/{b}", "driver_a": a, "driver_b": b,
+                     "team_earlier": earlier.loc[earlier["driver"] == a, "team"].mode().iloc[0],
+                     "team_later": later.loc[later["driver"] == a, "team"].mode().iloc[0],
+                     "weekends_earlier": len(before), "weekends_later": len(after),
+                     "cosine": cosine_similarity(vector_before, vector_after),
+                     "split_half_earlier": cosine_similarity(odd, even)})
+    return pd.DataFrame(rows)

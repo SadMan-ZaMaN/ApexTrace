@@ -575,3 +575,51 @@ check), and change nothing else. Why this and not the alternatives:
 `experiments/25_feed_check_2026_diagnosis.py` and `26_addendum_1_dry_run_check.py`, and is
 frozen once committed, like Part C. Its dry runs go to new folders (`*_addendum_1`), so the
 evidence quoted by Part C stays as committed.
+
+## 2026-11-09 — Day 16: two exploratory follow-ups, rules fixed before running
+Both are EXPLORATORY: they come after the frozen 2026 test, are not preregistered, and cannot
+change its verdict (H5 not supported). Each is reported whatever it shows. Written before
+either script was run.
+
+**E1. Which drivers lost the 30 laps to the marker removal (experiment 28).**
+- For every kept 2026 lap, `openf1.slice_lap` is run twice on the cached streams: with the
+  Addendum 1 rule (104 removed) and without it. A lap is "lost to the marker" if it has data
+  without the rule and none with it. The reason is recorded: fewer than 10 car samples, or
+  the lap's start or end no longer bracketed by samples.
+- Check: the per-session counts must equal the two frozen download logs (Shanghai 21,
+  Suzuka 7, Mexico City 1, Monza 1); otherwise the script stops.
+- Reported: per driver and session, the laps lost and the laps kept; whether any driver lost
+  a whole weekend; and the share of usable corner passes per session (already in
+  `results/final_2026/sessions_2026.csv`), to see whether the marker-heavy sessions also lost
+  corner passes to gaps.
+- Sensitivity, one only: the H5 comparison recomputed from the frozen 2026 data with
+  Shanghai and Suzuka (the sessions with about 8 % markers) left out for every driver.
+  Reported as "with / without these two sessions"; no other session subsets are tried.
+
+**E2. Teammate-relative signatures (experiment 29).**
+- Why: on the same weekend, two teammates share the car, its set-up direction, the track and
+  the weather. The difference between their weekend means cancels all of that, like a
+  differential amplifier rejecting the common-mode signal. What remains is the drivers'
+  difference (plus noise).
+- Pairs: two drivers of the same team lineage with at least 5 shared weekends in both of two
+  consecutive seasons. Seasons: 2023→2024 and 2024→2025 (same rules), 2025→2026 (new rules).
+- Per pair and season: on each shared weekend, equal laps for both drivers (each driver's
+  first laps, `signatures.equal_laps_per_session`), the weekend mean of the 30 lap-vector
+  columns, the difference A − B (A = alphabetically first), then the mean over weekends.
+  Each column is divided by the spread (SD) of the weekend differences of all pairs in the
+  EARLIER season of the comparison, so each column counts in "typical weekend differences".
+  No centring: centring would remove the sign.
+- Measure: the cosine similarity of the two seasons' difference vectors (over columns present
+  in both). Near +1: the same driver is ahead or behind on the same features; near 0: no
+  common direction.
+- Reported: per pair; the count with cosine > 0 and the median, for each pair of seasons; a
+  one-sided sign test p as orientation, not as a decision. Also, as a rough reference, the
+  split-half cosine within the earlier season (odd against even shared weekends): how alike
+  the difference is to itself over half a season.
+- Tests first (synthetic, known truth): with a personal offset the cosine is high even when
+  the car is redrawn and large; with no personal offset it averages 0.
+- Not done: the roadmap's first idea (subtract the team median, then re-run the H4
+  comparison). With two drivers, the teammate-relative values are +d and −d, so "own past
+  against teammate" compares a vector with its own mirror image, a comparison whose answer
+  depends on the size of d and not only on whether it persisted. The cosine asks the
+  persistence question directly.

@@ -1,0 +1,57 @@
+{
+  "note": "EXPLORATORY (docs/decisions.md 2026-11-09, E2); not a decision",
+  "columns": 30,
+  "min_weekends": 5,
+  "comparisons": {
+    "2023 -> 2024": {
+      "rules": "same rules",
+      "pairs": 10,
+      "cosine_positive": 9,
+      "median_cosine": 0.512,
+      "sign_test_p_orientation_only": 0.0107,
+      "median_split_half_earlier": 0.454,
+      "pairs_list": [
+        "ALB/SAR",
+        "ALO/STR",
+        "BOT/ZHO",
+        "GAS/OCO",
+        "HAM/RUS",
+        "HUL/MAG",
+        "LEC/SAI",
+        "NOR/PIA",
+        "PER/VER",
+        "RIC/TSU"
+      ]
+    },
+    "2024 -> 2025": {
+      "rules": "same rules",
+      "pairs": 2,
+      "cosine_positive": 2,
+      "median_cosine": 0.447,
+      "sign_test_p_orientation_only": 0.25,
+      "median_split_half_earlier": 0.277,
+      "pairs_list": [
+        "ALO/STR",
+        "NOR/PIA"
+      ]
+    },
+    "2025 -> 2026": {
+      "rules": "new rules",
+      "pairs": 8,
+      "cosine_positive": 6,
+      "median_cosine": 0.316,
+      "sign_test_p_orientation_only": 0.1445,
+      "median_split_half_earlier": 0.431,
+      "pairs_list": [
+        "ALB/SAI",
+        "ALO/STR",
+        "ANT/RUS",
+        "BEA/OCO",
+        "BOR/HUL",
+        "COL/GAS",
+        "HAM/LEC",
+        "NOR/PIA"
+      ]
+    }
+  }
+}

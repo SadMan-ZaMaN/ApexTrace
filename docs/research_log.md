@@ -1171,3 +1171,70 @@ The same distinction already applied to 2023–2024, so the wording was fixed th
   - lap table 1,751: clean rows grouped by lap.
 - `docs/sources.md` is hand-written; its numbers were copied from `sessions_2026.csv`, the
   download logs and `summary.json`. The Day 17 audit should check them by script.
+
+---
+
+## 2026-11-09 — Day 16: two exploratory follow-ups to the 2026 test
+
+Both are labelled exploratory. Their rules were written in `docs/decisions.md` (2026-11-09)
+before either script ran, and neither can change the frozen verdict.
+
+**E1. The 30 laps lost to the marker removal** (`experiments/28_lost_laps_2026.py`). It
+reads only the cache; the network call is replaced by one that raises.
+- Every kept 2026 lap went through `slice_lap` with and without Addendum 1's rule. The counts
+  equal both frozen download logs: 1,794 laps with data without the rule, 1,764 with it,
+  30 lost.
+- The 30 laps belong to 22 driver-sessions. The most for one driver at one session was 3
+  (VER at Shanghai, 7 kept). No driver lost a whole weekend.
+- Reasons: 28 lost the samples around the lap's start or end; 2 kept fewer than 10 samples.
+- Shanghai (0.44) and Suzuka (0.49) also have the lowest share of usable corner passes; the
+  other sessions range 0.54–0.70. That would fit removed samples leaving gaps inside corners,
+  but this was not checked directly.
+- Sensitivity check: H5 without Shanghai and Suzuka is still 13 of 19, and no driver's answer
+  changes. Recomputed with all sessions first, it reproduced the frozen table: the same
+  answers, distances at most 0.00034 apart. The difference comes from the saved dataset's 3
+  decimals; there is an engineering note.
+
+**E2. Teammate-relative signatures** (`experiments/29_teammate_relative.py`).
+- New functions in `signatures.py`, with tests in `tests/test_teammate_relative.py`:
+  `cosine_similarity`, `shared_weekends`, `weekend_differences` (equal laps) and
+  `pair_persistence`.
+- The idea: two teammates on the same weekend share the car, so the difference between them
+  rejects the car, the way a differential amplifier rejects common-mode signal. For pairs of
+  teammates in both of two seasons, the cosine between the two seasons' standardised
+  difference vectors measures whether the difference points the same way.
+- Results:
+  - 2023→2024: 9 of 10 pairs positive, median 0.51;
+  - 2024→2025: 2 of 2, median 0.45;
+  - 2025→2026 (new rules): 6 of 8, median 0.32, with ALB/SAI and ANT/RUS reversed.
+- Reading: closer to "weakened" than to "lost", but it is a hint. There are 8 pairs, no
+  preregistration, and ANT, BEA and BOR were in their first full season in 2025.
+- Changed from the roadmap's first idea (subtract the team median, re-run H4): with two
+  drivers that compares a vector with its own mirror image. The reasons are in the decision
+  entry.
+
+**Report and README:** new Section 6.7 (both analyses, a table and the figure), one sentence
+in the discussion, an updated future-work line, and one labelled line in the README. All
+numbers are generated (`collect_exploratory_2026`).
+
+**My mistakes today:**
+- I expected the recomputation to match the frozen distances to 4 decimals. The saved
+  dataset has 3, so the check failed. I diagnosed it and widened the check to "same answers,
+  distances within 0.001", for a reason I can state, not to make it pass.
+- I first printed the largest difference as "0.0003", which understates the true 0.00034.
+- I wrote "as expected if removed samples leave gaps" without checking the cause; it now
+  says "would fit … (not checked directly)".
+
+**Verified:**
+- The new tests pass, and each fails on a broken version (no cancellation, no equal laps, a
+  centred cosine). The file was restored byte-identical.
+- On known-truth synthetic data: with no personal offset, mean cosine 0.012 over 400 pairs;
+  with a personal offset and a car five times larger, median 0.954.
+- Two real cosines (NOR/PIA 0.6229, ANT/RUS −0.3557) were reproduced to 4 decimals by an
+  independent plain-loop implementation in a scratch script.
+- Experiment 28 stops unless its lap counts equal both frozen download logs, and unless it
+  reproduces the frozen H5 answers.
+- `docs/preregistration.md` is byte-identical after regeneration (SHA-256 `bc8c2182…`).
+- I looked at the figure and fixed three things: a label collision, a missing legend, and a
+  missing median mark.
+- I read the rendered Section 6.7 in full.

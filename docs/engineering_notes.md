@@ -155,3 +155,14 @@ After changing an analysis: re-run its experiment script, then
   version of `experiments/27_final_2026_figures.py` disagreed with all six frozen intervals. The
   interval comes from a separate `alternative="two-sided"` test object. Guarded by
   `test_every_frozen_block_matches_its_per_driver_table` (checked to fail with the one-sided interval).
+- **2026-11-09 — OpenF1's "no rows" answers are not cached.** For a session with no laps
+  (2026 Sakhir and Jeddah) OpenF1 answers 404, and `openf1.fetch` returns an empty list without
+  writing a cache file. So a script that reads only the cache (network blocked) still tries to
+  send a request for those sessions. `experiments/28_lost_laps_2026.py` skips the sessions that
+  the frozen download log records with 0 laps.
+- **2026-11-09 — Saved datasets have 3 decimals, so recomputing from them is close, not exact.**
+  The one-time runs compute from full-precision features but save `dataset_*.csv.gz` with
+  `float_format="%.3f"`. Recomputing H5 from the saved 2026 file gave the same 19 answers, with
+  distances up to 0.00034 away from the frozen ones (which are saved to 4 decimals). A check that
+  recomputes a frozen result from saved files must compare answers exactly and distances to about
+  0.001, not to the 4th decimal. (Found while building experiment 28; relevant to the Day 17 audit.)

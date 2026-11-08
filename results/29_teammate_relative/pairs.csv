@@ -1,0 +1,21 @@
+comparison,pair,driver_a,driver_b,team_earlier,team_later,weekends_earlier,weekends_later,cosine,split_half_earlier
+2023 -> 2024,ALB/SAR,ALB,SAR,Williams,Williams,17,11,-0.0162,0.7122
+2023 -> 2024,ALO/STR,ALO,STR,Aston Martin,Aston Martin,21,22,0.4170,0.4410
+2023 -> 2024,BOT/ZHO,BOT,ZHO,Alfa Romeo,Kick Sauber,18,21,0.1646,0.5963
+2023 -> 2024,GAS/OCO,GAS,OCO,Alpine,Alpine,19,20,0.6062,0.2657
+2023 -> 2024,HAM/RUS,HAM,RUS,Mercedes,Mercedes,20,22,0.8026,0.4667
+2023 -> 2024,HUL/MAG,HUL,MAG,Haas F1 Team,Haas F1 Team,18,21,0.6898,0.2192
+2023 -> 2024,LEC/SAI,LEC,SAI,Ferrari,Ferrari,22,21,0.6208,0.2523
+2023 -> 2024,NOR/PIA,NOR,PIA,McLaren,McLaren,22,22,0.1842,0.6765
+2023 -> 2024,PER/VER,PER,VER,Red Bull Racing,Red Bull Racing,21,21,0.8444,0.7788
+2023 -> 2024,RIC/TSU,RIC,TSU,AlphaTauri,RB,6,17,0.3579,0.3752
+2024 -> 2025,ALO/STR,ALO,STR,Aston Martin,Aston Martin,22,21,0.7093,0.3478
+2024 -> 2025,NOR/PIA,NOR,PIA,McLaren,McLaren,22,22,0.1855,0.2052
+2025 -> 2026,ALB/SAI,ALB,SAI,Williams,Williams,22,18,-0.2294,0.4011
+2025 -> 2026,ALO/STR,ALO,STR,Aston Martin,Aston Martin,21,17,0.1804,0.5223
+2025 -> 2026,ANT/RUS,ANT,RUS,Mercedes,Mercedes,21,19,-0.3557,0.4234
+2025 -> 2026,BEA/OCO,BEA,OCO,Haas F1 Team,Haas F1 Team,21,17,0.1578,0.1935
+2025 -> 2026,BOR/HUL,BOR,HUL,Kick Sauber,Audi,21,19,0.5253,0.4377
+2025 -> 2026,COL/GAS,COL,GAS,Alpine,Alpine,16,18,0.6656,0.2904
+2025 -> 2026,HAM/LEC,HAM,LEC,Ferrari,Ferrari,22,19,0.4513,0.6765
+2025 -> 2026,NOR/PIA,NOR,PIA,McLaren,McLaren,22,19,0.6229,0.4604

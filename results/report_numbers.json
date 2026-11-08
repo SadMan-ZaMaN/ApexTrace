@@ -260,7 +260,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "27"
+  "last_experiment": "29"
  },
  "c": {
   "written": "2026-11-06",
@@ -671,6 +671,53 @@
    "both_mate": 0,
    "singles": "VER (2025 teammate TSU)",
    "singles_own": 1
+  }
+ },
+ "x26": {
+  "lost": 30,
+  "driver_sessions": 22,
+  "most": 3,
+  "most_driver": "VER",
+  "most_location": "Shanghai",
+  "most_kept": 7,
+  "whole_weekends": 0,
+  "edges": 28,
+  "thin": 2,
+  "usable": {
+   "Shanghai": "0.44",
+   "Suzuka": "0.49"
+  },
+  "usable_low": "0.54",
+  "usable_high": "0.70",
+  "left_out": "Shanghai and Suzuka",
+  "without": "13 of 19",
+  "changed": 0,
+  "largest_difference": "0.00034",
+  "rel": {
+   "first": {
+    "pairs": 10,
+    "positive": 9,
+    "median": "0.51",
+    "p": "p = 0.011",
+    "split": "0.45"
+   },
+   "second": {
+    "pairs": 2,
+    "positive": 2,
+    "median": "0.45",
+    "p": "p = 0.25",
+    "split": "0.28"
+   },
+   "rules": {
+    "pairs": 8,
+    "positive": 6,
+    "median": "0.32",
+    "p": "p = 0.14",
+    "split": "0.43"
+   },
+   "reversed": "ALB/SAI and ANT/RUS",
+   "min_weekends": 5,
+   "first_season_2025": "ANT, BEA, BOR"
   }
  }
 }

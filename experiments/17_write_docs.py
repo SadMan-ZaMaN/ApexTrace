@@ -261,7 +261,56 @@ def collect_numbers():
     n["h5"] = collect_h5_numbers(n["c"])
     # attempt 1's diagnosis (experiment 25) and attempt 2's removal must count the same marker samples
     assert n["a1"]["either"] == n["h5"]["data"]["removed"], "markers diagnosed and markers removed differ"
+    n["x26"] = collect_exploratory_2026(n["h5"])
     return n
+
+
+def collect_exploratory_2026(h5):
+    """The two EXPLORATORY follow-ups of Day 16 (docs/decisions.md, 2026-11-09): the laps lost to
+    the marker removal (experiment 28) and teammate-relative signatures (experiment 29)."""
+    lost = load("28_lost_laps_2026/summary.json")
+    per_driver = pd.read_csv(RESULTS / "28_lost_laps_2026" / "per_driver.csv")
+    assert lost["matches_download_logs"] and lost["lost"] == h5["data"]["laps_lost_to_markers"]
+    sensitivity = lost["h5_sensitivity"]
+    assert sensitivity["reproduced_frozen_table"]
+    assert sensitivity["all_sessions"]["own_closer"] == h5["all"]["own"], "experiment 28 differs from the frozen test"
+    worst = per_driver.sort_values("lost", ascending=False).iloc[0]
+    x = {"lost": lost["lost"], "driver_sessions": int(len(per_driver)),
+         "most": int(worst["lost"]), "most_driver": worst["driver"], "most_location": worst["location"],
+         "most_kept": int(worst["kept"]),
+         "whole_weekends": len(lost["whole_weekends_lost"]),
+         "edges": lost["lost_by_reason"].get("start or end not bracketed by samples", 0),
+         "thin": lost["lost_by_reason"].get("fewer than 10 car samples", 0),
+         "usable": {name: f(share, 2) for name, share in lost["usable_share"]["marker_heavy"].items()},
+         "usable_low": f(lost["usable_share"]["other_sessions_min"], 2),
+         "usable_high": f(lost["usable_share"]["other_sessions_max"], 2),
+         "left_out": " and ".join(sensitivity["without_marker_heavy"]["left_out"]),
+         "without": f"{sensitivity['without_marker_heavy']['own_closer']} of {sensitivity['without_marker_heavy']['drivers']}",
+         "changed": len(sensitivity["drivers_whose_answer_changed"]),
+         # 5 decimals: rounding 0.000344 to 4 would print "0.0003", smaller than the true difference
+         "largest_difference": f(sensitivity["largest_distance_difference_vs_frozen"], 5)}
+
+    relative = load("29_teammate_relative/summary.json")
+    pairs = pd.read_csv(RESULTS / "29_teammate_relative" / "pairs.csv")
+    x["rel"] = {}
+    for key, name in (("first", "2023 -> 2024"), ("second", "2024 -> 2025"), ("rules", "2025 -> 2026")):
+        block = relative["comparisons"][name]
+        x["rel"][key] = {"pairs": block["pairs"], "positive": block["cosine_positive"],
+                         "median": f(block["median_cosine"], 2), "p": p_text(block["sign_test_p_orientation_only"]),
+                         "split": f(block["median_split_half_earlier"], 2)}
+    reversed_2026 = pairs[(pairs["comparison"] == "2025 -> 2026") & (pairs["cosine"] < 0)]
+    x["rel"]["reversed"] = " and ".join(reversed_2026["pair"])
+    x["rel"]["min_weekends"] = relative["min_weekends"]
+
+    # drivers of the 2025 -> 2026 pairs whose first full season was 2025 (fewer than the minimum
+    # weekends in the 2024 data): their difference may change with experience, not only the rules
+    development, _ = clean(load_dataset())
+    weekends_2024 = development[development["year"] == 2024].groupby("driver")["session_key"].nunique()
+    in_2026_pairs = sorted(set(pairs.loc[pairs["comparison"] == "2025 -> 2026", "driver_a"])
+                           | set(pairs.loc[pairs["comparison"] == "2025 -> 2026", "driver_b"]))
+    newer = [driver for driver in in_2026_pairs if weekends_2024.get(driver, 0) < relative["min_weekends"]]
+    x["rel"]["first_season_2025"] = ", ".join(newer)
+    return x
 
 
 def collect_h5_numbers(c):
