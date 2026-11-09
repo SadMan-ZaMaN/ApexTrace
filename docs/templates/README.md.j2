@@ -10,7 +10,8 @@ Can you recognise a Formula 1 driver from the public timing feed alone, and how 
 "style" belongs to the driver rather than the car?
 
 ApexTrace measures where each driver brakes, how much speed they carry to the slowest point and when they
-get back on the throttle, in every braking zone of every qualifying session from 2023 to 2025. It uses only
+get back on the throttle, in every braking zone of every qualifying session from 2023 to 2025, and of 2026 up to a
+fixed cutoff. It uses only
 public timing data, sampled about {{ data.rate_hz }} times a second. The 2025 season was locked away from the first day
 and used once, for a preregistered final test; 2026, the first season under new technical rules, was locked away in
 the same way for a second one.
@@ -33,7 +34,7 @@ In plain words:
   season than to their teammate's in the same car ({{ h4.dev.own_closer }} of {{ h4.dev.pairs }} drivers, {{ h4.dev.p }}).
 - **It does not beat simple whole-lap statistics** ({{ h3.final.raw }}), such as the share of the lap spent braking.
   What the corner features add is that they are interpretable: they say *where* two drivers differ.
-- **Whether the signature survives a change of car was not shown.** Only {{ h4.final.own_closer }} of {{ h4.final.changers }} drivers who moved
+- **Whether the signature survives a change of team was not shown.** Only {{ h4.final.own_closer }} of {{ h4.final.changers }} drivers who moved
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
   {{ h4.explore.control_own }} times out of {{ h4.explore.control_n }} in the same comparison, but with five changers the difference can't be told
   from chance ({{ h4.explore.fisher_p }}). The car, or a driver adapting to it, matters a lot.
@@ -80,6 +81,9 @@ the telemetry.
   crash before any result, and a team changer missing from the plan, are both reported as deviations. 2026 was
   handled the same way; its first run stopped at a data check before any result (a "no value" marker in the feed),
   and the fix was written down and committed as an addendum before the second run.
+- **Audits.** `experiments/30_audit.py` re-runs every development experiment with the network blocked (no output
+  may change), recomputes the three preregistered tests from the saved data, and checks the hand-written documents'
+  numbers and paths.{% if audit %} Last full run: {{ audit.date }}, {{ audit.experiments }} experiments re-run, all checks passed.{% endif %}
 
 ## Run it
 

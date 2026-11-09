@@ -353,6 +353,14 @@ def kept_laps_span(kept, margin_s=5.0):
 
 NO_VALUE = 104   # OpenF1's "no value" marker for throttle and brake
 
+# Addendum 1's rule (remove the marker in slice_lap) is on for everything built from 2026-11-07.
+# The development dataset (experiments/09_build_dataset.py) was built on 2026-10-17, before the
+# rule, and every development result and preregistration Part C quote it; 09 switches the rule
+# off so that its rebuild reproduces that dataset exactly (found in Audit I, 2026-11-09). The
+# rule's effect on development data was measured instead: 18 of 15,129 rows of 2024 change
+# (experiments/26_addendum_1_dry_run_check.py).
+DROP_NO_VALUE = True
+
 
 def drop_no_value_samples(car):
     """Remove the car samples whose throttle or brake is 104, the feed's "no value" marker.
@@ -374,10 +382,13 @@ def slice_lap(streams, lap_start, lap_end, pad_s=2.0):
     Times are seconds from lap_start, the same reference for both streams.
     Brake comes as 0/100 in OpenF1; it becomes True/False here. X, Y are
     converted from decimetres to metres. Returns None if the lap isn't covered.
-    Car samples carrying the "no value" marker 104 are removed first (drop_no_value_samples).
+    Car samples carrying the "no value" marker 104 are removed first (drop_no_value_samples),
+    unless DROP_NO_VALUE is switched off (only the rebuild of the development dataset does that).
     """
     pad = pd.Timedelta(pad_s, unit="s")
-    car = drop_no_value_samples(streams["car"])
+    car = streams["car"]
+    if DROP_NO_VALUE:
+        car = drop_no_value_samples(car)
     pos = streams["pos"]
     car = car[(car["date"] >= lap_start - pad) & (car["date"] <= lap_end + pad)]
     pos = pos[(pos["date"] >= lap_start - pad) & (pos["date"] <= lap_end + pad)]

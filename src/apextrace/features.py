@@ -4,7 +4,7 @@ Every feature uses the estimator chosen by the Phase 2 Monte Carlo
 (docs/decisions.md), and every distance is on the fused track coordinate
 (Phase 3), relative to the corner marker: negative = before the marker.
 
-Features (PROJECT_CONTEXT §10, adjusted by Phase 2):
+Features (as planned, adjusted by Phase 2):
   brake_onset_m        where braking starts       speed breakpoint inside the brake off->on interval
   entry_speed_kmh      speed 200 m before marker  linear interpolation
   min_speed_kmh        slowest speed              parabola through the 3 lowest samples

@@ -11,7 +11,8 @@ Can you recognise a Formula 1 driver from the public timing feed alone, and how 
 "style" belongs to the driver rather than the car?
 
 ApexTrace measures where each driver brakes, how much speed they carry to the slowest point and when they
-get back on the throttle, in every braking zone of every qualifying session from 2023 to 2025. It uses only
+get back on the throttle, in every braking zone of every qualifying session from 2023 to 2025, and of 2026 up to a
+fixed cutoff. It uses only
 public timing data, sampled about 3.77 times a second. The 2025 season was locked away from the first day
 and used once, for a preregistered final test; 2026, the first season under new technical rules, was locked away in
 the same way for a second one.
@@ -34,7 +35,7 @@ In plain words:
   season than to their teammate's in the same car (17 of 20 drivers, p = 0.0013).
 - **It does not beat simple whole-lap statistics** (0.680), such as the share of the lap spent braking.
   What the corner features add is that they are interpretable: they say *where* two drivers differ.
-- **Whether the signature survives a change of car was not shown.** Only 2 of 5 drivers who moved
+- **Whether the signature survives a change of team was not shown.** Only 2 of 5 drivers who moved
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
   8 times out of 10 in the same comparison, but with five changers the difference can't be told
   from chance (p = 0.25). The car, or a driver adapting to it, matters a lot.
@@ -81,6 +82,9 @@ the telemetry.
   crash before any result, and a team changer missing from the plan, are both reported as deviations. 2026 was
   handled the same way; its first run stopped at a data check before any result (a "no value" marker in the feed),
   and the fix was written down and committed as an addendum before the second run.
+- **Audits.** `experiments/30_audit.py` re-runs every development experiment with the network blocked (no output
+  may change), recomputes the three preregistered tests from the saved data, and checks the hand-written documents'
+  numbers and paths. Last full run: 2026-11-09, 25 experiments re-run, all checks passed.
 
 ## Run it
 
@@ -102,7 +106,7 @@ OpenF1 limits the request rate).
 | Folder | What |
 |---|---|
 | `src/apextrace/` | the package: data loading, quality checks, filters, alignment, events, features, statistics, identification, signatures |
-| `experiments/` | numbered scripts `00`–`29`; every number and figure comes from one of them |
+| `experiments/` | numbered scripts `00`–`30`; every number and figure comes from one of them |
 | `results/` | small outputs (JSON, CSV, figures); `results/final/` and `results/final_2026/` hold the frozen 2025 and 2026 tests |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |

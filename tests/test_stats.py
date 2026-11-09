@@ -85,7 +85,7 @@ def test_icc_matches_a_hand_computed_example():
 
 
 def test_min_detectable_effect_matches_the_plan():
-    # PROJECT_CONTEXT §8: ~1.8 for 6 laps per driver, ~1.3 for 10, ~0.9 for 20
+    # expected when the pilot was planned: ~1.8 for 6 laps per driver, ~1.3 for 10, ~0.9 for 20
     assert min_detectable_effect(6, 6) == pytest.approx(1.77, abs=0.03)
     assert min_detectable_effect(10, 10) == pytest.approx(1.32, abs=0.03)
     assert min_detectable_effect(20, 20) == pytest.approx(0.91, abs=0.03)

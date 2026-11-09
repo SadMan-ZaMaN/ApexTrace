@@ -22,6 +22,12 @@ Outputs in results/09_dataset/:
                        flat dataset for free exploration. Local only (*.parquet
                        is gitignored); rebuilt by running this script.
 
+This rebuilds the development dataset as it was built on 2026-10-17: WITHOUT Addendum 1's rule
+(the "no value" marker 104 removed inside laps), which came later (2026-11-07). Every development
+result and preregistration Part C were computed from that dataset, so a rebuild must reproduce it
+exactly (checked by experiments/30_audit.py). The rule's effect on development data is measured
+separately (experiments/26_addendum_1_dry_run_check.py: 18 of 15,129 rows of 2024 change).
+
 Run from the repo root:
     .venv\\Scripts\\python.exe experiments\\09_build_dataset.py
 """
@@ -32,6 +38,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from apextrace import openf1
 from apextrace.features import FEATURES
 from apextrace.openf1 import qualifying_sessions
 from apextrace.session_build import build_session
@@ -42,6 +49,7 @@ YEARS = [2023, 2024]
 
 
 def main():
+    openf1.DROP_NO_VALUE = False          # as built on 2026-10-17, before Addendum 1 (see the docstring)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     all_rows, all_corners, summaries, raw_tables = [], [], [], []
     for year in YEARS:

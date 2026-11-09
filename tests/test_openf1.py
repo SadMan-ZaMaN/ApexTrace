@@ -149,3 +149,23 @@ def test_no_marker_reaches_the_features_through_slice_lap():
     assert len(lap["car_time_s"]) == len(car[(car["date"] >= start - pd.Timedelta(2, unit="s"))
                                              & (car["date"] <= start + pd.Timedelta(80, unit="s"))]) - 4
     assert not lap["brake"].any()  # the only "brake on" in the raw data was the marker
+
+
+def test_the_development_rebuild_can_switch_the_marker_rule_off(monkeypatch):
+    """09_build_dataset reproduces the development dataset of 2026-10-17, built before Addendum 1,
+    by switching the rule off (openf1.DROP_NO_VALUE = False). Then the markers stay, exactly as
+    before; the rule is on by default for everything else (Audit I, 2026-11-09)."""
+    import apextrace.openf1 as openf1
+
+    assert openf1.DROP_NO_VALUE is True
+    start = pd.Timestamp("2026-03-07 05:00:00")
+    times = start + pd.to_timedelta(np.arange(-2.0, 80.0, 0.24), unit="s")
+    throttle = np.full(len(times), 100.0)
+    throttle[50:53] = 104
+    car = pd.DataFrame({"date": times, "speed": 250.0, "throttle": throttle, "brake": 0.0, "n_gear": 7})
+    pos = pd.DataFrame({"date": times, "x": 0.0, "y": 0.0})
+    with_rule = openf1.slice_lap({"car": car, "pos": pos}, start, start + pd.Timedelta(78, unit="s"))
+    monkeypatch.setattr(openf1, "DROP_NO_VALUE", False)
+    without_rule = openf1.slice_lap({"car": car, "pos": pos}, start, start + pd.Timedelta(78, unit="s"))
+    assert len(without_rule["car_time_s"]) == len(with_rule["car_time_s"]) + 3
+    assert (without_rule["throttle_pct"] == 104).sum() == 3

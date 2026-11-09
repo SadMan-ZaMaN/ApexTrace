@@ -10,9 +10,9 @@ next to them, so they can be checked.
 | Question | Answer |
 |---|---|
 | Where does the telemetry come from? | Formula 1's live timing feed, read through two free, **unofficial** tools: **FastF1** (pilot) and **OpenF1** (everything after). Neither is associated with Formula 1. |
-| Which sessions? | Main **qualifying** sessions of 2023, 2024 and 2025 (plus 2024 Abu Dhabi FP2 in the pilot). No races, no sprint qualifying. |
-| What is measured? | Per car, about 3.7 times a second: speed (km/h), throttle (%), brake (on/off), gear, rpm, and X/Y/Z position. |
-| Where is it on this computer? | `cache/` (raw downloads) and `results/09_dataset/`, `results/final/` (built files). |
+| Which sessions? | Main **qualifying** sessions of 2023, 2024 and 2025, and of 2026 up to a fixed cutoff (plus 2024 Abu Dhabi FP2 in the pilot). No races, no sprint qualifying. |
+| What is measured? | Per car, about 3.77 times a second: speed (km/h), throttle (%), brake (on/off), gear, rpm, and X/Y/Z position. |
+| Where is it on this computer? | `cache/` (raw downloads) and `results/09_dataset/`, `results/final/`, `results/final_2026/` (built files). |
 | Is the raw data on GitHub? | No. Raw downloads and raw-sample files are gitignored; only small derived results (CSV/JSON, figures) are committed. |
 | Can it be rebuilt? | Yes, with the scripts below (section 4), as long as OpenF1 stays online. |
 

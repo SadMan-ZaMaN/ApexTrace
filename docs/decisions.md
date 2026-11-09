@@ -2,14 +2,15 @@
 
 One entry per decision: the date, what we chose, and why. Add new entries at
 the bottom. Decisions made before this repo existed (the project direction,
-the pilot, the corrections to the first plan) are in PROJECT_CONTEXT §4.
+the pilot, the corrections to the first plan) are in the author's planning notes, which
+are not part of the repository.
 
 ---
 
 ## 2026-10-14 — Working solo
 Sadman works on ApexTrace alone. Consequence: no `CONTRACTS.md` and no module
 split between people. If a faculty member or collaborator joins later, agree
-on authorship early (PROJECT_CONTEXT §12.8).
+on authorship early.
 
 ## 2026-10-14 — Names: repo ApexTrace, package `apextrace`
 The Python package is `apextrace` (the original plan said `f1sig`).
@@ -41,11 +42,11 @@ reinstalling. The `src/` folder means tests always use the installed
 package, never a stray copy. `pyproject.toml` lists the libraries we need;
 `requirements.txt` records the exact versions we used.
 
-## 2026-10-14 — CLAUDE.md split
-`CLAUDE.md` (loaded in every Claude session) was cut from ~950 to under 250
-lines. The long reference parts moved word for word to
-`docs/PROJECT_CONTEXT.md`, which **keeps the original section numbers**, so
-"§9.7" still means the same thing everywhere. The chat reply that had been
+## 2026-10-14 — Working notes split
+The AI assistant's working file (loaded in every session) was cut from ~950 to
+under 250 lines. The long reference parts moved word for word to a planning file,
+which **keeps the original section numbers**, so "§9.7" still means the same thing
+everywhere. (Both are local working notes, not in the repository since 2026-10-25.) The chat reply that had been
 pasted by accident at the end of the file was deleted.
 
 ## 2026-10-15 — Lap selection rules (`select_laps`)
@@ -618,7 +619,7 @@ either script was run.
   the difference is to itself over half a season.
 - Tests first (synthetic, known truth): with a personal offset the cosine is high even when
   the car is redrawn and large; with no personal offset it averages 0.
-- Not done: the roadmap's first idea (subtract the team median, then re-run the H4
+- Not done: the first plan (subtract the team median, then re-run the H4
   comparison). With two drivers, the teammate-relative values are +d and −d, so "own past
   against teammate" compares a vector with its own mirror image, a comparison whose answer
   depends on the size of d and not only on whether it persisted. The cosine asks the

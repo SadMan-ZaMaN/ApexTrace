@@ -41,7 +41,7 @@ brake channel is on/off).
 
 **Contributions.** (i) An error budget for corner features from {{ data.rate_hz }} Hz public telemetry, built from synthetic
 laps with known truth. (ii) A reproducible pipeline from raw feed to field-relative corner features for every
-qualifying session of 2023–2025. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
+qualifying session of 2023–2025, and of 2026 up to a fixed cutoff. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
 season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
 of team, with an exploratory control, and a second held-out test of whether it survives a change of technical rules.
 (v) A web application that shows every result with its uncertainty.
@@ -93,11 +93,12 @@ throttle samples: {{ a1.development }}) but affected {{ a1.either_share }} % of 
 
 {# The 2023 Imola weekend was cancelled (flooding); OpenF1 lists its qualifying session with no data (results/08_download/download_log.csv). -#}
 **Sessions.** Main qualifying sessions of 2023–2024 for development ({{ data.sessions_dev }} sessions listed, {{ data.sessions_dev_with_data }} with data
-because the 2023 Imola weekend was cancelled; {{ data.laps_dev_kept }} kept laps, {{ data.laps_dev }} of them in the dataset, {{ data.drivers_dev }} drivers) and of 2025 for the final test
+because the 2023 Imola weekend was cancelled; {{ data.laps_dev_kept }} kept laps, {{ data.laps_dev }} of them with at least one usable corner pass, {{ data.drivers_dev }} drivers) and of 2025 for the final test
 ({{ data.sessions_2025 }} sessions; OpenF1 has no lap data for one, so {{ data.sessions_2025_built }} were built). The 2026 season, the second final test, was
 still running: the test used the {{ h5.data.listed }} qualifying sessions that ended before a cutoff fixed in advance ({{ h5.data.cutoff }}),
 the last being {{ h5.data.last }}. OpenF1 has no lap data for two of them ({{ h5.data.empty }}), so {{ h5.data.built }} were built, with
-{{ h5.data.laps_kept }} kept laps: {{ h5.data.laps_with_data }} with usable car data and {{ h5.data.lap_vectors }} with at least one clean corner. Laps were kept by FastF1-style
+{{ h5.data.laps_kept }} kept laps; {{ h5.data.laps_with_data }} still had car data once the marker samples were removed (Section 6.6), {{ h5.data.laps_usable }} had
+at least one usable corner pass and {{ h5.data.lap_vectors }} at least one clean one. Laps were kept by FastF1-style
 rules (timed, accurate, not an out or in lap, green flag, not deleted, within 107 % of the best lap of the same stint).
 Braking zones were detected automatically on each session's fastest kept lap and typed slow (< 120 km/h minimum),
 medium or fast (≥ 200 km/h).
@@ -106,7 +107,7 @@ medium or fast (≥ 200 km/h).
 compounds only, corner passes with an implausible minimum speed dropped, and impossible feature values (for example,
 braking after the corner marker) set to missing. This leaves {{ data.clean_dev }} clean (driver, lap, corner) rows in
 {{ data.sessions_dev_clean }} dry development sessions, {{ data.clean_2025 }} rows in {{ data.sessions_2025_clean }} dry 2025 sessions and {{ h5.data.clean }} rows in
-{{ h5.data.sessions_clean }} 2026 sessions.
+the {{ h5.data.sessions_clean }} sessions of 2026.
 
 **The frozen seasons.** From the first day, the code refused to load 2025 unless an environment flag was set, and the
 final script refused to run unless the preregistration was committed, unchanged, and had not been run before. 2026 was
@@ -408,7 +409,14 @@ in `experiments/` (the logged 2023–2024 download, `08`, took {{ data.download_
 because OpenF1 limits the request rate). Tests (`pytest`) use synthetic data only and run on
 GitHub Actions. The two one-time tests (`14_final_2025.py`, `23_final_2026.py`) refuse to run again; their results are
 frozen in `results/final/` and `results/final_2026/`, and `27_final_2026_figures.py` re-checks the 2026 numbers from the
-saved per-driver tables. Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
+saved per-driver tables. `30_audit.py` checks the whole project: it re-runs every development experiment with the
+network blocked (no output may change), recomputes the three preregistered tests in memory from the saved data,
+checks lap counts across files and the 2026 timeline, and runs the tests.{% if audit %} Its last full run
+({{ audit.date }}) re-ran {{ audit.experiments }} experiments ({{ audit.not_rerun }} can't be re-run safely and were recomputed or checked
+instead) and found all {{ audit.files }} output files unchanged, apart from what measures the computer rather than the data (a
+build stopwatch and the pilot's cache sizes) and one session note; the recomputed 2025 test matched the frozen one to within
+{{ audit.largest_2025 }} (the saved data have three decimals), and the tests passed ({{ audit.tests }}).{% endif %}
+Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
 research log and a decision log record what was done and why, with dates, and `docs/sources.md` lists what was
 downloaded from where and when.
 

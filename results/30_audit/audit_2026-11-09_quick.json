@@ -1,0 +1,159 @@
+{
+ "date": "2026-11-09",
+ "quick": true,
+ "commit": "ae6b7cf",
+ "uncommitted_files": [
+  " M README.md",
+  " M docs/data_report.md",
+  " M docs/decisions.md",
+  " M docs/research_log.md",
+  " M docs/sources.md",
+  " M experiments/01_data_pilot.py",
+  " M experiments/06_pilot_stats.py",
+  " M results/report_numbers.json",
+  " M src/apextrace/features.py",
+  " M src/apextrace/synthetic.py",
+  " M tests/test_alignment.py",
+  " M tests/test_stats.py",
+  "?? experiments/30_audit.py",
+  "?? tests/test_handwritten_numbers.py",
+  "?? tests/test_pilot_stats_guard.py",
+  "?? tests/test_public_files.py"
+ ],
+ "D pilot tests (Part A) recomputed": {
+  "ok": true,
+  "differences": [],
+  "largest": 0.0,
+  "discoveries": 0,
+  "seconds": 21.0
+ },
+ "E 2025 test (Part B) recomputed": {
+  "ok": true,
+  "differences": [],
+  "largest_summary_difference": 0.0016199158328740193,
+  "h4_changers": {
+   "rows_match": true,
+   "largest": {
+    "distance_own_2024": 5.033106847240898e-05,
+    "distance_new_teammate_2025": 4.7887320615003226e-05
+   },
+   "answers_differ": []
+  },
+  "h3_per_team": {
+   "rows_match": true,
+   "largest": {
+    "our features | balanced_accuracy": 4.8331415419933244e-05,
+    "lap time only | balanced_accuracy": 4.484553974315464e-05,
+    "raw lap statistics | balanced_accuracy": 4.838597709133641e-05
+   },
+   "answers_differ": []
+  },
+  "decisions": {
+   "h3_supported": true,
+   "h4_supported": false
+  },
+  "seconds": 26.3
+ },
+ "F 2026 test (Part C) recomputed": {
+  "ok": true,
+  "differences": [],
+  "largest_summary_difference": 0.0,
+  "tables": {
+   "h5_all.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.0003439550780490741,
+     "distance_teammate": 0.0003069909176205421
+    },
+    "answers_differ": []
+   },
+   "h5_control_points.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 5.731223156391074e-05,
+     "distance_teammate": 5.2160658603028764e-05
+    },
+    "answers_differ": []
+   },
+   "h5_energy-sensitive.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.0005363608112944895,
+     "distance_teammate": 0.0005460725260517663
+    },
+    "answers_differ": []
+   },
+   "h5_no_throttle.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.00032629196316724673,
+     "distance_teammate": 0.00035587503578238255
+    },
+    "answers_differ": []
+   },
+   "h4_changers.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own_reference": 2.8020171118026127e-05,
+     "distance_new_teammate": 3.992481202552689e-05
+    },
+    "answers_differ": []
+   },
+   "h4_stayers.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own_reference": 0.0002887726656459755,
+     "distance_new_teammate": 0.00012736292847748132
+    },
+    "answers_differ": []
+   }
+  },
+  "verdict": "not supported",
+  "seconds": 3.2
+ },
+ "G counts across files": {
+  "ok": false,
+  "problems": [
+   "09_dataset/summary.json disagrees with dataset.csv.gz",
+   "2023-2024: kept >= with data >= in the dataset does not hold: [4500, 4499, 4500]",
+   "2026: kept >= with data >= in the dataset does not hold: [1795, 1764, 1795]"
+  ],
+  "laps": {
+   "2023-2024": {
+    "kept": 4500,
+    "with_data": 4499,
+    "in_dataset": 4500,
+    "rows": 30441
+   },
+   "2025": {
+    "kept": 2092,
+    "in_dataset": 2092,
+    "with_a_clean_corner": 1984,
+    "rows": 14093
+   },
+   "2026": {
+    "kept": 1795,
+    "in_dataset": 1795,
+    "with_a_clean_corner": 1751,
+    "rows": 12254,
+    "with_data": 1764
+   }
+  },
+  "seconds": 0.2
+ },
+ "H 2026 timeline": {
+  "ok": true,
+  "problems": [],
+  "committed_2026_files_checked": 32,
+  "lap_tables_2026_in_cache": 1,
+  "oldest_2026_lap_table_utc": "2026-11-07T09:06:30.790696+00:00",
+  "first_allowed_utc": "2026-11-07T08:41:31.754253+00:00",
+  "seconds": 2.0
+ },
+ "I test suite": {
+  "ok": true,
+  "summary": "196 passed in 60.17s (0:01:00)",
+  "seconds": 61.1
+ },
+ "all_ok": false
+}

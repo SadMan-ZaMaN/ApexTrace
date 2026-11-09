@@ -260,7 +260,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "29"
+  "last_experiment": "30"
  },
  "c": {
   "written": "2026-11-06",
@@ -655,6 +655,7 @@
    "laps_kept": "1,795",
    "lap_vectors": "1,751",
    "laps_with_data": "1,764",
+   "laps_usable": "1,752",
    "laps_lost_to_markers": 30,
    "laps_lost_where": "Shanghai 21, Suzuka 7, Mexico City 1, Monza 1",
    "usable": "7,496",
@@ -719,5 +720,13 @@
    "min_weekends": 5,
    "first_season_2025": "ANT, BEA, BOR"
   }
+ },
+ "audit": {
+  "date": "2026-11-09",
+  "experiments": 25,
+  "not_rerun": 5,
+  "files": "183",
+  "largest_2025": "0.0016",
+  "tests": "197 passed"
  }
 }

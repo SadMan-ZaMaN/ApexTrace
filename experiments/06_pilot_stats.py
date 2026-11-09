@@ -146,7 +146,23 @@ def forest_plot(h2):
     plt.close(fig)
 
 
+def already_run():
+    """True once the pilot tests have produced their summary.
+
+    Why (added 2026-11-09, Audit I): the summary records the LATEST commit of
+    docs/preregistration.md at run time. Parts B and C were committed to the same file later,
+    so a re-run today would write a later commit over the Part A one (ab2510c) that the README
+    and the report quote. The statistics can be recomputed without writing anything
+    (h2_tests, h1_repeatability), which is what the audit does.
+    """
+    return (OUT_DIR / "summary.json").exists()
+
+
 def main():
+    if already_run():
+        print("STOP: the preregistered pilot tests have already been run (results/06_pilot_stats/summary.json).")
+        print("Re-running would overwrite the recorded Part A commit. Recompute in memory instead (experiments/30_audit.py).")
+        sys.exit(1)
     committed, commit_info = preregistration_is_committed()
     if not committed:
         print("STOP: docs/preregistration.md must be committed (and unchanged) before the tests are run.")

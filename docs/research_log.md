@@ -9,14 +9,15 @@ stop in the middle of a step, write "stopped at … / next: …".
 ## 2026-10-14 — Phase 0: setup
 
 **Did**
-- Split `CLAUDE.md` into a short working file (242 lines) plus
-  `docs/PROJECT_CONTEXT.md` (the full plan, original section numbers kept).
+- Split the AI assistant's working file into a short file (242 lines) plus a
+  planning file (the full plan, original section numbers kept); both are local
+  notes, not in the repository since 2026-10-25.
   Deleted the chat reply that had been pasted at the end of the file by accident.
-- Recorded the answers to the open questions (PROJECT_CONTEXT §19): solo; time;
+- Recorded the answers to the open questions in the plan: solo; time;
   repo ApexTrace with package `apextrace`; 2025 frozen as the final test set;
   no faculty member yet.
 - Created `docs/decisions.md`, this log, and `docs/related_work.md` (seeded
-  from §12.2).
+  from the plan's reading list).
 - Environment: `.venv` with Python 3.13.2, `requirements.txt` (pinned with
   `pip freeze`), `pyproject.toml`, `.gitignore`, folder structure, and
   `tests/test_smoke.py`.
@@ -37,7 +38,7 @@ pandas 2.3.3 · Matplotlib 3.11.2 · pytest 9.1.1.
   `add_distance`) against 3.8.3.
 - Phase 1: `src/apextrace/data_loading.py` (`load_session`, `select_laps`, which
   returns the kept laps plus a table of dropped laps with reasons), then the
-  NOR/PIA lap table for Q and FP2 (§7 checklist items 6 and 8).
+  NOR/PIA lap table for Q and FP2 (data-pilot checklist items 6 and 8).
 
 ---
 
@@ -176,7 +177,7 @@ at Turn 6, PIA's Q laps 2 and 7 both have gaps nearby. Then write
 ## 2026-10-16 (later) — Phase 1 finished (M1), Phase 2: measurement science
 
 Context: Sadman has exams; Claude builds autonomously, and everything is
-documented in `learn/` for later study.
+written up in local study notes for later.
 
 **Phase 1 finished:** check 10 chose T6 (heavy braking), T5 (medium) and T9
 (fast) by a fixed rule (decisions.md); gap rule decided; `docs/data_report.md`
@@ -599,9 +600,9 @@ per-lap measurement error for all 21 measured (feature, corner type) cases
 - **README screenshots** of the four app pages (`docs/images/`).
 - **Related work:** Enev et al. 2016 (PoPETs) and Bell et al. 2016 (JQAS) were
   verified by web search, and only verified works are cited.
-- **Handover:** `learn/14_presenting_and_next_steps.md` covers the video shot list,
-  pitch, faculty email, CV lines, the update loop and what is most likely to break;
-  the private roadmap has a task list for working alone.
+- **Handover:** the local study notes cover the video shot list, pitch, faculty
+  email, CV lines, the update loop and what is most likely to break, with a task list
+  for working alone.
 
 **Wording checks made while writing:** balanced accuracy is not described as "the
 share of laps"; "own signature closest" was changed to "closer than the
@@ -643,7 +644,7 @@ of a braking event.
 - **Wording corrected:** the slow difference between position and integrated distance
   is not a steady drift. On the hero lap it wanders from −3.7 to +14.1 m (range 17.8 m)
   and changes by 11.8 m from start to end (the "~12 m" quoted before). The
-  `fused_distance` docstring, learn/13 and the page now describe it this way.
+  `fused_distance` docstring, the study notes and the page now describe it this way.
 - **Links:** the overview's "How it works" points to the Method page, and the README
   table shows it. Checked at 1440 px and 390 px (estimator chart and cleaning funnel
   re-laid out for phones).
@@ -759,7 +760,7 @@ test. The cause stays open.
 official gap" (2026-10-19) was one lap pair. Across 15,326 pairs the median error at the
 line is 0.064 s from integrated distance and 0.061 s from projected position.
 Integrated distance's advantage is smoothness (jitter 0.007 s vs 0.041 s), not accuracy
-at the line. Corrected in engineering_notes.md and the learn/ notes; the report now
+at the line. Corrected in engineering_notes.md and the study notes; the report now
 states the measured numbers.
 
 ---
@@ -1144,7 +1145,9 @@ in advance (71 % on car-only synthetic data), and it is why the sign test is con
 - Day 16 will check which drivers lost those laps.
 
 The same distinction already applied to 2023–2024, so the wording was fixed there too:
-- 4,500 laps were kept, 4,499 had data, and 4,497 reached the dataset.
+- 4,500 laps were kept, 4,499 had car data, and 4,497 had at least one usable corner pass.
+  (Corrected on Day 17 by Audit I: this line first said "4,497 reached the dataset", but
+  every kept lap has dataset rows.)
 - The report used to call 4,497 "kept laps"; it now gives both numbers, generated.
 
 **My mistakes today:**
@@ -1209,7 +1212,7 @@ reads only the cache; the network call is replaced by one that raises.
   - 2025→2026 (new rules): 6 of 8, median 0.32, with ALB/SAI and ANT/RUS reversed.
 - Reading: closer to "weakened" than to "lost", but it is a hint. There are 8 pairs, no
   preregistration, and ANT, BEA and BOR were in their first full season in 2025.
-- Changed from the roadmap's first idea (subtract the team median, re-run H4): with two
+- Changed from the first plan (subtract the team median, re-run H4): with two
   drivers that compares a vector with its own mirror image. The reasons are in the decision
   entry.
 
@@ -1238,3 +1241,89 @@ numbers are generated (`collect_exploratory_2026`).
 - I looked at the figure and fixed three things: a label collision, a missing legend, and a
   missing median mark.
 - I read the rendered Section 6.7 in full.
+
+---
+
+## 2026-11-09 — Day 17: final read of the report and README, and Audit I
+
+**Built: `experiments/30_audit.py`.** It is run again on Days 22 and 28. It has nine sections:
+- **A–C:** fingerprint every output, re-run 25 development experiments with the network
+  blocked, and require that no output changed. Text line endings and gzip time stamps don't
+  count as changes.
+- **D, E, F:** recompute the three preregistered tests in memory from the saved data.
+- **G:** lap counts across files, with one definition per count.
+- **H:** the 2026 timeline. Every committed 2026 file was added after Part C, and every cached
+  2026 lap table was written after the run started.
+- **I:** the test suite.
+
+Five scripts are not re-run, each for a stated reason: 06, 08, 14, 23 and 25. `--quick`
+skips the re-runs. The records are in `results/30_audit/`, including the two runs that
+failed.
+
+**Audit I took three full runs.**
+- **Run 1: 40 result files changed.** Experiments 16 and 17 failed and 8 tests failed.
+  - Cause: Addendum 1 put the 104-marker removal into the shared lap-slicing code on
+    2026-11-07, after the development dataset was built (2026-10-17). The rebuild gave
+    24,465 usable rows instead of 24,496.
+  - Proof: with the rule switched off, the rebuild has exactly the committed content
+    (SHA-256 `99714c09…` of the decompressed file).
+  - Fix: a switch, `openf1.DROP_NO_VALUE`, which `09_build_dataset.py` turns off.
+  - Clean-up: the overwritten files were restored from git. The local raw-sample file was
+    rebuilt with the rule off, and everything computed from it came out unchanged in run 3.
+- **Run 2: one file changed,** the app's session list. It copies the 2023 Imola note from
+  09's `sessions.csv`, and that note can't be reproduced: the committed build predates the
+  empty-session fix, and an offline rebuild can't ask OpenF1. The field is now declared
+  volatile. The audit also now puts back the original bytes of files whose content didn't
+  change.
+- **Run 3: all checks pass.**
+  - all 183 output files unchanged, apart from the documented volatile parts: a build
+    stopwatch, the pilot's cache sizes, and that one note;
+  - Part A recomputed exactly;
+  - Part B: the same decisions, numbers within 0.0016 (the saved data have 3 decimals);
+  - Part C: no difference at all;
+  - lap counts consistent;
+  - all 19 cached 2026 lap tables written after 2026-11-07 08:41 UTC;
+  - 197 tests pass.
+
+**Other findings, all fixed:**
+- **Experiment 06** recorded "the latest commit" of the preregistration file at run time.
+  A re-run would have replaced Part A's commit (`ab2510c`) with a later one. It now refuses
+  to run again, and the audit recomputes its tables in memory.
+- **23 lines in public files cited local-only files.** They were in code comments, early
+  log entries, and two lines of mine from Day 16. All were reworded, and
+  `tests/test_public_files.py` now fails on any new one. It also checks that every
+  repository path in a public document exists.
+- **`docs/sources.md` had three stale details:** the session list without 2026, the folder
+  list without `results/final_2026/`, and "3.7" for 3.77. `tests/test_handwritten_numbers.py`
+  now checks the numbers in `sources.md` and in both frozen READMEs.
+- **Report:** my Day 16 wording "4,497 of them in the dataset" was wrong. That number counts
+  laps with a usable corner pass; every kept lap has dataset rows.
+- **Final read of the report and README:**
+  - contribution (ii) and the README introduction now include 2026;
+  - "survives a change of car" became "change of team" (what was tested);
+  - the 2026 lap counts now use the same definitions as 2023–24 (1,795 kept, 1,764 with
+    car data, 1,752 with a usable corner pass, 1,751 with a clean one);
+  - "19 2026 sessions" was reworded;
+  - the reproducibility paragraph and the README now describe the audit, with numbers
+    generated from its record.
+
+**My mistakes today:**
+- My first count check assumed the dataset has fewer laps than have car data. It is the
+  other way round, so I rewrote the check with one definition per count.
+- The 2026 timeline check first found 1 lap table instead of 19, because it looked only at
+  each table's first row.
+- The first full run rewrote committed results in the working tree, and the local raw-sample
+  file. Everything was restored, and the audit now restores what didn't really change and
+  keeps fingerprints of what did.
+- One of my own new engineering notes quoted a bare section number; the new test caught it.
+
+**Verified:**
+- 197 tests pass. Each new test was checked to fail:
+  - the public-files test on the 23 lines and the 3 bare section numbers before the fixes;
+  - the hand-written-numbers test on three deliberately broken numbers (bytes restored);
+  - the 06 guard, with the summary left untouched;
+  - the rule switch.
+- Audit I passes (`results/30_audit/audit_2026-11-09.json`), and runs 1 and 2 are kept as
+  records.
+- `docs/preregistration.md` is byte-identical after every regeneration (`bc8c2182…`).
+- The audit files contain no personal paths.

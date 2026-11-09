@@ -1,6 +1,6 @@
 """Phase 1 data pilot: what does the real data look like, before we build on it?
 
-Each check from the PROJECT_CONTEXT §7 checklist becomes numbers, a table or
+Each check from the data-pilot checklist becomes numbers, a table or
 a figure here, and one sentence in docs/data_report.md. Every number goes
 into results/01_data_pilot/summary.json, so the report quotes the script,
 never a hand-typed value.

@@ -84,7 +84,7 @@ def test_parabolic_peak_docstring_example():
 
 
 def test_cross_correlation_recovers_a_7_3_m_shift():
-    """The roadmap's synthetic shift test: a realistic corner moved 7.3 m later.
+    """The planned synthetic shift test: a realistic corner moved 7.3 m later.
 
     The grid is 1 m, so 7.3 m is between grid points: the parabolic peak
     refinement must get it to within 0.1 m.

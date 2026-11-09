@@ -46,7 +46,7 @@ BRAKE_AERO = 0.003876     # extra braking grip from downforce, times v^2
 MASS_2026_KG = 770.0      # FIA 2024: 768 kg minimum with driver and tyres
 ICE_2026_KW = 400.0       # FIA 2024: the engine alone, about 400 kW
 
-# Thresholds from the feature definitions (PROJECT_CONTEXT §10)
+# Thresholds from the feature definitions (features.py)
 THROTTLE_PICKUP_PCT = 10.0
 FULL_THROTTLE_PCT = 99.0
 

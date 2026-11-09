@@ -68,6 +68,12 @@ After changing an analysis: re-run its experiment script, then
 `experiments/16_app_data.py` (app data), then `experiments/17_write_docs.py`
 (README and report), then `pytest`, then a research-log entry.
 
+Every few weeks, and before anything is shown to someone: `experiments/30_audit.py`. It
+re-runs every development experiment with the network blocked (no output may change),
+recomputes the three preregistered tests in memory from the saved data, checks lap counts
+across files and the 2026 timeline, and runs the tests (which include the checks of the
+hand-written documents). `--quick` skips the re-runs. Results: `results/30_audit/`.
+
 ## Bug history
 
 - **2026-10-15 — Don't judge "slow laps" against the driver's session best.**
@@ -166,3 +172,31 @@ After changing an analysis: re-run its experiment script, then
   distances up to 0.00034 away from the frozen ones (which are saved to 4 decimals). A check that
   recomputes a frozen result from saved files must compare answers exactly and distances to about
   0.001, not to the 4th decimal. (Found while building experiment 28; relevant to the Day 17 audit.)
+- **2026-11-09 — The pilot tests (06) recorded "the latest commit" of the preregistration
+  file at run time.** Parts B and C were later committed to the same file, so re-running
+  `experiments/06_pilot_stats.py` would have written a later commit over the Part A one
+  (`ab2510c`) that the README and the report quote. Found while planning Audit I, before
+  anything was re-run. 06 now refuses to run once its summary exists, like the two one-time
+  scripts; the audit recomputes its tables in memory instead. Guarded by
+  `tests/test_pilot_stats_guard.py`.
+- **2026-11-09 — Two columns of `results/09_dataset/sessions.csv` can't be reproduced.**
+  `seconds` is a stopwatch, and the note for 2023 Imola (a cancelled weekend) was written by the
+  build of 2026-10-17, before the "session without laps" fix of 2026-10-18. The audit compares
+  that file without those two columns and lists any note that differs; the data files of the
+  build must match exactly.
+- **2026-11-09 — Public files must not point to local-only files.** Audit I found 23 lines
+  where a public file cited the local planning notes, the study notes or the private schedule
+  (code comments, early log entries, and two lines written on Day 16). All were reworded;
+  `tests/test_public_files.py` now fails on any new one, including a section number with no file
+  name, and checks that every repository path in a public document exists.
+- **2026-11-09 — A rule added for 2026 silently changed the rebuild of the development data.**
+  Addendum 1 (2026-11-07) put the 104-marker removal into `openf1.slice_lap`, the code every
+  build uses. The development dataset was built on 2026-10-17, without it. Audit I's first full
+  run rebuilt it and got 24,465 usable rows instead of 24,496 (31 corner passes moved to "feed
+  gap in window"), and 40 result files changed downstream. With the rule switched off, the
+  rebuild matched the committed dataset exactly (same decompressed content). Fix:
+  `openf1.DROP_NO_VALUE` (on by default) and `09_build_dataset.py` switches it off, so the
+  development data stay reproducible; the rule's effect on them is measured by experiment 26.
+  Lesson: a change to shared code must be checked against every dataset it rebuilds, not only
+  the one it was written for. Guarded by `test_the_development_rebuild_can_switch_the_marker_rule_off`
+  and by the audit's re-run check.

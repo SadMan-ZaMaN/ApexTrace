@@ -1,0 +1,561 @@
+{
+ "date": "2026-11-09",
+ "quick": false,
+ "commit": "ae6b7cf",
+ "uncommitted_files": [
+  " M README.md",
+  " M docs/data_report.md",
+  " M docs/decisions.md",
+  " M docs/report.md",
+  " M docs/research_log.md",
+  " M docs/sources.md",
+  " M docs/templates/report.md.j2",
+  " M experiments/01_data_pilot.py",
+  " M experiments/06_pilot_stats.py",
+  " M experiments/17_write_docs.py",
+  " M results/report_numbers.json",
+  " M src/apextrace/features.py",
+  " M src/apextrace/synthetic.py",
+  " M tests/test_alignment.py",
+  " M tests/test_stats.py",
+  "?? experiments/30_audit.py",
+  "?? results/30_audit/",
+  "?? tests/test_handwritten_numbers.py",
+  "?? tests/test_pilot_stats_guard.py",
+  "?? tests/test_public_files.py"
+ ],
+ "A+B+C re-run, no output may change": {
+  "ok": false,
+  "reruns": {
+   "ok": false,
+   "runs": [
+    {
+     "experiment": "00_hello_lap",
+     "exit_code": 0,
+     "seconds": 7.1,
+     "last_lines": [
+      "core           INFO \tProcessing timing data...",
+      "req            INFO \tUsing cached data for car_data",
+      "req            INFO \tUsing cached data for position_data",
+      "req            INFO \tUsing cached data for weather_data",
+      "req            INFO \tUsing cached data for race_control_messages",
+      "core           INFO \tFinished loading data for 20 drivers: ['4', '81', '55', '27', '1', '10', '63', '14', '77', '11', '22', '30', '18', '16', '20', '23', '24', '44', '43', '61']"
+     ]
+    },
+    {
+     "experiment": "01_data_pilot",
+     "exit_code": 0,
+     "seconds": 17.5,
+     "last_lines": [
+      "           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\sessions.py\", line 784, in send",
+      "    r = adapter.send(request, **kwargs)",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\adapters.py\", line 723, in send",
+      "    raise ProxyError(e, request=request)",
+      "requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.multiviewer.app', port=443): Max retries exceeded with url: /api/v1/circuits/70/2024 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+     ]
+    },
+    {
+     "experiment": "02_group_delay_demo",
+     "exit_code": 0,
+     "seconds": 15.0,
+     "last_lines": [
+      "           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\sessions.py\", line 784, in send",
+      "    r = adapter.send(request, **kwargs)",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\adapters.py\", line 723, in send",
+      "    raise ProxyError(e, request=request)",
+      "requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.jolpi.ca', port=443): Max retries exceeded with url: /ergast/f1/2024/24/results.json (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+     ]
+    },
+    {
+     "experiment": "03_synthetic_errors",
+     "exit_code": 0,
+     "seconds": 137.0,
+     "last_lines": [
+      "heavy_braking speed breakpoint inside off-on interval              2       1.894650                     1.919194  3.218373",
+      "heavy_braking speed breakpoint inside off-on interval              4       1.346421                     1.357075  3.218373",
+      "heavy_braking speed breakpoint inside off-on interval              8       0.981599                     0.959597  3.218373",
+      "heavy_braking speed breakpoint inside off-on interval             16       0.683696                     0.678538  3.218373",
+      "",
+      "Saved results to results\\03_synthetic_errors"
+     ]
+    },
+    {
+     "experiment": "04_alignment",
+     "exit_code": 0,
+     "seconds": 20.5,
+     "last_lines": [
+      "           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\sessions.py\", line 784, in send",
+      "    r = adapter.send(request, **kwargs)",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\adapters.py\", line 723, in send",
+      "    raise ProxyError(e, request=request)",
+      "requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.multiviewer.app', port=443): Max retries exceeded with url: /api/v1/circuits/70/2024 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+     ]
+    },
+    {
+     "experiment": "05_pilot_features",
+     "exit_code": 0,
+     "seconds": 20.1,
+     "last_lines": [
+      "           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\sessions.py\", line 784, in send",
+      "    r = adapter.send(request, **kwargs)",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\adapters.py\", line 723, in send",
+      "    raise ProxyError(e, request=request)",
+      "requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.multiviewer.app', port=443): Max retries exceeded with url: /api/v1/circuits/70/2024 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+     ]
+    },
+    {
+     "experiment": "07_openf1_validation",
+     "exit_code": 0,
+     "seconds": 18.3,
+     "last_lines": [
+      "           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\sessions.py\", line 784, in send",
+      "    r = adapter.send(request, **kwargs)",
+      "  File \"E:\\Formula1-Project\\.venv\\Lib\\site-packages\\requests\\adapters.py\", line 723, in send",
+      "    raise ProxyError(e, request=request)",
+      "requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.jolpi.ca', port=443): Max retries exceeded with url: /ergast/f1/2024/24/results.json (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+     ]
+    },
+    {
+     "experiment": "09_build_dataset",
+     "exit_code": 0,
+     "seconds": 278.5,
+     "last_lines": [
+      "2024 R24 Yas Island           kept  79 corners  6 usable  415/ 474    4.8 s  ",
+      "raw samples: 1443445 rows -> results\\09_dataset\\raw_samples.parquet (36.9 MB, local only)",
+      "",
+      "47 sessions (46 with data), 24465 usable rows of 30441, 25 drivers, 4497 laps, 314 corners",
+      "usable rows by corner type: {'slow': 12295, 'medium': 9555, 'fast': 2615}",
+      "exclusions: {'feed gap in window': 5969, 'no car/position data': 7}"
+     ]
+    },
+    {
+     "experiment": "10_eda",
+     "exit_code": 0,
+     "seconds": 3.8,
+     "last_lines": [
+      "",
+      "--- sanity checks before cleaning: 795 values outside physical limits ---",
+      "{'mean_decel_ms2': 385, 'apex_m': 150, 'brake_onset_m': 126, 'throttle_pickup_m': 126, 'min_speed_kmh': 8}",
+      "",
+      "raw samples: 1443445 rows, 46 sessions",
+      "Saved results to results\\10_eda"
+     ]
+    },
+    {
+     "experiment": "11_repeatability",
+     "exit_code": 0,
+     "seconds": 5.4,
+     "last_lines": [
+      "fast   throttle_pickup_m    n  1710  ICC lap 0.50 [0.26, 0.67]  weekend 0.04 [-0.02, 0.16]  lap SD 16.02 (meas. error 3.00)",
+      "fast   full_throttle_m      n  2362  ICC lap 0.58 [0.38, 0.66]  weekend 0.12 [0.04, 0.21]  lap SD 30.20 (meas. error 5.02)",
+      "fast   entry_speed_kmh      n  2452  ICC lap 0.19 [0.13, 0.37]  weekend 0.07 [0.02, 0.13]  lap SD 6.32 (meas. error 0.24)",
+      "fast   exit_speed_kmh       n  2452  ICC lap 0.19 [0.11, 0.33]  weekend 0.21 [0.08, 0.33]  lap SD 6.14 (meas. error 0.22)",
+      "fast   corner_time_s        n  2452  ICC lap 0.15 [0.08, 0.44]  weekend 0.33 [0.21, 0.43]  lap SD 0.16 (meas. error nan)",
+      "Saved results to results\\11_repeatability"
+     ]
+    },
+    {
+     "experiment": "12_identification",
+     "exit_code": 0,
+     "seconds": 60.4,
+     "last_lines": [
+      "",
+      "--- task (b): all drivers of a season ---",
+      "2023: 21 drivers, 1851 laps, chance 0.048 | lap time 0.079  raw 0.326  ours 0.237  +time 0.242",
+      "2024: 22 drivers, 1992 laps, chance 0.045 | lap time 0.087  raw 0.283  ours 0.240  +time 0.245",
+      "",
+      "Saved results to results\\12_identification"
+     ]
+    },
+    {
+     "experiment": "13_signature_stability",
+     "exit_code": 0,
+     "seconds": 43.4,
+     "last_lines": [
+      "   TSU              RB       DEV RIC         0.722              1.268        True",
+      "   VER Red Bull Racing           PER         0.497              0.926        True",
+      "   ZHO     Kick Sauber           BOT         0.855              0.635       False",
+      "",
+      "brake-flag share: correlation 2023 vs 2024 across drivers +0.95; own closer than teammate 16 of 20, sign test p = 0.0059",
+      "Saved results to results\\13_signature_stability"
+     ]
+    },
+    {
+     "experiment": "15_final_exploratory",
+     "exit_code": 0,
+     "seconds": 4.9,
+     "last_lines": [
+      "    \"changers_own_closer\": \"2 of 5\",",
+      "    \"stayers_own_closer\": \"8 of 10\",",
+      "    \"fisher_exact_two_sided_p\": 0.25074925074925075",
+      "  }",
+      "}",
+      "Saved to results\\15_final_exploratory"
+     ]
+    },
+    {
+     "experiment": "16_app_data",
+     "exit_code": 1,
+     "seconds": 6.9,
+     "last_lines": [
+      "    (\"signatures.json\", build_signatures(sessions)), (\"method.json\", build_method(sessions))]",
+      "                        ~~~~~~~~~~~~~~~~^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\experiments\\16_app_data.py\", line 436, in build_signatures",
+      "    assert np.isclose(expected[r[\"driver\"]][0], r[\"distance_own_2024\"], atol=1e-3)",
+      "           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError"
+     ]
+    },
+    {
+     "experiment": "18_position_offset",
+     "exit_code": 0,
+     "seconds": 33.5,
+     "last_lines": [
+      "    \"corr_session_sd_m_vs_start_speed\": 0.014346796662876039,",
+      "    \"corr_session_sd_seconds_vs_start_speed\": -0.564474162194703,",
+      "    \"median_within_driver_session_sd_s\": 0.056338738028897155,",
+      "    \"note\": \"exploratory interpretation: offset = -(speed at the line) x (lap-start timestamp error)\"",
+      "  }",
+      "}"
+     ]
+    },
+    {
+     "experiment": "19_h5_power",
+     "exit_code": 0,
+     "seconds": 1.7,
+     "last_lines": [
+      "        5     5.0             0.031250",
+      "        6     6.0             0.015625",
+      "        7     7.0             0.007812",
+      "        8     7.0             0.003906",
+      "",
+      "wrote results\\19_h5_power"
+     ]
+    },
+    {
+     "experiment": "20_h5_development",
+     "exit_code": 0,
+     "seconds": 8.6,
+     "last_lines": [
+      "   SAI         Ferrari        Williams      LEC               21         1.398              1.987        True",
+      "   STR    Aston Martin    Aston Martin      ALO               22         0.735              1.038        True",
+      "   TSU              RB Red Bull Racing      RIC               17         0.848              1.381        True",
+      "   VER Red Bull Racing Red Bull Racing      PER               21         0.489              1.038        True",
+      "",
+      "wrote results\\20_h5_development"
+     ]
+    },
+    {
+     "experiment": "21_coasting_check",
+     "exit_code": 0,
+     "seconds": 155.1,
+     "last_lines": [
+      "2026-like + lift and coast          fast           4.67          -1.82           7.20                         7.29",
+      " 2026-like + superclipping heavy_braking           4.49           3.14           7.71                         1.31",
+      " 2026-like + superclipping        medium           4.12           2.58           7.02                         0.44",
+      " 2026-like + superclipping          fast           4.60           3.23           7.28                         1.30",
+      "",
+      "worst: 2026-like + lift and coast / medium: 4.89 m (threshold 8.4 m) -> add variant without braking features: False"
+     ]
+    },
+    {
+     "experiment": "22_h5_null_check",
+     "exit_code": 0,
+     "seconds": 261.1,
+     "last_lines": [
+      "D H5 rules, full-season teammates: 0.497 over 3000 drivers, z = -0.33",
+      "E all laps, teammate with fewer laps: 0.734 over 1500 drivers, z = +18.13",
+      "F H5 rules, teammate with fewer laps: 0.497 over 1500 drivers, z = -0.26",
+      "A over seeds 93-98 (150 drivers each): 0.713-0.800",
+      "G: sign test 'significant' in 0.007 of 300 car-only studies (20 drivers each); count variance 3.06 vs binomial 5.00; pairs split one-and-one 0.71",
+      "wrote results\\22_h5_null_check"
+     ]
+    },
+    {
+     "experiment": "24_dry_run_checks",
+     "exit_code": 0,
+     "seconds": 4.7,
+     "last_lines": [
+      " \"reference_files\": {",
+      "  \"results/final/dataset_2025.csv.gz\": \"3742f48a2b5b677ee5d46d16935ae25ca43bef46514ee65b998c3dd9188c4616\",",
+      "  \"results/final/raw_samples_2025.parquet\": \"81d0be5066ca8deb54770d945b9de385240b266bb760d24940d595959cd5167d\",",
+      "  \"results/final/corners_2025.csv\": \"c41723bc0fb0d3ddccbdc77dc8900a5d2ca18ebff099ef41fe3fc29e2e55ac53\"",
+      " }",
+      "}"
+     ]
+    },
+    {
+     "experiment": "26_addendum_1_dry_run_check",
+     "exit_code": 0,
+     "seconds": 2.0,
+     "last_lines": [
+      "  \"ci95_low\": 0.6210731734546862,",
+      "  \"ci95_high\": 0.9679290628145363,",
+      "  \"sign_test_p\": 0.0012884140014648438",
+      " },",
+      " \"h5_same_count\": false",
+      "}"
+     ]
+    },
+    {
+     "experiment": "27_final_2026_figures",
+     "exit_code": 0,
+     "seconds": 2.4,
+     "last_lines": [
+      "COL/GAS both own past",
+      "HAD/LAW both own past",
+      "HAM/LEC         split",
+      "NOR/PIA both own past",
+      "{\"pairs\": 9, \"split\": 6, \"both_own_past\": 3, \"both_teammate\": 0, \"drivers_without_their_teammate\": 1}",
+      "wrote results\\27_final_2026_figures"
+     ]
+    },
+    {
+     "experiment": "28_lost_laps_2026",
+     "exit_code": 0,
+     "seconds": 54.7,
+     "last_lines": [
+      "   \"own_closer\": 13,",
+      "   \"drivers\": 19",
+      "  },",
+      "  \"drivers_whose_answer_changed\": []",
+      " }",
+      "}"
+     ]
+    },
+    {
+     "experiment": "29_teammate_relative",
+     "exit_code": 0,
+     "seconds": 5.3,
+     "last_lines": [
+      "BOR/HUL  Kick Sauber         Audi                21              19    0.53                0.44",
+      "COL/GAS       Alpine       Alpine                16              18    0.67                0.29",
+      "HAM/LEC      Ferrari      Ferrari                22              19    0.45                0.68",
+      "NOR/PIA      McLaren      McLaren                22              19    0.62                0.46",
+      "",
+      "wrote results\\29_teammate_relative"
+     ]
+    },
+    {
+     "experiment": "17_write_docs",
+     "exit_code": 1,
+     "seconds": 2.6,
+     "last_lines": [
+      "    n[\"c\"] = collect_part_c_numbers(n[\"prereg\"])",
+      "             ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^",
+      "  File \"E:\\Formula1-Project\\experiments\\17_write_docs.py\", line 611, in collect_part_c_numbers",
+      "    assert checks[\"rebuild_2024\"][\"identical\"] and checks[\"frozen_h4_2025\"][\"all_match\"], \"a dry-run check failed\"",
+      "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError: a dry-run check failed"
+     ]
+    }
+   ],
+   "not_rerun": {
+    "06_pilot_stats": "records the latest preregistration commit at run time, so it refuses to re-run; recomputed in memory (D)",
+    "08_download_openf1": "downloads from OpenF1; its log is the record of the download",
+    "14_final_2025": "the one-time 2025 test; refuses to run; recomputed in memory (E)",
+    "23_final_2026": "the one-time 2026 test; refuses to run; recomputed in memory (F). Its dry runs are evidence quoted by Part C, re-checked by 24",
+    "25_feed_check_2026_diagnosis": "asks OpenF1 for the two 2026 sessions without laps, whose 'no rows' answers are never cached (a network request); its marker count must equal the run's removal count (asserted by 17_write_docs)",
+    "30_audit": "this script"
+   }
+  },
+  "outputs": {
+   "ok": false,
+   "files": 183,
+   "changed": [
+    "results/01_data_pilot/summary.json",
+    "results/09_dataset/dataset.csv.gz",
+    "results/09_dataset/raw_samples.parquet",
+    "results/09_dataset/sessions.csv",
+    "results/09_dataset/summary.json",
+    "results/10_eda/correlations.png",
+    "results/10_eda/distributions_field_relative.png",
+    "results/10_eda/eda_report.md",
+    "results/10_eda/outliers.csv",
+    "results/10_eda/summary.json",
+    "results/10_eda/summary_statistics.csv",
+    "results/11_repeatability/icc.csv",
+    "results/11_repeatability/icc.png",
+    "results/11_repeatability/summary.json",
+    "results/12_identification/ablation.png",
+    "results/12_identification/confusion_2024.png",
+    "results/12_identification/seasons.csv",
+    "results/12_identification/summary.json",
+    "results/12_identification/teammates.csv",
+    "results/12_identification/teammates.png",
+    "results/13_signature_stability/distances_corner_features.csv",
+    "results/13_signature_stability/own_vs_teammate_corner_features.csv",
+    "results/13_signature_stability/signature_distances.png",
+    "results/13_signature_stability/summary.json",
+    "results/15_final_exploratory/final_h4_distances.png",
+    "results/15_final_exploratory/h4_all_changers.csv",
+    "results/15_final_exploratory/h4_shape_control_non_changers.csv",
+    "results/18_position_offset/lap_offsets.csv.gz",
+    "results/18_position_offset/position_offset.png",
+    "results/18_position_offset/summary.json",
+    "results/20_h5_development/h5_development.png",
+    "results/20_h5_development/own_vs_teammate_2023_2024.csv",
+    "results/20_h5_development/own_vs_teammate_2024_2025.csv",
+    "results/20_h5_development/summary.json",
+    "results/24_dry_run_checks/summary.json",
+    "results/26_addendum_1_dry_run_check/summary.json",
+    "results/27_final_2026_figures/final_h5.png",
+    "results/29_teammate_relative/pairs.csv",
+    "results/29_teammate_relative/summary.json",
+    "results/29_teammate_relative/teammate_relative.png"
+   ],
+   "new": [],
+   "removed": [],
+   "volatile_note_differences": [
+    {
+     "session_key": 9082,
+     "note_before": "KeyError: 'driver_number'",
+     "note_now": "ProxyError: HTTPSConnectionPool(host='api.openf1.org', port=443): Max retries exceeded with url: /v1/laps?session_key=9082 (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+    }
+   ]
+  },
+  "seconds": 1171.7
+ },
+ "D pilot tests (Part A) recomputed": {
+  "ok": true,
+  "differences": [],
+  "largest": 0.0,
+  "discoveries": 0,
+  "seconds": 22.8
+ },
+ "E 2025 test (Part B) recomputed": {
+  "ok": false,
+  "differences": [],
+  "largest_summary_difference": 0.0016199158328740193,
+  "h4_changers": {
+   "rows_match": true,
+   "largest": {
+    "distance_own_2024": 0.0244886018492525,
+    "distance_new_teammate_2025": 0.0017352802495378405
+   },
+   "answers_differ": []
+  },
+  "h3_per_team": {
+   "rows_match": true,
+   "largest": {
+    "our features | balanced_accuracy": 4.8331415419933244e-05,
+    "lap time only | balanced_accuracy": 4.484553974315464e-05,
+    "raw lap statistics | balanced_accuracy": 4.838597709133641e-05
+   },
+   "answers_differ": []
+  },
+  "decisions": {
+   "h3_supported": true,
+   "h4_supported": false
+  },
+  "seconds": 23.8
+ },
+ "F 2026 test (Part C) recomputed": {
+  "ok": true,
+  "differences": [],
+  "largest_summary_difference": 0.0,
+  "tables": {
+   "h5_all.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.0003439550780490741,
+     "distance_teammate": 0.0003069909176205421
+    },
+    "answers_differ": []
+   },
+   "h5_control_points.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 5.731223156391074e-05,
+     "distance_teammate": 5.2160658603028764e-05
+    },
+    "answers_differ": []
+   },
+   "h5_energy-sensitive.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.0005363608112944895,
+     "distance_teammate": 0.0005460725260517663
+    },
+    "answers_differ": []
+   },
+   "h5_no_throttle.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own": 0.00032629196316724673,
+     "distance_teammate": 0.00035587503578238255
+    },
+    "answers_differ": []
+   },
+   "h4_changers.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own_reference": 2.8020171118026127e-05,
+     "distance_new_teammate": 3.992481202552689e-05
+    },
+    "answers_differ": []
+   },
+   "h4_stayers.csv": {
+    "rows_match": true,
+    "largest": {
+     "distance_own_reference": 0.0002887726656459755,
+     "distance_new_teammate": 0.00012736292847748132
+    },
+    "answers_differ": []
+   }
+  },
+  "verdict": "not supported",
+  "seconds": 3.4
+ },
+ "G counts across files": {
+  "ok": true,
+  "problems": [],
+  "laps": {
+   "2023-2024": {
+    "kept": 4500,
+    "with_dataset_rows": 4500,
+    "with_car_data": 4499,
+    "with_a_usable_corner": 4497,
+    "with_a_clean_corner": 3873,
+    "rows": 30441
+   },
+   "2025": {
+    "kept": 2092,
+    "with_dataset_rows": 2092,
+    "with_car_data": 2092,
+    "with_a_usable_corner": 2082,
+    "with_a_clean_corner": 1984,
+    "rows": 14093
+   },
+   "2026": {
+    "kept": 1795,
+    "with_dataset_rows": 1795,
+    "with_car_data": 1764,
+    "with_a_usable_corner": 1752,
+    "with_a_clean_corner": 1751,
+    "rows": 12254
+   }
+  },
+  "seconds": 0.2
+ },
+ "H 2026 timeline": {
+  "ok": true,
+  "problems": [],
+  "committed_2026_files_checked": 32,
+  "lap_tables_2026_in_cache": 19,
+  "oldest_2026_lap_table_utc": "2026-11-07T08:41:35.009365+00:00",
+  "first_allowed_utc": "2026-11-07T08:41:31.754253+00:00",
+  "seconds": 2.1
+ },
+ "I test suite": {
+  "ok": false,
+  "summary": "8 failed, 188 passed in 63.69s (0:01:03)",
+  "seconds": 64.5
+ },
+ "all_ok": false
+}

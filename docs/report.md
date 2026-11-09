@@ -42,7 +42,7 @@ brake channel is on/off).
 
 **Contributions.** (i) An error budget for corner features from 3.77 Hz public telemetry, built from synthetic
 laps with known truth. (ii) A reproducible pipeline from raw feed to field-relative corner features for every
-qualifying session of 2023–2025. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
+qualifying session of 2023–2025, and of 2026 up to a fixed cutoff. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
 season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
 of team, with an exploratory control, and a second held-out test of whether it survives a change of technical rules.
 (v) A web application that shows every result with its uncertainty.
@@ -92,11 +92,12 @@ throttle samples: 2023 0.015 %, 2024 0.006 %, 2025 0.007 %) but affected 1.13 % 
 Suzuka 8.3 %, Shanghai 8.0 %, Monza 1.1 %); such samples are dropped as missing (Section 6.6).
 
 **Sessions.** Main qualifying sessions of 2023–2024 for development (47 sessions listed, 46 with data
-because the 2023 Imola weekend was cancelled; 4,500 kept laps, 4,497 of them in the dataset, 25 drivers) and of 2025 for the final test
+because the 2023 Imola weekend was cancelled; 4,500 kept laps, 4,497 of them with at least one usable corner pass, 25 drivers) and of 2025 for the final test
 (24 sessions; OpenF1 has no lap data for one, so 23 were built). The 2026 season, the second final test, was
 still running: the test used the 21 qualifying sessions that ended before a cutoff fixed in advance (2026-11-06 00:00 UTC),
 the last being Mexico City. OpenF1 has no lap data for two of them (Sakhir and Jeddah), so 19 were built, with
-1,795 kept laps: 1,764 with usable car data and 1,751 with at least one clean corner. Laps were kept by FastF1-style
+1,795 kept laps; 1,764 still had car data once the marker samples were removed (Section 6.6), 1,752 had
+at least one usable corner pass and 1,751 at least one clean one. Laps were kept by FastF1-style
 rules (timed, accurate, not an out or in lap, green flag, not deleted, within 107 % of the best lap of the same stint).
 Braking zones were detected automatically on each session's fastest kept lap and typed slow (< 120 km/h minimum),
 medium or fast (≥ 200 km/h).
@@ -105,7 +106,7 @@ medium or fast (≥ 200 km/h).
 compounds only, corner passes with an implausible minimum speed dropped, and impossible feature values (for example,
 braking after the corner marker) set to missing. This leaves 21,493 clean (driver, lap, corner) rows in
 44 dry development sessions, 8,871 rows in 22 dry 2025 sessions and 7,491 rows in
-19 2026 sessions.
+the 19 sessions of 2026.
 
 **The frozen seasons.** From the first day, the code refused to load 2025 unless an environment flag was set, and the
 final script refused to run unless the preregistration was committed, unchanged, and had not been run before. 2026 was
@@ -410,7 +411,14 @@ in `experiments/` (the logged 2023–2024 download, `08`, took 68 minutes, about
 because OpenF1 limits the request rate). Tests (`pytest`) use synthetic data only and run on
 GitHub Actions. The two one-time tests (`14_final_2025.py`, `23_final_2026.py`) refuse to run again; their results are
 frozen in `results/final/` and `results/final_2026/`, and `27_final_2026_figures.py` re-checks the 2026 numbers from the
-saved per-driver tables. Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
+saved per-driver tables. `30_audit.py` checks the whole project: it re-runs every development experiment with the
+network blocked (no output may change), recomputes the three preregistered tests in memory from the saved data,
+checks lap counts across files and the 2026 timeline, and runs the tests. Its last full run
+(2026-11-09) re-ran 25 experiments (5 can't be re-run safely and were recomputed or checked
+instead) and found all 183 output files unchanged, apart from what measures the computer rather than the data (a
+build stopwatch and the pilot's cache sizes) and one session note; the recomputed 2025 test matched the frozen one to within
+0.0016 (the saved data have three decimals), and the tests passed (197 passed).
+Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
 research log and a decision log record what was done and why, with dates, and `docs/sources.md` lists what was
 downloaded from where and when.
 

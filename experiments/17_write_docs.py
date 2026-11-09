@@ -100,7 +100,8 @@ def collect_numbers():
         "clean_total": thousands(repeat["cleaning"]["clean_rows"] + final["cleaning_2025"]["clean_rows"]),
         "drivers_dev": dataset["drivers"], "corners_dev": dataset["corners"], "features": len(dataset["features"]),
         "laps_dev": thousands(dataset["laps"]), "raw_samples_millions": f(headline["raw_samples"] / 1e6, 2),
-        # kept by the lap-selection rules (the download log); laps_dev = those that reached the dataset
+        # kept by the lap-selection rules (the download log); laps_dev = those with at least one usable
+        # corner pass (car data present, no feed gap in the window): 09_build_dataset's "laps"
         "laps_dev_kept": thousands(download_log["kept_laps"].sum()),
         "drivers_total": headline["drivers"],
         # the logged 2023-2024 download: OpenF1's rate limit sets the pace
@@ -262,7 +263,31 @@ def collect_numbers():
     # attempt 1's diagnosis (experiment 25) and attempt 2's removal must count the same marker samples
     assert n["a1"]["either"] == n["h5"]["data"]["removed"], "markers diagnosed and markers removed differ"
     n["x26"] = collect_exploratory_2026(n["h5"])
+    n["audit"] = collect_audit()
     return n
+
+
+def collect_audit():
+    """The latest FULL audit (experiments/30_audit.py) whose checks all passed, or None.
+    Files: results/30_audit/audit_<date>.json (a quick run, or a kept failed run, has a suffix)."""
+    import re
+
+    passed = []
+    for path in sorted((RESULTS / "30_audit").glob("audit_*.json")):
+        if not re.fullmatch(r"audit_\d{4}-\d{2}-\d{2}\.json", path.name):
+            continue
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if report["all_ok"] and not report["quick"]:
+            passed.append(report)
+    if not passed:
+        return None
+    report = passed[-1]
+    rerun = report["A+B+C re-run, no output may change"]
+    return {"date": report["date"], "experiments": len(rerun["reruns"]["runs"]),
+            "not_rerun": len(rerun["reruns"]["not_rerun"]) - 1,          # minus the audit itself
+            "files": thousands(rerun["outputs"]["files"]),
+            "largest_2025": f(report["E 2025 test (Part B) recomputed"]["largest_summary_difference"], 4),
+            "tests": report["I test suite"]["summary"].split(" in ")[0]}
 
 
 def collect_exploratory_2026(h5):
@@ -366,7 +391,8 @@ def collect_h5_numbers(c):
     # which 2026 drivers were not compared, and why (the rule: at least MIN_WEEKENDS in both seasons)
     from apextrace import h5_protocol
 
-    rows_2026, _ = clean(pd.read_csv(RESULTS / "final_2026" / "dataset_2026.csv.gz"))
+    dataset_2026_all = pd.read_csv(RESULTS / "final_2026" / "dataset_2026.csv.gz")
+    rows_2026, _ = clean(dataset_2026_all)
     rows_2025, _ = clean(pd.read_csv(RESULTS / "final" / "dataset_2025.csv.gz"))
     weekends_2026 = rows_2026.groupby("driver")["session_key"].nunique()
     weekends_2025 = rows_2025.groupby("driver")["session_key"].nunique()
@@ -423,6 +449,8 @@ def collect_h5_numbers(c):
                   "last": final["sessions"][-1]["location"], "cutoff": final["cutoff_utc"].replace("T", " ")[:16] + " UTC",
                   "laps_kept": thousands(built["kept_laps"].sum()), "lap_vectors": thousands(final["laps"]),
                   "laps_with_data": thousands(log_2["kept_laps_with_data"].sum()),
+                  "laps_usable": thousands(dataset_2026_all[dataset_2026_all["usable"]]
+                                           .groupby(["session_key", "driver", "lap"]).ngroups),
                   "laps_lost_to_markers": int(lost.sum()), "laps_lost_where": ", ".join(lost_text),
                   "usable": thousands(final["cleaning"]["usable_rows"]), "clean": thousands(final["cleaning"]["clean_rows"]),
                   "sessions_clean": int(rows_2026["session_key"].nunique()),
