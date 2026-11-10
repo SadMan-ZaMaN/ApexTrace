@@ -1327,3 +1327,70 @@ failed.
   records.
 - `docs/preregistration.md` is byte-identical after every regeneration (`bc8c2182…`).
 - The audit files contain no personal paths.
+
+---
+
+## 2026-11-10 — Day 18: 2026 in the web app (Lap compare and Corner lab)
+
+**Done:**
+- **The export (`16_app_data.py`):**
+  - adds the 2026 sessions, raw samples and corners, from `results/final_2026/`;
+  - gives each 2026 session its "no value" samples removed, read from the run's `checks.json`;
+  - gives every lap its longest hole in the car data;
+  - puts the coasting-check numbers into `features.json`, computed as for Part C;
+  - adds the 2026 corner passes to the headline counts (37,855 in all).
+- **The app:** it reads the 2026 raw-sample and dataset files. The season pickers say
+  "held out" for 2025 and 2026.
+- **The 2026 notes:**
+  - Lap compare has a note on what's different in 2026: the new rules, OpenF1's own
+    description of throttle ("percentage of maximum engine power being used", an open
+    question), and the markers removed in that session;
+  - Corner lab has a note for braking measurements: the errors were simulated on the old cars,
+    and the coasting check moved the bias by 3.9–4.7 m, an offset shared by every car at a
+    corner.
+
+**Found and fixed: holes in the car data.**
+- The first look at 2026 Suzuka showed a gap curve ending at −1.63 s, against the official
+  +0.24 s.
+- Cause: ANT's lap 14 has a 10.3 s hole where the marker samples were removed, and integrated
+  distance lost 86 m across it.
+- Measured per season, holes over 2 s: 2023–2024 21 laps (16 over 5 s), 2025 9, 2026 120
+  of 1,764 (58 over 5 s, the longest 23 s).
+- Fix: such laps get their gap from the position-corrected coordinate (+0.37 s here). The
+  gap is masked within 200 m of a hole, and those mini-sectors are marked "no data".
+- Lines are not drawn across a hole, and the defaults use each driver's fastest lap without
+  one.
+- Normal laps are unchanged: the 2024 pilot pair still gives +0.198 s against +0.209 s.
+- The research results are not affected: corner features are measured per corner window, and
+  a window with a feed gap is excluded.
+
+**Also fixed:** the public-files test from Day 17 flagged its own text once it was committed,
+so CI on `48c167a` fails; it now skips itself.
+
+**Seen, not analysed:** at 2026 Suzuka C1, a few laps (PIA, RUS, NOR, HAM) brake about 130 m
+earlier than the field median (−212 m against −78 m). That could be lift-and-coast before the
+braking zone; it would need its own check.
+
+**My mistakes today:**
+- My first version showed the broken 2026 default (wrong gap), because I hadn't thought about
+  holes in the 2026 data. Looking at the page caught it.
+- The export first rounded hole lengths to one decimal while the app used two, so the lap
+  picker and the comparison could disagree near 2 s.
+- One new test was too loose: it passed with the hint text broken, because the missing file's
+  path contains the same word. It now checks the exact file name.
+- Yesterday's public-files test, committed in a state that fails in CI (above).
+
+**Verified:**
+- 204 tests pass. Each new test was checked to fail on its broken version:
+  - the 2026 raw-file path;
+  - the 2026 dataset file;
+  - the hint naming the missing file;
+  - the hole fallback switched off.
+- The app's 2026 numbers equal the report's (test): coasting 4.89 / 8.4 / 3.9–4.7 m, 6,539
+  markers, 19 sessions built.
+- Synthetic hole: the gap is wrong by more than 1.0 s on integrated distance and right to
+  0.909 s with the fallback; the true value is 1.0 s, and the 5 m position offset predicts
+  0.917 s.
+- I looked at four pages in Edge with no console errors: 2026 Suzuka default pair, the hole
+  pair, Corner lab 2026, and the 2024 pilot.
+- `docs/preregistration.md` is byte-identical; README and report are unchanged.

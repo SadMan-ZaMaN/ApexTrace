@@ -200,3 +200,19 @@ hand-written documents). `--quick` skips the re-runs. Results: `results/30_audit
   Lesson: a change to shared code must be checked against every dataset it rebuilds, not only
   the one it was written for. Guarded by `test_the_development_rebuild_can_switch_the_marker_rule_off`
   and by the audit's re-run check.
+- **2026-11-10 — Lap compare: across a hole in the car data, integrated distance loses track.**
+  Removing the 2026 "no value" samples left holes of up to 23 s in 120 of 1,764 laps (2023–2024:
+  21 laps over 2 s, 2025: 9). Integrating speed across a hole misses the slow part of a corner:
+  2026 Suzuka, ANT lap 14, a 10.3 s hole, 86 m lost, and the gap at the line read −1.63 s against
+  the official +0.24 s. Fix in `app.data.compare`: if a lap has a hole longer than `HOLE_S` (2 s),
+  the gap is computed on the position-corrected coordinate (+0.37 s here), and no gap is shown
+  within 200 m of a hole (`hole_spans`: half the fusion window, where that coordinate can't
+  re-anchor yet); those mini-sectors say "no data". Lines are not drawn across a hole, and the
+  default pair uses each driver's fastest lap without one. Laps without holes keep the
+  validated gap on integrated distance. Guarded by
+  `test_a_hole_breaks_the_gap_from_integrated_distance_and_the_fallback_repairs_it` (fails with
+  the fallback switched off) and `test_hole_spans_worked_example`.
+- **2026-11-10 — The public-files test flagged itself once it was committed.**
+  `tests/test_public_files.py` must name the local-only files to look for them. While
+  untracked it wasn't scanned; committed (`48c167a`), it failed on its own text, so CI on that
+  commit fails. It now skips itself, like `.gitignore`.

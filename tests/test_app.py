@@ -109,14 +109,30 @@ def test_mini_sectors_name_the_faster_driver_and_call_small_gains_even():
 
 # ---------------------------------------------------------------- the Flask app on a fake results folder
 
-def fake_results(root, rng, with_raw=True):
-    """A results/ folder with one session, two drivers, one lap each (synthetic)."""
+def with_hole(lap, start_s, end_s, lost_m):
+    """Lap samples with a hole, as the 2026 marker removal leaves: no samples between start_s and
+    end_s, and integrated distance `lost_m` short afterwards (across a hole, speed added up over
+    time misses the corner's slow part: 86 m at 2026 Suzuka)."""
+    keep = (lap["t"] <= start_s) | (lap["t"] >= end_s)
+    out = {key: (value[keep] if isinstance(value, np.ndarray) else value) for key, value in lap.items()}
+    out["d"] = np.where(out["t"] >= end_s, out["d"] - lost_m, out["d"])
+    return out
+
+
+def fake_results(root, rng, with_raw=True, year=2024, hole=None):
+    """A results/ folder with one session, two drivers, one lap each (synthetic). The raw samples
+    go where the app looks for that season (app.data.RAW_FILES), e.g. final_2026/ for 2026.
+    hole = (start_s, end_s, lost_m) puts a hole into lap A (with_hole)."""
+    from app.data import RAW_FILES
+
     app_dir = root / "app"
     app_dir.mkdir(parents=True)
     angles = np.linspace(0, 2 * np.pi, 200, endpoint=False)
     track = {"centre": [0.0, 0.0], "rotation_deg": 0.0, "length_m": TRACK_M,
              "s": list(angles / (2 * np.pi) * TRACK_M), "x": list(RADIUS * np.cos(angles)), "y": list(RADIUS * np.sin(angles))}
     a, b = two_laps(rng)
+    if hole is not None:
+        a = with_hole(a, *hole)
     drivers = []
     rows = []
     for code, team, colour, lap in [("AAA", "Team One", "#ff8000", a), ("BBB", "Team One", "#ff8000", b)]:
@@ -125,12 +141,12 @@ def fake_results(root, rng, with_raw=True):
                                   "samples": len(lap["t"])}]})
         for i in range(len(lap["t"])):
             angle = lap["true_s"][i] / RADIUS
-            rows.append({"year": 2024, "session_key": 1, "driver": code, "lap": 5, "time_s": lap["t"][i],
+            rows.append({"year": year, "session_key": 1, "driver": code, "lap": 5, "time_s": lap["t"][i],
                          "s_m": lap["s"][i], "d_m": lap["d"][i], "speed_kmh": round(lap["speed"][i] * 3.6),
                          "throttle_pct": 100.0, "brake": False, "gear": 7,
                          "x_m": RADIUS * np.cos(angle), "y_m": RADIUS * np.sin(angle)})
-    session = {"key": 1, "year": 2024, "round": 1, "location": "Testville", "country": "Nowhere", "circuit": "Ring",
-               "date": "2024-01-01", "note": "", "wet": False, "track": track, "drivers": drivers,
+    session = {"key": 1, "year": year, "round": 1, "location": "Testville", "country": "Nowhere", "circuit": "Ring",
+               "date": f"{year}-01-01", "note": "", "wet": False, "track": track, "drivers": drivers,
                "corners": [{"name": "C1", "s_m": 950.0, "type": "medium", "min_speed_kmh": 180, "entry_speed_kmh": 216}]}
     hero = {"session_key": 1, "year": 2024, "location": "Testville", "country": "Nowhere", "circuit": "Ring",
             "track": track, "corners": session["corners"], "cars": [
@@ -144,9 +160,10 @@ def fake_results(root, rng, with_raw=True):
                 "preregistration": {"part_a": "aaaaaaa", "part_b": "bbbbbbb"}}
     for name, content in [("sessions.json", [session]), ("hero.json", hero), ("headline.json", headline)]:
         (app_dir / name).write_text(json.dumps(content), encoding="utf-8")
+    raw_path = root / RAW_FILES[year]
+    raw_path.parent.mkdir(exist_ok=True)
     if with_raw:
-        (root / "09_dataset").mkdir()
-        pd.DataFrame(rows).to_parquet(root / "09_dataset" / "raw_samples.parquet", index=False)
+        pd.DataFrame(rows).to_parquet(raw_path, index=False)
     return a, b
 
 
@@ -167,7 +184,8 @@ def test_compare_returns_both_laps_and_a_correct_gap(client):
     response = client.get("/api/compare/1?a=AAA:5&b=BBB:5")
     assert response.status_code == 200
     body = response.get_json()
-    assert set(body) == {"a", "b", "delta", "mini_sectors"}
+    assert set(body) == {"a", "b", "delta", "mini_sectors", "gap"}
+    assert body["gap"]["coordinate"] == "integrated distance"     # no hole: the validated way
     s, gap = np.array(body["delta"]["s"]), np.array(body["delta"]["d"])
     assert np.mean(np.abs(gap[(s > 1200) & (s < 1900)] - 1.0)) < 0.02   # the 1.0 s B lost at 800-1,100 m
     faster = [m["faster"] for m in body["mini_sectors"]]
@@ -230,3 +248,98 @@ def test_missing_raw_samples_give_a_clear_503(tmp_path):
     response = client.get("/api/compare/1?a=AAA:5&b=BBB:5")
     assert response.status_code == 503
     assert "09_build_dataset" in response.get_json()["hint"]
+
+
+# ---------------------------------------------------------------- 2026 (Day 18)
+
+def test_a_2026_session_is_compared_from_the_2026_raw_samples(tmp_path):
+    """2026 laps are read from results/final_2026/raw_samples_2026.parquet, through the same
+    compare path as every other season (same gap, same mini-sectors)."""
+    fake_results(tmp_path, np.random.default_rng(8), year=2026)
+    assert (tmp_path / "final_2026" / "raw_samples_2026.parquet").exists()
+    client = create_app(tmp_path).test_client()
+    assert client.get("/api/sessions/1").get_json()["raw_available"] is True
+    body = client.get("/api/compare/1?a=AAA:5&b=BBB:5").get_json()
+    s, gap = np.array(body["delta"]["s"]), np.array(body["delta"]["d"])
+    assert np.mean(np.abs(gap[(s > 1200) & (s < 1900)] - 1.0)) < 0.02
+
+
+def test_missing_2026_raw_samples_are_explained(tmp_path):
+    fake_results(tmp_path, np.random.default_rng(9), with_raw=False, year=2026)
+    response = create_app(tmp_path).test_client().get("/api/compare/1?a=AAA:5&b=BBB:5")
+    assert response.status_code == 503
+    # the hint names the exact missing file, and says it comes from the one-time test
+    hint = response.get_json()["hint"]
+    assert "results/final_2026/raw_samples_2026.parquet is missing" in hint and "one-time test" in hint
+
+
+def test_2026_corner_rows_come_from_the_2026_dataset_with_the_same_cleaning(tmp_path):
+    fake_results(tmp_path, np.random.default_rng(10), year=2026)
+    rows = [fake_dataset_row(1), fake_dataset_row(2, compound="WET")]
+    pd.DataFrame(rows).to_csv(tmp_path / "final_2026" / "dataset_2026.csv.gz", index=False)
+    body = create_app(tmp_path).test_client().get("/api/corners/1").get_json()
+    assert [r["lap"] for r in body["rows"]] == [1]          # the wet lap is not analysed, as in the test
+
+
+def test_the_app_export_agrees_with_the_report_on_2026():
+    """The committed app files and the report's numbers come from the same results files by two
+    scripts (16_app_data and 17_write_docs); they must say the same thing."""
+    from pathlib import Path
+
+    results = Path(__file__).resolve().parent.parent / "results"
+    numbers = json.loads((results / "report_numbers.json").read_text(encoding="utf-8"))
+    features = json.loads((results / "app" / "features.json").read_text(encoding="utf-8"))
+    coasting = features["coasting_2026"]
+    assert f"{coasting['worst_brake_onset_error_m']:.2f}" == numbers["c"]["coasting"]["worst"]
+    assert f"{coasting['limit_m']:.1f}" == numbers["c"]["coasting"]["threshold"]
+    assert [f"{v:.1f}" for v in coasting["bias_shift_m"]] == [numbers["c"]["coasting"]["gap_low"],
+                                                               numbers["c"]["coasting"]["gap_high"]]
+    sessions = json.loads((results / "app" / "sessions.json").read_text(encoding="utf-8"))
+    removed = sum(s["no_value_removed"]["removed"] for s in sessions if s["year"] == 2026)
+    assert f"{removed:,}" == numbers["h5"]["data"]["removed"]
+    built = [s for s in sessions if s["year"] == 2026 and s["track"] is not None]
+    assert len(built) == numbers["h5"]["data"]["built"]
+
+
+# ---------------------------------------------------------------- holes in the car data (Day 18)
+
+def test_longest_hole_worked_example():
+    from app.data import longest_hole
+    assert longest_hole([0.0, 0.24, 0.48, 10.8, 11.0]) == pytest.approx(10.32)
+    assert longest_hole([5.0]) == 0.0
+
+
+def test_a_hole_breaks_the_gap_from_integrated_distance_and_the_fallback_repairs_it(tmp_path):
+    """Lap A loses its samples from 5 s to 15 s (300-900 m at 60 m/s), and its integrated distance
+    comes out 80 m short after the hole. The true gap from 1,100 m on is 1.0 s.
+    Integrated distance: wrong by about 80 m / 60 m/s = 1.3 s. The app sees the 10 s hole and uses
+    the position-corrected coordinate: right to within B's 5 m position offset (0.08 s)."""
+    rng = np.random.default_rng(11)
+    a, b = two_laps(rng)
+    a = with_hole(a, 5.0, 15.0, 80.0)
+    grid, gap = delta_time(a["d"], a["t"], b["d"], b["t"])
+    late = (grid > 1300) & (grid < 1900)
+    assert abs(np.median(gap[late]) - 1.0) > 1.0                     # the failure, reproduced
+
+    fake_results(tmp_path, np.random.default_rng(11), hole=(5.0, 15.0, 80.0))
+    body = create_app(tmp_path).test_client().get("/api/compare/1?a=AAA:5&b=BBB:5").get_json()
+    assert body["gap"]["coordinate"] == "position-corrected distance"
+    assert body["gap"]["longest_hole_s"] > 9.5
+    s = np.array(body["delta"]["s"])
+    gap = np.array([np.nan if value is None else value for value in body["delta"]["d"]])
+    assert abs(np.nanmedian(gap[(s > 1300) & (s < 1900)]) - 1.0) < 0.15  # repaired
+    # no gap is claimed in or near the hole (300-900 m, widened by 200 m), and no faster driver there
+    assert np.all(np.isnan(gap[(s > 320) & (s < 1080)]))
+    assert np.all(np.isfinite(gap[(s > 1200) & (s < 1900)]))
+    sectors = body["mini_sectors"]
+    assert any(m["faster"] == "no data" for m in sectors)
+    assert all(m["faster"] != "no data" for m in sectors if m["start_m"] > 1200)
+
+
+def test_hole_spans_worked_example():
+    """A hole from 129 m to 890 m, widened by half the 400 m fusion window: (-71 m, 1,090 m)."""
+    from app.data import hole_spans
+    t = [0.0, 0.24, 0.48, 10.8, 11.0]
+    s = [80.0, 105.0, 129.0, 890.0, 905.0]
+    assert hole_spans(t, s) == [(-71.0, 1090.0)]
+    assert hole_spans([0.0, 0.24, 0.5], [0.0, 15.0, 30.0]) == []

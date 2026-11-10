@@ -44,8 +44,8 @@ def tracked_files():
 def test_public_files_do_not_point_to_local_only_files():
     problems = []
     for name in tracked_files():
-        if name == ".gitignore" or not name.endswith(TEXT_SUFFIXES):
-            continue      # .gitignore must name the local-only files: that is how they stay local
+        if name in (".gitignore", "tests/test_public_files.py") or not name.endswith(TEXT_SUFFIXES):
+            continue      # these two must name the local-only files: to keep them local, and to look for them
         text = (REPO_ROOT / name).read_text(encoding="utf-8", errors="replace")
         for number, line in enumerate(text.splitlines(), start=1):
             bare_section = SECTION.search(line) and not NAMED_SECTION.search(line)

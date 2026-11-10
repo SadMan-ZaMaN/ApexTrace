@@ -34,6 +34,7 @@
   const AXIS_BAND = 34;                 // room for the distance axis under the last chart
   const CORNER_WINDOW = [-300, 200];    // the window the features are measured in (corners.window_bounds)
   const SAMPLE_DOTS_BELOW_M = 1600;     // show the individual samples when zoomed in this far
+  const NO_DATA_GREY = "#2f3138";       // mini-sectors near a hole in the car data (the --hair-2 token)
 
   const state = { index: [], session: null, a: null, b: null, data: null, domain: null, corner: null, request: 0,
     replay: null, replayView: null, replayMap: null };
@@ -68,6 +69,48 @@
     return out;
   }
 
+  /** A lap with a stretch without car samples longer than the session's threshold (app.data.HOLE_S). */
+  function hasHole(lap) {
+    return lap.longest_hole_s > (state.session.hole_threshold_s ?? Infinity);
+  }
+
+  /** A driver's fastest lap without a hole (the export sorts laps fastest first), or the fastest. */
+  function bestLap(entry) {
+    return (entry.laps.find((l) => !hasHole(l)) || entry.laps[0]).lap;
+  }
+
+  /** The gap at track position s, or null where it is unknown (near a hole, app.data.hole_spans).
+   *  Plain interpolation would treat a missing value as 0, so a missing neighbour means "unknown". */
+  function gapAt(s) {
+    const { s: xs, d: ys } = state.data.delta;
+    if (!xs.length || s < xs[0] || s > xs[xs.length - 1]) return null;
+    const i = Math.max(1, d3.bisectRight(xs, s));
+    const before = ys[Math.min(i - 1, ys.length - 1)], after = ys[Math.min(i, ys.length - 1)];
+    if (before == null || after == null) return null;
+    const span = xs[Math.min(i, xs.length - 1)] - xs[i - 1];
+    return span > 0 ? before + ((s - xs[i - 1]) / span) * (after - before) : before;
+  }
+
+  /** The last known value of the gap (the one closest to the line). */
+  function lastGap() {
+    const values = state.data.delta.d;
+    for (let i = values.length - 1; i >= 0; i--) if (values[i] != null) return values[i];
+    return null;
+  }
+
+  /** One lap's line for one channel, broken wherever the car data has a hole: a line is not drawn
+   *  across a stretch that was never measured. Each run between holes becomes its own sub-path. */
+  function tracePath(lap, key, x, y, curve = d3.curveLinear) {
+    const limit = state.session.hole_threshold_s ?? Infinity;
+    const line = d3.line().curve(curve).x((d) => x(d[0])).y((d) => y(d[1]));
+    let path = "", run = [];
+    for (let i = 0; i < lap.s.length; i++) {
+      if (i > 0 && lap.t[i] - lap.t[i - 1] > limit) { path += line(run) || ""; run = []; }
+      run.push([lap.s[i], lap[key][i]]);
+    }
+    return path + (line(run) || "");
+  }
+
   // ---------------------------------------------------------------- pickers
 
   function option(value, text, disabled = false) {
@@ -76,7 +119,7 @@
 
   function fillSeasons(selectedYear) {
     const years = [...new Set(state.index.map((s) => s.year))].sort((a, b) => b - a);
-    ui.season.replaceChildren(...years.map((y) => option(y, y === 2025 ? `${y} · test` : String(y))));
+    ui.season.replaceChildren(...years.map((y) => option(y, AT.seasonLabel(y))));
     ui.season.value = selectedYear;
   }
 
@@ -105,16 +148,18 @@
     const laps = driver(pick.code).laps;
     // fastest first (the export sorts them), so the first entry is the driver's best lap
     select.replaceChildren(...laps.map((l) => option(l.lap,
-      `${AT.lapTime(l.time_s)} · L${l.lap}${l.compound ? " · " + l.compound[0] : ""}`)));
+      `${AT.lapTime(l.time_s)} · L${l.lap}${l.compound ? " · " + l.compound[0] : ""}`
+      + (hasHole(l) ? ` · hole ${Math.round(l.longest_hole_s)} s` : ""))));
     select.value = pick.lap;
   }
 
-  /** A = the session's fastest driver, B = their teammate (or the next fastest driver). */
+  /** A = the session's fastest driver, B = their teammate (or the next fastest driver), each on
+   *  their fastest lap without a hole in the data. */
   function defaultPair() {
     const drivers = state.session.drivers;      // sorted fastest first by the export
     const first = drivers[0];
     const mate = drivers.find((d) => d.code !== first.code && d.team === first.team) || drivers[1];
-    return [{ code: first.code, lap: first.laps[0].lap }, { code: mate.code, lap: mate.laps[0].lap }];
+    return [{ code: first.code, lap: bestLap(first) }, { code: mate.code, lap: bestLap(mate) }];
   }
 
   function valid(pick) {
@@ -163,7 +208,9 @@
       state.data = null;
       renderMap();
       showMessage("The raw samples for this season aren't on this computer, so only lap times are shown. "
-        + "Build them with python experiments/09_build_dataset.py (2023–2024).");
+        + (state.session.year <= 2024
+          ? "Build them with python experiments/09_build_dataset.py (2023–2024)."
+          : "They are written once by that season's one-time test and are not in the repository."));
       return;
     }
     const request = ++state.request;            // ignore answers to older requests
@@ -343,7 +390,7 @@
       for (const sr of series) {
         chart.plot.append("path").attr("fill", "none").attr("stroke", sr.colour).attr("stroke-width", 2)
           .attr("stroke-linejoin", "round").attr("stroke-linecap", "round").attr("stroke-dasharray", sr.dash)
-          .attr("d", d3.line().x((d, i) => x(sr.lap.s[i])).y((d) => y(d))(sr.lap.speed));
+          .attr("d", tracePath(sr.lap, "speed", x, y));
         if (showDots) {
           chart.plot.append("g").selectAll("circle").data(sr.lap.s.map((s, i) => [s, sr.lap.speed[i]]).filter(([s]) => inView(s)))
             .join("circle").attr("cx", (d) => x(d[0])).attr("cy", (d) => y(d[1])).attr("r", 2.6)
@@ -364,10 +411,12 @@
       yAxis(chart, y, y.ticks(4), (d) => (d === 0 ? "0" : AT.signed(d, 2)));
       chart.plot.append("line").attr("x1", M.left).attr("x2", width - M.right).attr("y1", y(0)).attr("y2", y(0))
         .attr("stroke", "#4a4c53");
+      // no value near a hole in the car data: the curve stops there instead of guessing
+      const known = (d) => d[1] != null;
       chart.plot.append("path").attr("fill", colours.b).attr("fill-opacity", 0.1)
-        .attr("d", d3.area().x((d) => x(d[0])).y0(y(0)).y1((d) => y(d[1]))(points));
+        .attr("d", d3.area().defined(known).x((d) => x(d[0])).y0(y(0)).y1((d) => y(d[1]))(points));
       chart.plot.append("path").attr("fill", "none").attr("stroke", colours.b).attr("stroke-width", 2)
-        .attr("d", d3.line().x((d) => x(d[0])).y((d) => y(d[1]))(points));
+        .attr("d", d3.line().defined(known).x((d) => x(d[0])).y((d) => y(d[1]))(points));
       charts.gap.y = y;
     }
 
@@ -379,7 +428,7 @@
       for (const sr of series) {
         chart.plot.append("path").attr("fill", "none").attr("stroke", sr.colour).attr("stroke-width", 2)
           .attr("stroke-linejoin", "round").attr("stroke-dasharray", sr.dash)
-          .attr("d", d3.line().x((d, i) => x(sr.lap.s[i])).y((d) => y(d))(sr.lap.throttle));
+          .attr("d", tracePath(sr.lap, "throttle", x, y));
       }
     }
 
@@ -399,7 +448,9 @@
           if (!lap.brake[i]) { i += 1; continue; }
           let j = i;
           while (j + 1 < lap.s.length && lap.brake[j + 1]) j += 1;
-          const end = j + 1 < lap.s.length ? lap.s[j + 1] : lap.s[j] + 5;
+          // the block ends at the next sample, unless a hole follows (then nothing is known after it)
+          const holeAfter = j + 1 < lap.s.length && lap.t[j + 1] - lap.t[j] > (state.session.hole_threshold_s ?? Infinity);
+          const end = j + 1 < lap.s.length && !holeAfter ? lap.s[j + 1] : lap.s[j] + 5;
           chart.plot.append("rect").attr("x", x(lap.s[i])).attr("width", Math.max(1, x(end) - x(lap.s[i])))
             .attr("y", rows(sr.key)).attr("height", rows.bandwidth()).attr("fill", sr.colour);
           i = j + 1;
@@ -414,8 +465,7 @@
       yAxis(chart, y, [2, 4, 6, 8], (d) => d);
       for (const sr of series) {
         chart.plot.append("path").attr("fill", "none").attr("stroke", sr.colour).attr("stroke-width", 2)
-          .attr("stroke-dasharray", sr.dash).attr("d",
-            d3.line().curve(d3.curveStepAfter).x((d, i) => x(sr.lap.s[i])).y((d) => y(d))(sr.lap.gear));
+          .attr("stroke-dasharray", sr.dash).attr("d", tracePath(sr.lap, "gear", x, y, d3.curveStepAfter));
       }
     }
 
@@ -521,10 +571,9 @@
   }
 
   function fillTooltip(tooltip, s, series) {
-    const { delta } = state.data;
     const near = state.session.corners.find((c) => s >= c.s_m + CORNER_WINDOW[0] && s <= c.s_m + CORNER_WINDOW[1]);
     const values = series.map((sr) => valuesAt(sr.lap, s));
-    const gap = s >= delta.s[0] && s <= delta.s[delta.s.length - 1] ? AT.interp(s, delta.s, delta.d) : null;
+    const gap = gapAt(s);
     const row = (label, format) => AT.el("tr", {}, AT.el("td", { class: "k" }, label),
       ...values.map((v) => AT.el("td", { class: "v num" }, format(v))));
     tooltip.replaceChildren(
@@ -565,20 +614,23 @@
         const inside = track.s.map((s, k) => [s, k]).filter(([s]) => s > sector.start_m && s < sector.end_m)
           .map(([, k]) => points[k]);
         const segment = [at(sector.start_m), ...inside, at(sector.end_m)];
-        const colour = sector.faster === "a" ? colours.a : sector.faster === "b" ? colours.b : "#55575f";
+        const colour = sector.faster === "a" ? colours.a : sector.faster === "b" ? colours.b
+          : sector.faster === "no data" ? NO_DATA_GREY : "#55575f";
         const path = svg.append("path").attr("d", line(segment)).attr("fill", "none").attr("stroke", colour)
           .attr("stroke-width", 5).attr("stroke-linecap", "butt");
         const who = sector.faster === "a" ? `${state.a.code} faster by ${Math.abs(sector.gain_s).toFixed(3)} s`
           : sector.faster === "b" ? `${state.b.code} faster by ${Math.abs(sector.gain_s).toFixed(3)} s`
-            : `within ${(0.02).toFixed(2)} s (measurement error)`;
+            : sector.faster === "no data" ? "unknown: a hole in the car data nearby"
+              : `within ${(0.02).toFixed(2)} s (measurement error)`;
         path.append("title").text(`Mini-sector ${i + 1}, ${sector.start_m.toFixed(0)}–${sector.end_m.toFixed(0)} m: ${who}`);
       }
-      const counts = { a: 0, b: 0, even: 0 };
+      const counts = { a: 0, b: 0, even: 0, "no data": 0 };
       for (const sector of sectors) counts[sector.faster] += 1;
       ui.mapCaption.textContent = `${sectors.length} mini-sectors`;
       legend.push(key(colours.a, `${state.a.code} faster (${counts.a})`),
         key(colours.b, `${state.b.code} faster (${counts.b})`),
         key("#55575f", `even, under 0.02 s (${counts.even})`));
+      if (counts["no data"]) legend.push(key(NO_DATA_GREY, `no data, near a hole (${counts["no data"]})`));
     } else {
       svg.append("path").attr("d", line(points) + "Z").attr("fill", "none").attr("stroke", "#3d3f46").attr("stroke-width", 1.4);
       ui.mapCaption.textContent = "";
@@ -673,8 +725,7 @@
       }
     }
     // gap at car A's position (time) and how far behind B is on track (metres)
-    const delta = state.data.delta;
-    const gap = now.a.s >= delta.s[0] && now.a.s <= delta.s[delta.s.length - 1] ? AT.interp(now.a.s, delta.s, delta.d) : null;
+    const gap = gapAt(now.a.s);
     const metres = now.a.s - now.b.s;
     ui.replayReadout.replaceChildren(
       AT.el("span", {}, `${state.a.code} `, AT.el("b", {}, `${Math.round(now.a.speed)} km/h`)),
@@ -700,14 +751,52 @@
 
   // ---------------------------------------------------------------- notes
 
+  /** For 2026 sessions: what is different about this season's data (empty list for other seasons). */
+  function seasonNotes() {
+    if (state.session.year !== 2026) return [];
+    const notes = [
+      AT.el("p", { class: "note-season" }, "2026 is the first season under new technical rules. It was held out until "
+        + "the one-time test of whether driving signatures survive the change (H5); only sessions up to that test's "
+        + "fixed cutoff are here."),
+      AT.el("p", {}, "OpenF1 describes throttle as “percentage of maximum engine power being used”. In 2026 power can "
+        + "be cut while the pedal stays down, so this trace may show the car's energy management as well as the "
+        + "driver's foot (an open question)."),
+    ];
+    const marker = state.session.no_value_removed;
+    if (marker && marker.removed > 0) {
+      const share = (100 * marker.removed / marker.samples).toFixed(marker.removed / marker.samples < 0.01 ? 2 : 1);
+      notes.push(AT.el("p", {}, `In this session the feed sent “no value” for throttle or brake in `
+        + `${marker.removed.toLocaleString("en")} of ${marker.samples.toLocaleString("en")} samples inside kept laps `
+        + `(${share} %). They are removed, as in the test, so a line can bridge a longer gap here.`));
+    }
+    return notes;
+  }
+
+  /** When a lap has a hole: what it means for the lines and for the gap (app.data.compare). */
+  function holeNote() {
+    const gap = state.data.gap;
+    if (!gap || gap.coordinate === "integrated distance") return [];
+    const which = [[state.a, state.data.a], [state.b, state.data.b]]
+      .filter(([, lap]) => lap.longest_hole_s > gap.hole_threshold_s)
+      .map(([pick, lap]) => `${pick.code}'s lap has ${lap.longest_hole_s.toFixed(1)} s without car samples`);
+    return [AT.el("p", { class: "note-season" }, `${which.join(" and ")}. No line is drawn across a hole, and `
+      + "no gap is shown from 200 m before to 200 m after it (nothing was measured there). Across a hole that long, "
+      + "speed added up over time loses track of distance, so the gap is computed from the distance corrected by the "
+      + "car's track position instead: still smooth, but it carries each lap's small position offset.")];
+  }
+
   function renderNotes() {
     const lapA = lapOf(state.a), lapB = lapOf(state.b);
-    const gapCurve = state.data.delta.d[state.data.delta.d.length - 1];
+    const gapCurve = lastGap();
     ui.notes.replaceChildren(
+      ...seasonNotes(),
       AT.el("p", {}, `Lines join the measured samples: ${lapA.samples} for ${state.a.code} and ${lapB.samples} for ${state.b.code}, `
         + `about ${(lapA.samples / lapA.time_s).toFixed(1)} per second. Zoom into a braking zone to see each one.`),
       AT.el("p", {}, "Brake is on/off in the public feed: it shows when the pedal is pressed, not how hard."),
-      AT.el("p", {}, "The gap compares both laps' clocks at the same distance, measured by integrating speed. "
+      ...holeNote(),
+      AT.el("p", {}, "The gap compares both laps' clocks at the same distance, measured "
+        + (state.data.gap.coordinate === "integrated distance" ? "by integrating speed. "
+          : "by the position-corrected distance (see above). ")
         + `Check: it reaches ${AT.signed(gapCurve)} s just before the line; the official lap times differ by `
         + `${AT.signed(lapB.time_s - lapA.time_s)} s.`),
       AT.el("p", {}, `Distance on the charts is speed integrated over time, corrected by the car's track position `
@@ -726,12 +815,12 @@
   });
   ui.event.addEventListener("change", () => loadSession(Number(ui.event.value), null, null));
   ui.driverA.addEventListener("change", () => {
-    state.a = { code: ui.driverA.value, lap: driver(ui.driverA.value).laps[0].lap };
+    state.a = { code: ui.driverA.value, lap: bestLap(driver(ui.driverA.value)) };
     fillLaps(ui.lapA, state.a);
     loadCompare();
   });
   ui.driverB.addEventListener("change", () => {
-    state.b = { code: ui.driverB.value, lap: driver(ui.driverB.value).laps[0].lap };
+    state.b = { code: ui.driverB.value, lap: bestLap(driver(ui.driverB.value)) };
     fillLaps(ui.lapB, state.b);
     loadCompare();
   });

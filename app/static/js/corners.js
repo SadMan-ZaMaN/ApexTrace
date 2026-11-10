@@ -51,7 +51,7 @@
 
   function fillSeasons(year) {
     const years = [...new Set(state.index.map((s) => s.year))].sort((a, b) => b - a);
-    ui.season.replaceChildren(...years.map((y) => option(y, y === 2025 ? `${y} · test` : String(y))));
+    ui.season.replaceChildren(...years.map((y) => option(y, AT.seasonLabel(y))));
     ui.season.value = year;
   }
 
@@ -80,7 +80,10 @@
 
   async function init() {
     try {
-      [state.index, { features: state.features }] = await Promise.all([AT.getJSON("/api/sessions"), AT.getJSON("/api/features")]);
+      let featureData;
+      [state.index, featureData] = await Promise.all([AT.getJSON("/api/sessions"), AT.getJSON("/api/features")]);
+      state.features = featureData.features;
+      state.coasting = featureData.coasting_2026 || null;
     } catch (error) {
       ui.tower.append(AT.el("p", { class: "message" }, `Could not load the data (${error.message}).`));
       return;
@@ -290,7 +293,21 @@
         AT.el("dt", {}, "Repeatability, weekend to weekend"),
         AT.el("dd", {}, `ICC ${stats.icc_weekend.toFixed(2)}${ci(stats.icc_weekend_ci)}: a driver's place on this measurement `
           + `${iccWords(stats.icc_weekend)} from one weekend to the next.`)),
-      AT.el("p", { class: "facts-note" }, "Repeatability from all 2023–2024 drivers (H1), relative to the field at each corner."));
+      AT.el("p", { class: "facts-note" }, "Repeatability from all 2023–2024 drivers (H1), relative to the field at each corner."),
+      ...season2026Note(feature));
+  }
+
+  /** 2026 sessions, braking measurements: the errors above were simulated for the old cars;
+   *  what the 2026 coasting check (experiment 21) found. */
+  function season2026Note(feature) {
+    const braking = ["brake_onset_m", "braking_distance_m", "mean_decel_ms2"].includes(feature.key);
+    if (state.session.year !== 2026 || !state.coasting || !braking) return [];
+    const c = state.coasting;
+    return [AT.el("p", { class: "facts-note note-season" },
+      "2026, new rules: the per-lap errors were simulated for the earlier cars. A check with 2026-like cars that coast "
+      + `before braking kept the brake-onset error below ${c.limit_m} m (worst ${c.worst_brake_onset_error_m} m) but moved `
+      + `its average offset by ${c.bias_shift_m[0]}–${c.bias_shift_m[1]} m. An offset that every car shares cancels when `
+      + "drivers are compared at the same corner, as here.")];
   }
 
   function renderMap(corner) {

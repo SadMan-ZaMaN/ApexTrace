@@ -9,7 +9,7 @@ import re
 
 from flask import Blueprint, abort, current_app, jsonify, render_template, request
 
-from app.data import RawSamplesMissing
+from app.data import HOLE_S, RawSamplesMissing
 
 pages = Blueprint("pages", __name__)
 api = Blueprint("api", __name__)
@@ -80,7 +80,7 @@ def session(key):
     if key not in data().sessions:
         abort(404)
     session = data().sessions[key]
-    return jsonify({**session, "raw_available": data().raw_available(session["year"])})
+    return jsonify({**session, "raw_available": data().raw_available(session["year"]), "hole_threshold_s": HOLE_S})
 
 
 def parse_lap(text):
@@ -102,7 +102,8 @@ def compare(key):
     except RawSamplesMissing as missing:
         return jsonify({"error": "raw samples not built",
                         "hint": f"results/{missing} is missing: run experiments/09_build_dataset.py "
-                                f"(2023-2024) or keep results/final/ (2025)."}), 503
+                                f"(2023-2024); for 2025 and 2026 keep the local files of the one-time tests "
+                                f"(results/final/, results/final_2026/)."}), 503
     if result is None:
         abort(404, description="no samples for that lap")
     return jsonify(result)

@@ -9,7 +9,8 @@
       <h1>Can you recognise a driver from <em>public</em> telemetry?</h1>
       <p class="lede">
         ApexTrace measures where each driver brakes, how much speed they carry to the apex and when they get back on the
-        throttle, corner by corner, in every qualifying session from 2023 to 2025. It uses only the public timing feed, at
+        throttle, corner by corner, in every qualifying session from 2023 to 2025 and of 2026 up to a fixed cutoff. It
+        uses only the public timing feed, at
         <span class="num">{{ d.sample_rate_hz }}</span> samples per second. Then it asks how much of that style belongs to
         the driver, and how much to the car.
       </p>
@@ -17,7 +18,7 @@
         <div><dt>Qualifying sessions</dt><dd>{{ d.sessions_built }}</dd></div>
         <div><dt>Raw samples</dt><dd>{{ "%.2f"|format(d.raw_samples / 1000000) }}M</dd></div>
         <div><dt>Corner passes</dt><dd>{{ "{:,}".format(d.clean_corner_passes) }}</dd></div>
-        <div><dt>Held-out season</dt><dd>2025</dd></div>
+        <div><dt>Held-out seasons</dt><dd>2025, 2026</dd></div>
       </dl>
       <div class="hero-actions">
         <a class="btn btn-primary cut" href="{{ url_for('pages.telemetry') }}">Compare two laps <span class="arrow">&rarr;</span></a>

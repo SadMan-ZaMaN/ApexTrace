@@ -90,11 +90,18 @@ const AT = (() => {
     };
   }
 
+  /** How a season is named in the pickers: the two seasons held out for one-time tests say so
+   *  (what is different about 2026 is explained on the page itself). */
+  const HELD_OUT = new Set([2025, 2026]);
+  function seasonLabel(year) {
+    return HELD_OUT.has(year) ? `${year} · held out` : String(year);
+  }
+
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // On a phone the nav scrolls sideways: make sure the current page's tab is visible.
   const current = document.querySelector('.topbar nav a[aria-current="page"]');
   if (current) current.scrollIntoView({ inline: "nearest", block: "nearest" });
 
-  return { lapTime, signed, mix, colourDistance, getJSON, el, interp, stepValue, fitTrack, reducedMotion };
+  return { lapTime, signed, mix, colourDistance, getJSON, el, interp, stepValue, fitTrack, seasonLabel, reducedMotion };
 })();

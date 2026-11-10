@@ -4,9 +4,10 @@ The app never computes research results itself: every number it shows comes
 from a results file written by an experiment script, and this script gathers
 them into three small JSON files (committed, unlike the raw-sample Parquet):
 
-  sessions.json  every qualifying session 2023-2025: event names, drivers with
-                 team colours, kept laps, detected corners, and a track outline
-                 (the reference lap's X/Y, rotated to lie landscape)
+  sessions.json  every qualifying session 2023-2026 (2026 up to the fixed cutoff of the
+                 one-time test): event names, drivers with team colours, kept laps,
+                 detected corners, a track outline (the reference lap's X/Y, rotated to
+                 lie landscape), and for 2026 the "no value" samples removed (Addendum 1)
   hero.json      two laps for the animated track on the home page
                  (2024 Abu Dhabi qualifying, Norris vs Piastri: the pilot)
   headline.json  the hypothesis results (H1-H4) with the file each number came from
@@ -46,7 +47,12 @@ OUT_DIR = REPO_ROOT / "results" / "app"
 RESULTS = REPO_ROOT / "results"
 RAW = {2023: RESULTS / "09_dataset" / "raw_samples.parquet",
        2024: RESULTS / "09_dataset" / "raw_samples.parquet",
-       2025: RESULTS / "final" / "raw_samples_2025.parquet"}
+       2025: RESULTS / "final" / "raw_samples_2025.parquet",
+       2026: RESULTS / "final_2026" / "raw_samples_2026.parquet"}
+YEARS = (2023, 2024, 2025, 2026)
+# the build files of each one-time test: (sessions, corners)
+FINAL_BUILDS = [("final", "sessions_2025.csv", "corners_2025.csv"),
+                ("final_2026", "sessions_2026.csv", "corners_2026.csv")]
 HERO = {"year": 2024, "location": "Yas Island", "drivers": ["NOR", "PIA"]}
 
 
@@ -80,16 +86,34 @@ def round_list(values, digits):
 
 
 def session_table():
-    """All sessions of the three seasons with their build summary (dev + final)."""
-    dev = pd.read_csv(RESULTS / "09_dataset" / "sessions.csv")
-    final = pd.read_csv(RESULTS / "final" / "sessions_2025.csv")
-    return pd.concat([dev, final], ignore_index=True)
+    """All sessions of the four seasons with their build summary (development + the two one-time tests)."""
+    tables = [pd.read_csv(RESULTS / "09_dataset" / "sessions.csv")]
+    for folder, sessions_file, _ in FINAL_BUILDS:
+        tables.append(pd.read_csv(RESULTS / folder / sessions_file))
+    return pd.concat(tables, ignore_index=True)
 
 
 def corner_table():
-    dev = pd.read_csv(RESULTS / "09_dataset" / "corners.csv")
-    final = pd.read_csv(RESULTS / "final" / "corners_2025.csv")
-    return pd.concat([dev, final], ignore_index=True)
+    tables = [pd.read_csv(RESULTS / "09_dataset" / "corners.csv")]
+    for folder, _, corners_file in FINAL_BUILDS:
+        tables.append(pd.read_csv(RESULTS / folder / corners_file))
+    return pd.concat(tables, ignore_index=True)
+
+
+def markers_removed_2026():
+    """{session_key: (samples, "no value" samples removed)} from the 2026 run's own checks.
+
+    Addendum 1: inside a kept lap, a throttle or brake value of 104 (the feed's "no value"
+    marker) is a missing sample. The run counted them per session before building anything.
+    Example: Suzuka, 36,533 samples, 3,044 removed (8.3 %).
+    """
+    checks = load("final_2026/checks.json")
+    started = load("final_2026/run_started.json")
+    key_of = {s["location"]: int(s["session_key"]) for s in started["sessions"]}
+    out = {}
+    for row in checks["no_value_marker_removed"]:
+        out[key_of[row["location"]]] = (int(row["samples"]), int(row["no_value_removed"]))
+    return out
 
 
 def openf1_session_info(year):
@@ -110,11 +134,22 @@ def openf1_drivers(session_key):
 
 # ---------------------------------------------------------------- sessions.json
 
+def longest_hole(times):
+    """The longest time between two consecutive samples of one lap: the app's own function
+    (app.data.longest_hole), so the lap list and the comparison can't disagree."""
+    sys.path.insert(0, str(REPO_ROOT))      # so `import app` works when this file is run as a script
+    from app.data import longest_hole as app_longest_hole
+
+    return app_longest_hole(np.sort(np.asarray(times, dtype=float)))
+
+
 def lap_list(raw_session):
-    """Kept laps per driver (the laps that have raw samples), fastest first."""
+    """Kept laps per driver (the laps that have raw samples), fastest first, with each lap's
+    longest stretch without car samples (the app marks laps with a hole, app.data.HOLE_S)."""
     laps = (raw_session.groupby(["driver", "lap"])
             .agg(lap_time_s=("lap_time_s", "first"), compound=("compound", "first"),
-                 tyre_life=("tyre_life", "first"), team=("team", "first"), samples=("time_s", "size"))
+                 tyre_life=("tyre_life", "first"), team=("team", "first"), samples=("time_s", "size"),
+                 longest_hole_s=("time_s", longest_hole))
             .reset_index())
     return laps.sort_values(["driver", "lap_time_s"])
 
@@ -136,8 +171,9 @@ def track_outline(raw_session, reference):
 def build_sessions():
     sessions = session_table()
     corners = corner_table()
+    markers = markers_removed_2026()
     info = {}
-    for year in (2023, 2024, 2025):
+    for year in YEARS:
         info.update(openf1_session_info(year))
 
     out = []
@@ -149,6 +185,9 @@ def build_sessions():
                  "country": meta.get("country_name", ""), "circuit": meta.get("circuit_short_name", ""),
                  "date": (meta.get("date_start") or "")[:10], "note": "" if pd.isna(row["note"]) else row["note"],
                  "drivers": [], "corners": [], "track": None}
+        if key in markers:
+            samples, removed = markers[key]
+            entry["no_value_removed"] = {"samples": samples, "removed": removed}
         if pd.isna(row.get("reference")) or not row.get("reference"):
             out.append(entry)
             continue
@@ -174,7 +213,8 @@ def build_sessions():
                 "laps": [{"lap": int(l["lap"]), "time_s": round(float(l["lap_time_s"]), 3),
                           "compound": l["compound"] if isinstance(l["compound"], str) else "",
                           "tyre_life": None if pd.isna(l["tyre_life"]) else int(l["tyre_life"]),
-                          "samples": int(l["samples"])} for _, l in driver_laps.iterrows()],
+                          "samples": int(l["samples"]), "longest_hole_s": round(float(l["longest_hole_s"]), 2)}
+                         for _, l in driver_laps.iterrows()],
             })
         entry["drivers"].sort(key=lambda d: d["laps"][0]["time_s"])
         out.append(entry)
@@ -222,6 +262,7 @@ def build_headline(sessions):
     dev_id = load("12_identification/summary.json")["teammates"]
     dev_sig = load("13_signature_stability/summary.json")["corner_features"]
     final = load("final/summary.json")
+    final_2026 = load("final_2026/summary.json")
     explore = load("15_final_exploratory/summary.json")
     raw_rows = sum(pq.ParquetFile(path).metadata.num_rows for path in set(RAW.values()))
 
@@ -233,13 +274,15 @@ def build_headline(sessions):
             "sessions": len(sessions),
             "sessions_built": sum(1 for s in sessions if s["track"] is not None),
             "raw_samples": raw_rows,
-            # (driver, lap, corner) rows after cleaning: 2023-2024 + 2025
-            "clean_corner_passes": repeatability["cleaning"]["clean_rows"] + final["cleaning_2025"]["clean_rows"],
+            # (driver, lap, corner) rows after cleaning: 2023-2024 + 2025 + 2026
+            "clean_corner_passes": (repeatability["cleaning"]["clean_rows"] + final["cleaning_2025"]["clean_rows"]
+                                    + final_2026["cleaning"]["clean_rows"]),
+            "seasons": f"{min(YEARS)}–{max(YEARS)}",
             "features": len(dataset["features"]),
             # along-track error of the fused lap coordinate (Phase 3, 2024 Abu Dhabi)
             "alignment_error_m": round(load("04_alignment/summary.json")["fusion_offset_noise_m"], 2),
             "drivers": len({d["code"] for s in sessions for d in s["drivers"]}),
-            "source": "01_data_pilot, 09_dataset, 11_repeatability, final (summary.json)",
+            "source": "01_data_pilot, 09_dataset, 11_repeatability, final, final_2026 (summary.json)",
         },
         "hypotheses": [
             {"id": "H1", "question": "Are corner features repeatable from lap to lap?",
@@ -317,8 +360,33 @@ def build_features():
             }
         out.append({"key": feature, "label": label, "unit": unit, "meaning": meaning, "group": group_of[feature],
                     "by_corner_type": per_type})
-    return {"features": out, "source": "results/11_repeatability/summary.json (ICC, H1) and "
-                                       "results/03_synthetic_errors (per-lap measurement error, Phase 2)"}
+    return {"features": out, "coasting_2026": coasting_summary(),
+            "source": "results/11_repeatability/summary.json (ICC, H1) and "
+                      "results/03_synthetic_errors (per-lap measurement error, Phase 2); 2026 note: "
+                      "results/21_coasting_check"}
+
+
+def coasting_summary():
+    """What the coasting check (experiment 21) found, for the 2026 note in the Corner lab.
+
+    The per-lap errors were simulated on the old cars. 2026 cars may coast or harvest energy
+    before braking, so experiment 21 re-ran the brake-onset estimator on such corners: the worst
+    error stayed below the 8.4 m it had to stay under, but the average offset (bias) moved.
+    The bias shift is computed exactly as for preregistration Part C (17_write_docs): plain
+    braking minus "lift and coast", per corner type, for the old and the 2026-like car.
+    Example: worst error 4.89 m; bias shift 3.9-4.7 m.
+    """
+    coasting = load("21_coasting_check/summary.json")
+    table = pd.read_csv(RESULTS / "21_coasting_check" / "error_table.csv")
+    shifts = []
+    for car in ("", "2026-like + "):
+        without = "Phase 2 car" if car == "" else "2026-like car"
+        for corner_type in table["corner_type"].unique():
+            lift = table[(table["scenario"] == f"{car}lift and coast") & (table["corner_type"] == corner_type)]
+            plain = table[(table["scenario"] == without) & (table["corner_type"] == corner_type)]
+            shifts.append(float(plain["chosen_bias_m"].iloc[0] - lift["chosen_bias_m"].iloc[0]))
+    return {"worst_brake_onset_error_m": round(coasting["worst"]["rmse_m"], 2), "limit_m": coasting["threshold_m"],
+            "bias_shift_m": [round(min(shifts), 1), round(max(shifts), 1)]}
 
 
 # ---------------------------------------------------------------- identification.json
