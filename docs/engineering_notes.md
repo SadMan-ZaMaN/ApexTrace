@@ -74,6 +74,9 @@ recomputes the three preregistered tests in memory from the saved data, checks l
 across files and the 2026 timeline, and runs the tests (which include the checks of the
 hand-written documents). `--quick` skips the re-runs. Results: `results/30_audit/`.
 
+After changing what a page shows: `experiments/31_screenshots.py` re-takes the five README
+images the same way every time (Edge through Playwright, 1440 x 1000).
+
 ## Bug history
 
 - **2026-10-15 — Don't judge "slow laps" against the driver's session best.**

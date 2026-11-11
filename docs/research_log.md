@@ -1430,3 +1430,41 @@ braking zone; it would need its own check.
 - I looked at the H5 section on desktop and phone, the results board and the funnel in Edge,
   with no console errors.
 - README and report are unchanged; `docs/preregistration.md` is byte-identical.
+
+---
+
+## 2026-11-12 — Day 20: README screenshots, docs, CI
+
+**Screenshots:** a new `experiments/31_screenshots.py` replaces the hand-taken images of
+2026-10-20. It starts the app on a free port, opens each page in Edge through Playwright at
+1440 × 1000, waits for the fonts and charts, and stops if a page logs a JavaScript error.
+- Lap compare now shows 2026 Mexico City; Driver vs car is scrolled to the H5 section.
+- The overview, Corner lab and Method framing is as before.
+- The README captions say so.
+- Its first run took 21 s on one page: my server was single-threaded, and the browser keeps
+  connections open. With `threaded=True` (what `app.run` uses) the whole run takes 14 s. The
+  app itself answers the first Corner lab request in 1.4 s, the cold import included.
+
+**CI:**
+- GitHub's run list (public API, read-only) shows `48c167a` failed and `7e166a6` and
+  `a52a290` passed.
+- The failed step was "Run the tests"; the logs need a login, so I reproduced it in a clean
+  local clone. At `48c167a` the public-files test fails on its own text, as diagnosed on
+  Day 18; at `a52a290` it passes.
+- My first reproduction attempt used `git archive` and was not faithful: without a git
+  repository the test fails for another reason.
+- The runs also warned that `actions/checkout@v4` and `setup-python@v5` use the deprecated
+  Node 20, and that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19.
+- The workflow now uses `checkout@v7` and `setup-python@v7`. Their `action.yml` was read at
+  the release tags (v7.0.1, v7.1.0): both run on Node 24, and `setup-python` still takes
+  `python-version` and `cache`.
+- The runner is pinned to `ubuntu-24.04`, so the test environment changes only when we change
+  it.
+- Not yet run on GitHub: the next push tests the new workflow file.
+
+**Verified:**
+- 205 tests pass.
+- I looked at all five new images: 1440 × 1000, current numbers, no logos or photos.
+- README: only the two captions and the experiment range (00–31) changed;
+  `docs/preregistration.md` is byte-identical.
+- The CI facts come from GitHub's API and a local clone, not from memory.

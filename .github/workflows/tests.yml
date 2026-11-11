@@ -16,12 +16,16 @@ permissions:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    # a fixed image, not ubuntu-latest: that label moves to Ubuntu 26 from 2026-10-19 (GitHub's
+    # notice on our runs), and the test environment should change only when we change it
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      # v7 of both run on Node 24 (their action.yml, checked 2026-11-12); v4/v5 ran on the
+      # deprecated Node 20, which GitHub warned about on every run
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip                      # reuse downloaded packages between runs
