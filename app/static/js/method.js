@@ -313,7 +313,7 @@
   // ---------------------------------------------------------------- 5. cleaning funnel
 
   function renderFunnel() {
-    const dev = data.funnel.development, fin = data.funnel.final_2025;
+    const dev = data.funnel.development, fin = data.funnel.final_2025, fin26 = data.funnel.final_2026;
     const steps = [
       { group: "2023–2024", label: "Corner passes found", n: dev.rows, note: "every kept lap × every detected braking zone" },
       { group: "2023–2024", label: "With complete data in the window", n: dev.usable,
@@ -324,6 +324,13 @@
       { group: "2025 (held out)", label: "Dry and plausible (analysed)", n: fin.cleaning.clean_rows,
         note: `${d3.format(",")(fin.cleaning.dropped_not_dry)} not on dry tyres, ${fin.cleaning.dropped_min_speed_below_40} with an impossible minimum speed` },
     ];
+    if (fin26) {
+      steps.push(
+        { group: "2026 (held out)", label: "With complete data in the window", n: fin26.usable,
+          note: "same pipeline, run once; \"no value\" samples removed first (Addendum 1)" },
+        { group: "2026 (held out)", label: "Dry and plausible (analysed)", n: fin26.cleaning.clean_rows,
+          note: `${d3.format(",")(fin26.cleaning.dropped_not_dry)} not on dry tyres, ${fin26.cleaning.dropped_min_speed_below_40} with an impossible minimum speed` });
+    }
     const box = byId("funnel-chart");
     box.replaceChildren();
     // wide screens: label on the left, bar on the right; phones: label above its bar
@@ -334,12 +341,12 @@
     const svg = d3.select(box).append("svg").attr("width", width).attr("height", height);
     steps.forEach((step, i) => {
       const y = 10 + i * ROW;
-      if (i === 3) svg.append("line").attr("x1", 0).attr("x2", width).attr("y1", y - 4).attr("y2", y - 4).attr("stroke", C.hair);
+      if (i > 0 && step.group !== steps[i - 1].group) svg.append("line").attr("x1", 0).attr("x2", width).attr("y1", y - 4).attr("y2", y - 4).attr("stroke", C.hair);
       svg.append("text").attr("x", 0).attr("y", y + 12).attr("class", "tower-code").text(step.label);
       svg.append("text").attr("x", narrow ? width : 0).attr("y", narrow ? y + 12 : y + 29).attr("text-anchor", narrow ? "end" : "start")
         .attr("class", "tower-team").text(step.group);
       svg.append("rect").attr("x", LABEL).attr("y", y + 4 + TOP).attr("width", Math.max(2, x(step.n) - LABEL)).attr("height", 20)
-        .attr("fill", i === 2 || i === 4 ? C.blue : "#3a3c43");
+        .attr("fill", step.label.startsWith("Dry and plausible") ? C.blue : "#3a3c43");
       svg.append("text").attr("x", x(step.n) + 8).attr("y", y + 15 + TOP).attr("dominant-baseline", "central").attr("class", "tower-value")
         .text(d3.format(",")(step.n));
       svg.append("text").attr("x", LABEL).attr("y", y + 38 + TOP).attr("class", "tower-team").text(step.note);

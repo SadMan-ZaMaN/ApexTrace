@@ -231,7 +231,7 @@ def test_corner_rows_use_the_research_cleaning_rules(tmp_path):
 def test_optional_exports_are_served_or_explained(tmp_path):
     fake_results(tmp_path, np.random.default_rng(7))
     client = create_app(tmp_path).test_client()
-    for endpoint in ["/api/features", "/api/identification", "/api/signatures", "/api/method"]:
+    for endpoint in ["/api/features", "/api/identification", "/api/signatures", "/api/h5", "/api/method"]:
         response = client.get(endpoint)
         assert response.status_code == 503
         assert "16_app_data" in response.get_json()["hint"]
@@ -343,3 +343,30 @@ def test_hole_spans_worked_example():
     s = [80.0, 105.0, 129.0, 890.0, 905.0]
     assert hole_spans(t, s) == [(-71.0, 1090.0)]
     assert hole_spans([0.0, 0.24, 0.5], [0.0, 15.0, 30.0]) == []
+
+
+# ---------------------------------------------------------------- the H5 section (Day 19)
+
+def test_the_h5_export_agrees_with_the_frozen_test_and_the_report():
+    """results/app/h5.json (Driver vs car) and the H5 row of headline.json are read from the frozen
+    2026 results by 16_app_data; the report's numbers are read by 17_write_docs. They must agree."""
+    from pathlib import Path
+
+    results = Path(__file__).resolve().parent.parent / "results"
+    h5 = json.loads((results / "app" / "h5.json").read_text(encoding="utf-8"))
+    frozen = json.loads((results / "final_2026" / "summary.json").read_text(encoding="utf-8"))
+    numbers = json.loads((results / "report_numbers.json").read_text(encoding="utf-8"))["h5"]
+    primary = frozen["h5"]["sets"]["all"]
+    rule = h5["comparisons"][-1]
+    assert (rule["own_closer"], rule["drivers"]) == (primary["own_closer"], primary["drivers"])
+    assert sum(d["own_closer"] for d in h5["drivers"]) == primary["own_closer"]
+    assert all((d["distance_own_2025"] < d["distance_teammate_2025"]) == d["own_closer"] for d in h5["drivers"])
+    assert h5["verdict"] == frozen["h5"]["verdict"] == numbers["verdict"]
+    assert h5["needed"] == numbers["needed"]
+    assert f"{h5['power_if_share_0_7'] * 100:.0f}" == numbers["power_70"]
+    assert [c["own_closer"] for c in h5["comparisons"][:2]] == [numbers["dev"]["first"]["own"], numbers["dev"]["second"]["own"]]
+    assert h5["preregistration"] == {"part_c": numbers["commits"]["part_c"], "addendum_1": numbers["commits"]["addendum_1"]}
+    headline = json.loads((results / "app" / "headline.json").read_text(encoding="utf-8"))
+    row = next(h for h in headline["hypotheses"] if h["id"] == "H5")
+    assert row["verdict"] == frozen["h5"]["verdict"]
+    assert row["result"].startswith(f"{primary['own_closer']} of {primary['drivers']} drivers")

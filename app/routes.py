@@ -132,6 +132,11 @@ def signature_data():
     return export_or_503(data().signatures, "signatures.json")
 
 
+@api.route("/h5")
+def h5_data():
+    return export_or_503(data().h5, "h5.json")
+
+
 @api.route("/method")
 def method_data():
     return export_or_503(data().method, "method.json")

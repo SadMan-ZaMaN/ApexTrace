@@ -1394,3 +1394,39 @@ braking zone; it would need its own check.
 - I looked at four pages in Edge with no console errors: 2026 Suzuka default pair, the hole
   pair, Corner lab 2026, and the 2024 pilot.
 - `docs/preregistration.md` is byte-identical; README and report are unchanged.
+
+---
+
+## 2026-11-12 — Day 19: H5 in the web app
+
+**Done:**
+- **New export, `results/app/h5.json`** (`16_app_data.build_h5`). It reads only the frozen
+  2026 files:
+  - each driver's two distances;
+  - who changed team, the run's own decision from `team_changes.csv`, so the rename from
+    Kick Sauber to Audi is not counted as a change;
+  - the same comparison on 2023→2024 and 2024→2025;
+  - the 14 drivers needed, the power at a share of 0.7, the secondary sets and H4 on 2026;
+  - the exploratory teammate-relative counts.
+  It asserts that its count equals the frozen summary.
+- **Driver vs car, new H5 section:**
+  - three tiles: 16 of 20, 14 of 16, 13 of 19 with "14 needed";
+  - the verdict line;
+  - one bar per driver (distance to the 2025 teammate minus distance to the own 2025
+    signature; blue = own past closer, grey = teammate closer);
+  - what the "no" means, the secondary results, and the exploratory note, labelled.
+  It is served by `/api/h5`, and the rest of the page still works without it.
+- **Overview:** an H5 row on the results board, from the frozen summary, and the Part C and
+  Addendum 1 commits next to Parts A and B.
+- **Method page:** the cleaning funnel has a 2026 group (7,496 usable, 7,491 analysed). Its
+  separators and highlighted bars now follow the data instead of fixed row numbers.
+
+**Verified:**
+- 205 tests pass. Two new tests were checked to fail on their broken versions: the route
+  removed, and one driver's answer flipped in the export.
+- The export agrees with the frozen test and the report (by test): the count, the
+  per-driver answers against the distances, the verdict, the 14 needed, the 47 % power, the
+  development counts, and the commits.
+- I looked at the H5 section on desktop and phone, the results board and the funnel in Edge,
+  with no console errors.
+- README and report are unchanged; `docs/preregistration.md` is byte-identical.

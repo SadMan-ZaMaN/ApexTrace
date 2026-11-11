@@ -4,10 +4,11 @@
 {% block content %}
 <div class="wrap">
   <header class="page-head">
-    <p class="eyebrow">Driver vs car <span class="dot">/</span> H3 and H4, tested once on the held-out 2025 season</p>
+    <p class="eyebrow">Driver vs car <span class="dot">/</span> H3 and H4 tested once on 2025, H5 once on 2026</p>
     <h1>Driver or car?</h1>
-    <p>Two questions. Can corner-by-corner telemetry tell two teammates apart, in the same car, on weekends the model
-      never saw? And when a driver moves to another team, does their style come with them?</p>
+    <p>Three questions. Can corner-by-corner telemetry tell two teammates apart, in the same car, on weekends the model
+      never saw? When a driver moves to another team, does their style come with them? And when every team gets a new
+      car under new rules, does it survive?</p>
   </header>
 
   <section class="block" aria-labelledby="h3-title">
@@ -48,6 +49,29 @@
       </div>
     </div>
     <div class="fingerprint" id="fingerprint"></div>
+  </section>
+
+  <section class="block" aria-labelledby="h5-title">
+    <div class="block-head">
+      <div>
+        <p class="eyebrow"><span class="dot">H5</span> the 2026 rule change</p>
+        <h2 id="h5-title">Does the style survive a new car?</h2>
+      </div>
+    </div>
+    <div class="tiles" id="h5-tiles"></div>
+    <p class="verdict-line" id="h5-verdict"></p>
+    <div class="h4-grid">
+      <div class="chart-box" id="h5-chart"></div>
+      <div class="h4-side">
+        <p class="side-copy">In 2026 every team raced a new car under new technical rules. For each driver who raced in
+          both seasons, the 2026 signature is compared with <b>their own 2025 signature</b> and with <b>their 2025
+          teammate's</b>, made in the same 2025 car on the same weekends. If the style belonged only to the car, the
+          two would be equally close, a coin flip per driver.</p>
+        <p class="side-copy muted" id="h5-meaning"></p>
+        <p class="side-copy muted" id="h5-secondary"></p>
+      </div>
+    </div>
+    <p class="chart-note" id="h5-note"></p>
   </section>
 </div>
 {% endblock %}

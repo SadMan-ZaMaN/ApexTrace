@@ -14,6 +14,8 @@ them into three small JSON files (committed, unlike the raw-sample Parquet):
   features.json  the 10 corner features: meaning, unit, per-lap measurement error
                  (Phase 2) and repeatability (H1 ICC) per corner type
   identification.json  per team-season teammate identification (H3), 2023-2025
+  h5.json        the 2026 test (H5), read from the frozen results/final_2026: each driver's two
+                 distances, the same comparison without a rule change, secondary results
   signatures.json      the H4 season signatures (z-scores, 30 features) for every
                  driver in both 2024 and 2025, built with the exact H4 steps and
                  CHECKED to reproduce the frozen H4 distances
@@ -313,10 +315,33 @@ def build_headline(sessions):
                         f"{explore['changers_vs_stayers']['stayers_own_closer']} (exploratory)."),
              "verdict": "supported" if final["h4_supported"] else "not supported", "data": "2025 (held out)",
              "source": "results/final/summary.json"},
+            h5_row(final_2026),
         ],
         "preregistration": {"part_a": pilot["preregistration_commit"][:7],
-                            "part_b": final["preregistration_commit"][:7]},
+                            "part_b": final["preregistration_commit"][:7],
+                            "part_c": load("final_2026_attempt_1/run_started.json")["preregistration_commit"][:7],
+                            "addendum_1": final_2026["preregistration_commit"][:7]},
     }
+
+
+def h5_row(final_2026):
+    """The H5 line of the results board, from the frozen 2026 summary and the development pairs.
+    Example: "13 of 19 drivers, p = 0.084 (14 needed)"."""
+    from apextrace.signatures import sign_test_threshold
+
+    primary = final_2026["h5"]["sets"]["all"]
+    development = load("20_h5_development/summary.json")["pairs"]
+    first, second = development["2023 -> 2024"]["all"], development["2024 -> 2025"]["all"]
+    relative = load("29_teammate_relative/summary.json")["comparisons"]["2025 -> 2026"]
+    return {"id": "H5", "question": "Does the signature survive the 2026 rule change?",
+            "result": (f"{primary['own_closer']} of {primary['drivers']} drivers, p = {primary['sign_test_p']:.3f} "
+                       f"({sign_test_threshold(primary['drivers'])} needed)"),
+            "detail": (f"Without a rule change: {first['own_closer']} of {first['drivers']} and {second['own_closer']} "
+                       f"of {second['drivers']}. With {primary['drivers']} drivers this \"no\" can't tell a weakened "
+                       f"signature from a lost one. Exploratory, with the car removed: the difference between "
+                       f"teammates kept its direction for {relative['cosine_positive']} of {relative['pairs']} pairs."),
+            "verdict": final_2026["h5"]["verdict"], "data": "2026 (held out)",
+            "source": "results/final_2026/summary.json"}
 
 
 # ---------------------------------------------------------------- features.json
@@ -524,6 +549,75 @@ def build_signatures(sessions):
                                 "results/15_final_exploratory/h4_shape_control_non_changers.csv"]}
 
 
+# ---------------------------------------------------------------- h5.json (the 2026 test)
+
+def build_h5(sessions):
+    """The 2026 test (H5) for the Driver vs car page, read from the FROZEN results (nothing is
+    recomputed): each driver's two distances, the same comparison on two pairs of seasons without
+    a rule change, the secondary results, and the exploratory teammate-relative check.
+
+    For each driver in both 2025 and 2026: is their 2026 signature closer to their own 2025
+    signature (another car, other rules) than to their 2025 teammate's (the same 2025 car)?
+    Example: NOR 0.64 from his own 2025 and 1.34 from PIA's -> own past closer by 0.70.
+    The count is checked against the frozen summary, so the chart can't drift from the result.
+    """
+    from apextrace.signatures import sign_test_power, sign_test_threshold
+
+    final = load("final_2026/summary.json")
+    table = pd.read_csv(RESULTS / "final_2026" / "h5_all.csv")
+    development = load("20_h5_development/summary.json")["pairs"]
+    relative = load("29_teammate_relative/summary.json")["comparisons"]
+    changes = pd.read_csv(RESULTS / "final_2026" / "team_changes.csv")
+    colours = team_colours(sessions)
+
+    # who changed team: the run's own decision (team lineages, so a renamed team is not a change)
+    changed = dict(zip(changes["driver"], changes["changed"]))
+    drivers = []
+    for r in table[table["included"]].itertuples():
+        drivers.append({"driver": r.driver, "team_2025": r.team_reference, "team_2026": r.team_target,
+                        "changed_team": bool(changed.get(r.driver, False)),
+                        "teammate_2025": r.teammate, "colour_2026": colours.get((2026, r.team_target), "#888888"),
+                        "weekends_2026": int(r.weekends_target), "shared_weekends_2025": int(r.shared_weekends),
+                        "distance_own_2025": round(float(r.distance_own), 4),
+                        "distance_teammate_2025": round(float(r.distance_teammate), 4),
+                        "own_closer": bool(r.own_closer)})
+    primary = final["h5"]["sets"]["all"]
+    assert sum(d["own_closer"] for d in drivers) == primary["own_closer"] and len(drivers) == primary["drivers"]
+
+    def block(label, rules, result):
+        return {"label": label, "rules": rules, "own_closer": result["own_closer"], "drivers": result["drivers"],
+                "share": round(result["share"], 4), "ci95": [round(result["ci95_low"], 4), round(result["ci95_high"], 4)],
+                "p": result["sign_test_p"]}
+
+    secondary = {}
+    for name, result in final["h5"]["sets"].items():
+        if name != "all":
+            secondary[name] = {"own_closer": result["own_closer"], "drivers": result["drivers"], "p": result["sign_test_p"]}
+    not_eligible = changes[changes["changed"] & ~changes["eligible"]]
+    pairs = {}
+    for key, result in relative.items():
+        pairs[key.replace("->", "→")] = {"rules": result["rules"], "positive": result["cosine_positive"],
+                                         "pairs": result["pairs"], "median_cosine": result["median_cosine"]}
+    return {
+        "comparisons": [block("2023 → 2024", "same rules", development["2023 -> 2024"]["all"]),
+                        block("2024 → 2025", "same rules", development["2024 -> 2025"]["all"]),
+                        block("2025 → 2026", "new rules", primary)],
+        "needed": sign_test_threshold(primary["drivers"]), "verdict": final["h5"]["verdict"],
+        "power_if_share_0_7": round(sign_test_power(primary["drivers"], 0.7), 3),
+        "secondary": secondary,
+        "h4_2026": {"eligible_changers": final["h4"]["changer_names"],
+                    "not_eligible": [{"driver": r.driver, "weekends_2026": int(r.weekends_target)}
+                                     for r in not_eligible.itertuples()],
+                    "stayers_own_closer": final["h4"]["stayers"]["own_closer"],
+                    "stayers": final["h4"]["stayers"]["drivers"]},
+        "teammate_relative": pairs,
+        "drivers": drivers,
+        "preregistration": {"part_c": load("final_2026_attempt_1/run_started.json")["preregistration_commit"][:7],
+                            "addendum_1": final["preregistration_commit"][:7]},
+        "source": "results/final_2026 (summary.json, h5_all.csv, team_changes.csv), results/20_h5_development, "
+                  "results/29_teammate_relative (exploratory)"}
+
+
 # ---------------------------------------------------------------- method.json (the measurement science)
 
 # The estimator the pipeline uses for each feature (features.py, chosen by the Phase 2 Monte Carlo),
@@ -636,11 +730,13 @@ def build_method(sessions):
     dataset = load("09_dataset/summary.json")
     repeat = load("11_repeatability/summary.json")["cleaning"]
     final = load("final/summary.json")["cleaning_2025"]
+    final_2026 = load("final_2026/summary.json")["cleaning"]
     out["funnel"] = {
         "development": {"rows": dataset["rows"], "usable": dataset["usable_rows"],
                         "excluded": dataset["exclusion_reasons"], "cleaning": repeat},
         "final_2025": {"usable": final["usable_rows"], "cleaning": final},
-        "source": "results/09_dataset, results/11_repeatability, results/final (summary.json)"}
+        "final_2026": {"usable": final_2026["usable_rows"], "cleaning": final_2026},
+        "source": "results/09_dataset, results/11_repeatability, results/final, results/final_2026 (summary.json)"}
     return out
 
 
@@ -651,7 +747,8 @@ def main():
     headline = build_headline(sessions)
     outputs = [("sessions.json", sessions), ("hero.json", hero), ("headline.json", headline),
                ("features.json", build_features()), ("identification.json", build_identification()),
-               ("signatures.json", build_signatures(sessions)), ("method.json", build_method(sessions))]
+               ("signatures.json", build_signatures(sessions)), ("h5.json", build_h5(sessions)),
+               ("method.json", build_method(sessions))]
     for name, content in outputs:
         with open(OUT_DIR / name, "w", encoding="utf-8") as file:
             json.dump(content, file, ensure_ascii=False, separators=(",", ":"))

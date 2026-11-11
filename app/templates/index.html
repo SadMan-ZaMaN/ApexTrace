@@ -46,7 +46,9 @@
     <div class="section-head">
       <h2>Results</h2>
       <p class="section-note">Tests written down and committed before they were run:<br>
-        pilot <code>{{ headline.preregistration.part_a }}</code> · final 2025 test <code>{{ headline.preregistration.part_b }}</code></p>
+        pilot <code>{{ headline.preregistration.part_a }}</code> · final 2025 test <code>{{ headline.preregistration.part_b }}</code>
+        {% if headline.preregistration.part_c %}· 2026 test <code>{{ headline.preregistration.part_c }}</code> with
+        addendum <code>{{ headline.preregistration.addendum_1 }}</code>{% endif %}</p>
     </div>
     <table class="board">
       <thead>
@@ -57,7 +59,8 @@
         {% set evidence = {"H1": (url_for('pages.corners'), "Corner lab: every lap, with its measurement error"),
                            "H2": (url_for('pages.corners'), "Corner lab: 2024 Abu Dhabi, Norris vs Piastri"),
                            "H3": (url_for('pages.signatures') ~ "#h3-title", "Driver vs car: every team, 2023–2025"),
-                           "H4": (url_for('pages.signatures') ~ "#h4-title", "Driver vs car: the five team changers")} %}
+                           "H4": (url_for('pages.signatures') ~ "#h4-title", "Driver vs car: the five team changers"),
+                           "H5": (url_for('pages.signatures') ~ "#h5-title", "Driver vs car: every driver of 2025 and 2026")} %}
         {% for h in headline.hypotheses %}
         <tr>
           <td class="pos"><span class="pos-box cut">{{ h.id }}</span></td>

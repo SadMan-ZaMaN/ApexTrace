@@ -1,8 +1,9 @@
-/* Driver vs car: H3 (teammate identification) and H4 (drivers who changed teams).
+/* Driver vs car: H3 (teammate identification), H4 (drivers who changed teams) and H5 (the 2026
+ * rule change).
  *
  * Data: /api/identification (per team-season balanced accuracy, 2023-2025),
  * /api/signatures (the H4 season signatures, checked against the frozen results
- * by the export script), /api/features (feature names).
+ * by the export script), /api/features (feature names), /api/h5 (the frozen 2026 test).
  *
  * Colours (validated with the dataviz palette checker on the dark surface):
  * blue = our corner features / drivers who stayed, orange = raw lap statistics /
@@ -26,7 +27,7 @@
   };
   const CORNER_TYPES = ["slow", "medium", "fast"];
 
-  const state = { identification: null, signatures: null, features: null, year: 2025, selected: "HAM" };
+  const state = { identification: null, signatures: null, features: null, h5: null, year: 2025, selected: "HAM" };
   const byId = (id) => document.getElementById(id);
   const tooltip = AT.el("div", { class: "tooltip", hidden: true });
   document.body.append(tooltip);
@@ -321,6 +322,84 @@
       + "root-mean-square difference over all 30 cells."));
   }
 
+  // ---------------------------------------------------------------- H5: the 2026 rule change
+
+  function renderH5() {
+    const h5 = state.h5;
+    const share = (c) => `share ${c.share.toFixed(2)} · 95 % ${c.ci95[0].toFixed(2)}–${c.ci95[1].toFixed(2)} · ${pValue(c.p)}`;
+    byId("h5-tiles").replaceChildren(...h5.comparisons.map((c) =>
+      tile(`${c.label} · ${c.rules}`, `${c.own_closer} of ${c.drivers}`,
+        c.rules === "new rules" ? `${h5.needed} needed · ${pValue(c.p)} · ${h5.verdict}` : share(c))));
+    const [first, second, rule] = h5.comparisons;
+    byId("h5-verdict").textContent = `Across the rule change, ${rule.own_closer} of ${rule.drivers} drivers stayed closer to `
+      + `their own past; the test needed ${h5.needed}, so H5 is ${h5.verdict}. Without a rule change the same comparison `
+      + `gave ${first.own_closer} of ${first.drivers} and ${second.own_closer} of ${second.drivers}.`;
+    byId("h5-meaning").textContent = `What the "no" means: the share, ${rule.share.toFixed(2)}, is above a coin flip, but `
+      + `the test can't separate it from chance. With ${rule.drivers} drivers it had only `
+      + `${Math.round(h5.power_if_share_0_7 * 100)} % power if the true share had dropped to 0.7, so the data fit a `
+      + "signature that survived in weaker form and one that didn't. They don't show which.";
+    const sec = h5.secondary, h4 = h5.h4_2026;
+    const late = h4.not_eligible.map((d) => `${d.driver} had ${d.weekends_2026} weekends`).join(", ");
+    byId("h5-secondary").textContent = `Secondary, stated in advance: control points ${sec["control points"].own_closer}, `
+      + `energy-sensitive ${sec["energy-sensitive"].own_closer}, no throttle ${sec["no throttle"].own_closer} of `
+      + `${sec["no throttle"].drivers}. H4 on 2026's team changers: only ${h4.eligible_changers.join(", ")} was eligible`
+      + `${late ? ` (${late})` : ""}, so there is no test; of the drivers who stayed, ${h4.stayers_own_closer} of `
+      + `${h4.stayers} were closer to their own 2025 than to their current teammate.`;
+    const pairs = h5.teammate_relative, now = pairs["2025 → 2026"];
+    const before = Object.entries(pairs).filter(([, p]) => p.rules === "same rules")
+      .map(([label, p]) => `${p.positive} of ${p.pairs} (${label}, median ${p.median_cosine.toFixed(2)})`).join(" and ");
+    byId("h5-note").textContent = "Exploratory, not preregistered: with the car removed (the difference between two teammates "
+      + `on the same weekends), the difference kept its direction for ${now.positive} of ${now.pairs} pairs across the rule `
+      + `change (median cosine ${now.median_cosine.toFixed(2)}), against ${before} without one. Distances: the root-mean-square `
+      + "difference over the 30 corner measurements, each relative to the field and scaled, as in H4.";
+    drawH5();
+  }
+
+  /** One bar per driver: distance to the 2025 teammate minus distance to their own 2025 signature.
+   *  Right of zero (blue): own past closer. Left (grey): the 2025 teammate closer. */
+  function drawH5() {
+    const box = byId("h5-chart");
+    const bar = (colour) => (g, cx, cy) => g.append("rect").attr("x", cx - 6).attr("y", cy - 4).attr("width", 12)
+      .attr("height", 8).attr("fill", colour);
+    box.replaceChildren(htmlLegend([["own 2025 signature closer", bar(C.blue)], ["2025 teammate's closer", bar(C.grey)]]));
+    const drivers = state.h5.drivers.map((d) => ({ ...d, margin: d.distance_teammate_2025 - d.distance_own_2025 }))
+      .sort((a, b) => b.margin - a.margin);
+    const width = box.clientWidth, narrow = width < 520;
+    const LABEL = narrow ? 92 : 220, RIGHT = 16, TOP = 12, ROW = 24, BOTTOM = 44;
+    const height = TOP + drivers.length * ROW + BOTTOM;
+    const extent = d3.max(drivers, (d) => Math.abs(d.margin));
+    const x = d3.scaleLinear().domain([-extent, extent]).nice().range([LABEL, width - RIGHT]);
+    const svg = d3.select(box).append("svg").attr("width", width).attr("height", height);
+    svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${height - BOTTOM})`)
+      .call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSize(-(height - TOP - BOTTOM + 4)).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - BOTTOM})`)
+      .call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSizeOuter(0)).select(".domain").attr("stroke", "#3b3d44");
+    svg.append("text").attr("class", "corner-tag").attr("x", width - RIGHT).attr("y", height - 6).attr("text-anchor", "end")
+      .text(narrow ? "OWN PAST CLOSER →" : "TO 2025 TEAMMATE − TO OWN 2025 · OWN PAST CLOSER →");
+    drivers.forEach((d, i) => {
+      const y = TOP + i * ROW + ROW / 2;
+      const g = svg.append("g");
+      g.append("rect").attr("x", 0).attr("y", y - 7).attr("width", 3).attr("height", 14).attr("fill", d.colour_2026);
+      g.append("text").attr("x", 10).attr("y", y).attr("dominant-baseline", "central").attr("class", "tower-code")
+        .text(d.driver);
+      if (!narrow) {
+        g.append("text").attr("x", 52).attr("y", y).attr("dominant-baseline", "central").attr("class", "tower-team")
+          .text(d.changed_team ? `${d.team_2026} · new team` : d.team_2026);
+      }
+      const left = x(Math.min(0, d.margin)), right = x(Math.max(0, d.margin));
+      g.append("rect").attr("x", left).attr("y", y - 6).attr("width", Math.max(1.5, right - left)).attr("height", 12)
+        .attr("fill", d.own_closer ? C.blue : C.grey);
+      g.append("rect").attr("x", 0).attr("y", y - ROW / 2).attr("width", width).attr("height", ROW).attr("fill", "transparent")
+        .on("pointermove", (event) => showTooltip(event, `${d.driver} · ${d.team_2025} 2025 → ${d.team_2026} 2026`, [
+          ["To own 2025 signature", d.distance_own_2025.toFixed(3)],
+          [`To 2025 teammate (${d.teammate_2025})`, d.distance_teammate_2025.toFixed(3)],
+          ["Closer to", d.own_closer ? "own past" : "the 2025 teammate"],
+          ["Weekends 2026 · shared 2025", `${d.weekends_2026} · ${d.shared_weekends_2025}`]]))
+        .on("pointerleave", hideTooltip);
+    });
+    svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", TOP - 4).attr("y2", height - BOTTOM).attr("stroke", "#5a5c63");
+  }
+
   // ---------------------------------------------------------------- start
 
   async function init() {
@@ -337,12 +416,22 @@
     renderTabs();
     renderH3();
     renderH4();
+    // H5 is its own export: if it is missing, the rest of the page still works
+    try {
+      state.h5 = await AT.getJSON("/api/h5");
+      renderH5();
+    } catch (error) {
+      byId("h5-chart").append(AT.el("p", { class: "message" }, `Could not load the 2026 results (${error.message}${error.body && error.body.hint ? "; " + error.body.hint : ""}).`));
+    }
   }
 
   let resizeTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { if (state.signatures) { renderH3(); renderH4(); } }, 150);
+    resizeTimer = setTimeout(() => {
+      if (state.signatures) { renderH3(); renderH4(); }
+      if (state.h5) drawH5();
+    }, 150);
   });
 
   init();

@@ -233,6 +233,7 @@ class AppData:
         self.features = self._load_optional(app_dir / "features.json")
         self.identification = self._load_optional(app_dir / "identification.json")
         self.signatures = self._load_optional(app_dir / "signatures.json")
+        self.h5 = self._load_optional(app_dir / "h5.json")
         self.method = self._load_optional(app_dir / "method.json")
         self._corner_table = None
 
