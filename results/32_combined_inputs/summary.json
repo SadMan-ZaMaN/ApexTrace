@@ -1,0 +1,67 @@
+{
+  "note": "EXPLORATORY (docs/decisions.md 2026-11-13, E3); not preregistered",
+  "data": {
+    "development 2023-2024": {
+      "team_seasons": 20,
+      "matches_committed_h3_within": 4.705882352940005e-05,
+      "mean_balanced_accuracy": {
+        "whole-lap statistics": 0.7289341867495434,
+        "corner features": 0.6854923185005213,
+        "both": 0.7498918418038726
+      },
+      "both_minus_whole_lap": {
+        "mean_difference": 0.02095765505432907,
+        "ci95": [
+          -0.009903720721607447,
+          0.05239044958052412
+        ],
+        "higher": 12,
+        "team_seasons": 20,
+        "wilcoxon_p_orientation_only": 0.11398696899414062,
+        "words": "no clear gain from adding corner features to whole-lap statistics"
+      },
+      "both_minus_corner": {
+        "mean_difference": 0.06439952330335108,
+        "ci95": [
+          0.03822905140690016,
+          0.09650115027511684
+        ],
+        "higher": 17,
+        "team_seasons": 20,
+        "wilcoxon_p_orientation_only": 0.00021367000439069728,
+        "words": "whole-lap statistics add information beyond corner features"
+      }
+    },
+    "2025 (second look)": {
+      "team_seasons": 10,
+      "matches_committed_h3_within": 4.838597709133641e-05,
+      "mean_balanced_accuracy": {
+        "whole-lap statistics": 0.679974760496699,
+        "corner features": 0.662316087275481,
+        "both": 0.705027950406825
+      },
+      "both_minus_whole_lap": {
+        "mean_difference": 0.02505318991012596,
+        "ci95": [
+          0.0012595883793342544,
+          0.04989503726619941
+        ],
+        "higher": 6,
+        "team_seasons": 10,
+        "wilcoxon_p_orientation_only": 0.130859375,
+        "words": "corner features add information beyond whole-lap statistics"
+      },
+      "both_minus_corner": {
+        "mean_difference": 0.042711863131343966,
+        "ci95": [
+          0.006801510612505825,
+          0.0889602077350122
+        ],
+        "higher": 7,
+        "team_seasons": 10,
+        "wilcoxon_p_orientation_only": 0.064453125,
+        "words": "whole-lap statistics add information beyond corner features"
+      }
+    }
+  }
+}

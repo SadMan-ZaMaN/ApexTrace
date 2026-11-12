@@ -33,7 +33,9 @@ In plain words:
   than lap time alone. From one year to the next, a driver's season signature stays closer to their own previous
   season than to their teammate's in the same car ({{ h4.dev.own_closer }} of {{ h4.dev.pairs }} drivers, {{ h4.dev.p }}).
 - **It does not beat simple whole-lap statistics** ({{ h3.final.raw }}), such as the share of the lap spent braking.
-  What the corner features add is that they are interpretable: they say *where* two drivers differ.
+  What the corner features add is that they are interpretable: they say *where* two drivers differ. An exploratory
+  model given both inputs did a little better than the whole-lap statistics alone ({{ x21.dev.add_corner.diff }} in development,
+  {{ x21.final.add_corner.diff }} in 2025), a gain too small to be sure of.
 - **Whether the signature survives a change of team was not shown.** Only {{ h4.final.own_closer }} of {{ h4.final.changers }} drivers who moved
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
   {{ h4.explore.control_own }} times out of {{ h4.explore.control_n }} in the same comparison, but with five changers the difference can't be told

@@ -223,6 +223,21 @@ lap time alone is little better than chance there.
 
 ![Teammate identification per team, 2025](../results/15_final_exploratory/final_h3_teams.png)
 
+**Exploratory, not preregistered: do corner features add anything on top of whole-lap statistics?**
+(`experiments/32_combined_inputs.py`; rules in `docs/decisions.md`, 2026-11-13.) The same protocol with both inputs
+together (35 numbers) reached 0.750 in development and 0.705 in 2025, against 0.729 and 0.680 for the
+whole-lap statistics alone: a difference of +0.021 (95 % interval −0.010 to +0.052, higher for 12 of
+20 team-seasons) and +0.025 (+0.001 to +0.050, 6 of 10). By the words fixed in advance, development
+reads "no clear gain from adding corner features to whole-lap statistics" and 2025 "corner features add information beyond whole-lap statistics", although the 2025
+interval only just excludes zero. Taken together: a small gain of about two points, the same in direction in both,
+uncertain in size. The other way round, adding the whole-lap statistics to the corner features helps clearly
+(+0.064, +0.038 to +0.097; +0.043, +0.007 to +0.089). So most of what tells teammates apart is
+either shared by the two inputs or sits in the whole-lap statistics; the corner features add a little on top, and their
+main value is that they show where two drivers differ. (A neural network on the raw corner traces was planned as an
+optional step and not done: no unused test season is left, and the data are small for it.)
+
+![Whole-lap statistics alone against both inputs together, per team-season](../results/32_combined_inputs/combined.png)
+
 ### 6.4 Driver vs car (H4): not supported
 
 **Development (2023 → 2024, same car both years).** A driver's 2024 signature ranked their own 2023 signature

@@ -34,7 +34,9 @@ In plain words:
   than lap time alone. From one year to the next, a driver's season signature stays closer to their own previous
   season than to their teammate's in the same car (17 of 20 drivers, p = 0.0013).
 - **It does not beat simple whole-lap statistics** (0.680), such as the share of the lap spent braking.
-  What the corner features add is that they are interpretable: they say *where* two drivers differ.
+  What the corner features add is that they are interpretable: they say *where* two drivers differ. An exploratory
+  model given both inputs did a little better than the whole-lap statistics alone (+0.021 in development,
+  +0.025 in 2025), a gain too small to be sure of.
 - **Whether the signature survives a change of team was not shown.** Only 2 of 5 drivers who moved
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
   8 times out of 10 in the same comparison, but with five changers the difference can't be told
@@ -106,7 +108,7 @@ OpenF1 limits the request rate).
 | Folder | What |
 |---|---|
 | `src/apextrace/` | the package: data loading, quality checks, filters, alignment, events, features, statistics, identification, signatures |
-| `experiments/` | numbered scripts `00`–`31`; every number and figure comes from one of them |
+| `experiments/` | numbered scripts `00`–`32`; every number and figure comes from one of them |
 | `results/` | small outputs (JSON, CSV, figures); `results/final/` and `results/final_2026/` hold the frozen 2025 and 2026 tests |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |

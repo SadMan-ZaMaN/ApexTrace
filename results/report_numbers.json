@@ -260,7 +260,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "31"
+  "last_experiment": "32"
  },
  "c": {
   "written": "2026-11-06",
@@ -728,5 +728,47 @@
   "files": "183",
   "largest_2025": "0.0016",
   "tests": "197 passed"
+ },
+ "x21": {
+  "dev": {
+   "whole": "0.729",
+   "corner": "0.685",
+   "both": "0.750",
+   "teams": 20,
+   "add_corner": {
+    "diff": "+0.021",
+    "low": "−0.010",
+    "high": "+0.052",
+    "higher": 12,
+    "words": "no clear gain from adding corner features to whole-lap statistics"
+   },
+   "add_whole": {
+    "diff": "+0.064",
+    "low": "+0.038",
+    "high": "+0.097",
+    "higher": 17,
+    "words": "whole-lap statistics add information beyond corner features"
+   }
+  },
+  "final": {
+   "whole": "0.680",
+   "corner": "0.662",
+   "both": "0.705",
+   "teams": 10,
+   "add_corner": {
+    "diff": "+0.025",
+    "low": "+0.001",
+    "high": "+0.050",
+    "higher": 6,
+    "words": "corner features add information beyond whole-lap statistics"
+   },
+   "add_whole": {
+    "diff": "+0.043",
+    "low": "+0.007",
+    "high": "+0.089",
+    "higher": 7,
+    "words": "whole-lap statistics add information beyond corner features"
+   }
+  }
  }
 }

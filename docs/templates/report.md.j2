@@ -224,6 +224,21 @@ lap time alone is little better than chance there.
 
 ![Teammate identification per team, 2025](../results/15_final_exploratory/final_h3_teams.png)
 
+**Exploratory, not preregistered: do corner features add anything on top of whole-lap statistics?**
+(`experiments/32_combined_inputs.py`; rules in `docs/decisions.md`, 2026-11-13.) The same protocol with both inputs
+together (35 numbers) reached {{ x21.dev.both }} in development and {{ x21.final.both }} in 2025, against {{ x21.dev.whole }} and {{ x21.final.whole }} for the
+whole-lap statistics alone: a difference of {{ x21.dev.add_corner.diff }} (95 % interval {{ x21.dev.add_corner.low }} to {{ x21.dev.add_corner.high }}, higher for {{ x21.dev.add_corner.higher }} of
+{{ x21.dev.teams }} team-seasons) and {{ x21.final.add_corner.diff }} ({{ x21.final.add_corner.low }} to {{ x21.final.add_corner.high }}, {{ x21.final.add_corner.higher }} of {{ x21.final.teams }}). By the words fixed in advance, development
+reads "{{ x21.dev.add_corner.words }}" and 2025 "{{ x21.final.add_corner.words }}", although the 2025
+interval only just excludes zero. Taken together: a small gain of about two points, the same in direction in both,
+uncertain in size. The other way round, adding the whole-lap statistics to the corner features helps clearly
+({{ x21.dev.add_whole.diff }}, {{ x21.dev.add_whole.low }} to {{ x21.dev.add_whole.high }}; {{ x21.final.add_whole.diff }}, {{ x21.final.add_whole.low }} to {{ x21.final.add_whole.high }}). So most of what tells teammates apart is
+either shared by the two inputs or sits in the whole-lap statistics; the corner features add a little on top, and their
+main value is that they show where two drivers differ. (A neural network on the raw corner traces was planned as an
+optional step and not done: no unused test season is left, and the data are small for it.)
+
+![Whole-lap statistics alone against both inputs together, per team-season](../results/32_combined_inputs/combined.png)
+
 ### 6.4 Driver vs car (H4): not supported
 
 **Development (2023 → 2024, same car both years).** A driver's 2024 signature ranked their own 2023 signature

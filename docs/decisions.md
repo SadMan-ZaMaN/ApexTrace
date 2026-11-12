@@ -624,3 +624,30 @@ either script was run.
   against teammate" compares a vector with its own mirror image, a comparison whose answer
   depends on the size of d and not only on whether it persisted. The cosine asks the
   persistence question directly.
+
+## 2026-11-13 — Day 21: do corner features add anything on top of whole-lap statistics? (E3)
+EXPLORATORY, not preregistered; written before the script was run, and reported whatever it shows.
+Why: H3 found that corner features identify teammates better than lap time but not better than
+simple whole-lap statistics (development 0.685 vs 0.729; 2025 0.662 vs 0.680). That leaves open
+whether the corner features carry information the whole-lap statistics don't, or only the same
+information in an interpretable form. Instead of a neural network (planned as optional Phase 9;
+not done now: no unused test season is left, the data are small for it, and it would not be
+explainable yet), one combined model answers that directly.
+
+- **Same machinery as H3:** the same team-season pairs (the two drivers with most laps, weekends
+  where both drove, at least 5 weekends), the same leave-one-weekend-out logistic regression
+  (`protocol.run`, no tuning), the same balanced accuracy.
+- **Three inputs:** whole-lap statistics (5), corner features (30), both together (35).
+- **Data:** development 2023–2024 (20 team-seasons) first; then the saved 2025 data as a second
+  look (10 teams). 2025 was used once for H3 already, so both are exploratory. 2026 is not used
+  (the cars changed).
+- **Check first:** the script's own runs of whole-lap statistics and corner features must equal the
+  committed H3 per-team results exactly, or it stops (the same pairs, the same models).
+- **Reported:** per team-season and mean balanced accuracy of each input; for "both minus whole-lap
+  statistics", the mean difference with a bootstrap 95 % interval over team-seasons (resampling
+  team-seasons, 5,000 draws) and the number of team-seasons where both was higher; Wilcoxon p for
+  orientation only.
+- **Words fixed now:** if the interval for "both minus whole-lap statistics" lies above 0:
+  "corner features add information beyond whole-lap statistics"; if it includes 0: "no clear gain
+  from adding corner features"; if it lies below 0: "adding them made it worse" (35 inputs fitted on
+  about 100–250 laps per team can overfit). The same words for development and 2025, each on its own.

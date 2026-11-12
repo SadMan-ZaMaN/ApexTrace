@@ -264,7 +264,29 @@ def collect_numbers():
     assert n["a1"]["either"] == n["h5"]["data"]["removed"], "markers diagnosed and markers removed differ"
     n["x26"] = collect_exploratory_2026(n["h5"])
     n["audit"] = collect_audit()
+    n["x21"] = collect_combined_inputs()
     return n
+
+
+def collect_combined_inputs():
+    """EXPLORATORY (Day 21, experiment 32): corner features and whole-lap statistics together.
+    One block per dataset: the three mean balanced accuracies, and both differences with their
+    intervals, counts and the words fixed in advance (docs/decisions.md, 2026-11-13)."""
+    summary = load("32_combined_inputs/summary.json")
+    out = {}
+    for key, name in (("dev", "development 2023-2024"), ("final", "2025 (second look)")):
+        block = summary["data"][name]
+        assert block["matches_committed_h3_within"] <= 1e-4, "experiment 32 does not reproduce H3"
+        means = block["mean_balanced_accuracy"]
+        entry = {"whole": f(means["whole-lap statistics"], 3), "corner": f(means["corner features"], 3),
+                 "both": f(means["both"], 3), "teams": block["team_seasons"]}
+        for short, result in (("add_corner", block["both_minus_whole_lap"]), ("add_whole", block["both_minus_corner"])):
+            entry[short] = {"diff": f"{result['mean_difference']:+.3f}".replace("-", "−"),
+                            "low": f"{result['ci95'][0]:+.3f}".replace("-", "−"),
+                            "high": f"{result['ci95'][1]:+.3f}".replace("-", "−"),
+                            "higher": result["higher"], "words": result["words"]}
+        out[key] = entry
+    return out
 
 
 def collect_audit():

@@ -1468,3 +1468,59 @@ braking zone; it would need its own check.
 - README: only the two captions and the experiment range (00–31) changed;
   `docs/preregistration.md` is byte-identical.
 - The CI facts come from GitHub's API and a local clone, not from memory.
+
+---
+
+## 2026-11-13 — Day 21: do corner features add anything on top of whole-lap statistics? (exploratory)
+
+**Instead of a neural network.** The optional Phase 9 model is not built now:
+- no unused test season is left (2025 and 2026 are both used);
+- 100–250 laps per team is small for a CNN;
+- Sadman couldn't explain it yet, and the project's strength is explainability.
+
+Instead, one combined model answers the question H3 left open (decision written first,
+`docs/decisions.md` 2026-11-13).
+
+**Done:**
+- `experiments/32_combined_inputs.py` uses H3's own machinery: the same team-season pairs, the
+  leave-one-weekend-out logistic regression, and balanced accuracy. It compares three inputs:
+  whole-lap statistics (5), corner features (30), and both together (35).
+- It first reproduces the committed H3 per-team results; it matched within 0.00005.
+- New `tests/test_combined_inputs.py`, on known truths:
+  - two independent signals add up (+0.056 in the synthetic world);
+  - a copied signal adds nothing (−0.014);
+  - the words follow the interval.
+  The first test fails if "both" is secretly only the whole-lap statistics.
+
+**Results:**
+
+| Data | Whole-lap | Corner | Both | Both − whole-lap [95 %] | Higher |
+|---|---|---|---|---|---|
+| 2023–2024 | 0.729 | 0.685 | 0.750 | +0.021 [−0.010, +0.052] | 12 of 20 |
+| 2025 | 0.680 | 0.662 | 0.705 | +0.025 [+0.001, +0.050] | 6 of 10 |
+
+- By the words fixed in advance, development reads "no clear gain" and 2025 "corner features add
+  information". The 2025 interval only just excludes zero.
+- Reading: a small gain of about two points, the same in direction in both, uncertain in size.
+- The other way round is clear: adding the whole-lap statistics to the corner features gives
+  +0.064 [0.038, 0.097] (17 of 20) and +0.043 [0.007, 0.089] (7 of 10).
+- So the corner features mostly overlap with the whole-lap statistics, add a little, and their
+  value is mainly that they show where drivers differ.
+- Seen in the figure, not tested: the gain seems largest for team-seasons where the whole-lap
+  statistics alone are weak.
+
+**My mistakes today:**
+- The decision-writing script wrote a doubled backslash where a line break was meant (a literal
+  `\r\n`, not a line break), so the new entry had LF endings in a CRLF file and an extra blank
+  line. Both were fixed; git shows only the 27 new lines.
+- A column lookup through `itertuples` would have failed, because it renames columns with
+  spaces; it now uses `iterrows`.
+- The verdict text first said "both add information"; it now names what was added.
+
+**Verified:**
+- 208 tests pass. The new known-truth tests were checked to fail on a broken combined input
+  (file restored byte-identical).
+- The script stops unless it reproduces H3. It matched within 0.000047 (development) and
+  0.000048 (2025).
+- I looked at the figure. README and report numbers are generated from
+  `results/32_combined_inputs/summary.json`, and `docs/preregistration.md` is byte-identical.
