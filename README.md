@@ -86,7 +86,7 @@ the telemetry.
   and the fix was written down and committed as an addendum before the second run.
 - **Audits.** `experiments/30_audit.py` re-runs every development experiment with the network blocked (no output
   may change), recomputes the three preregistered tests from the saved data, and checks the hand-written documents'
-  numbers and paths. Last full run: 2026-11-09, 25 experiments re-run, all checks passed.
+  numbers and paths. Last full run: 2026-11-14, 26 experiments re-run, all checks passed.
 
 ## Run it
 

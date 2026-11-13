@@ -64,7 +64,7 @@ RERUN = ["00_hello_lap", "01_data_pilot", "02_group_delay_demo", "03_synthetic_e
          "12_identification", "13_signature_stability", "15_final_exploratory", "16_app_data",
          "18_position_offset", "19_h5_power", "20_h5_development", "21_coasting_check", "22_h5_null_check",
          "24_dry_run_checks", "26_addendum_1_dry_run_check", "27_final_2026_figures", "28_lost_laps_2026",
-         "29_teammate_relative", "17_write_docs"]
+         "29_teammate_relative", "32_combined_inputs", "17_write_docs"]
 NOT_RERUN = {
     "06_pilot_stats": "records the latest preregistration commit at run time, so it refuses to re-run; "
                       "recomputed in memory (D)",
@@ -76,6 +76,8 @@ NOT_RERUN = {
                                     "are never cached (a network request); its marker count must equal the run's "
                                     "removal count (asserted by 17_write_docs)",
     "30_audit": "this script",
+    "31_screenshots": "pictures of the app taken with a browser: the replay frame differs from run to run, and "
+                      "nothing in them is a computed result; looked at by eye when taken",
 }
 EXTRA_ENVIRONMENT = {"15_final_exploratory": {"FINAL_TEST": "1"}}
 

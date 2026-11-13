@@ -1524,3 +1524,38 @@ Instead, one combined model answers the question H3 left open (decision written 
   0.000048 (2025).
 - I looked at the figure. README and report numbers are generated from
   `results/32_combined_inputs/summary.json`, and `docs/preregistration.md` is byte-identical.
+
+---
+
+## 2026-11-14 — Day 22: Audit II
+
+**Before the run:** the audit's lists were brought up to date.
+- `32_combined_inputs` is now re-run.
+- `31_screenshots` is listed as not re-run, with its reason: browser pictures whose replay
+  frame differs between runs, with no computed result in them.
+- New `tests/test_audit.py` fails if any numbered experiment is neither re-run nor listed with
+  a reason. Scripts 31 and 32 had slipped past both lists. The test was checked to fail with 32
+  left out.
+- The report's audit sentence now names the six scripts that are not re-run: the three
+  preregistered tests (recomputed in memory instead), two scripts that need OpenF1 online, and
+  the screenshots. Before, it called them all "can't be re-run safely", which didn't fit the
+  screenshots.
+
+**Result: all checks pass on the first run** (`results/30_audit/audit_2026-11-14.json`).
+- 26 experiments were re-run offline, and all 187 output files are unchanged. The only
+  exceptions are the documented volatile parts: the build stopwatch, the pilot's cache sizes
+  and the 2023 Imola note.
+- Part A was recomputed exactly; Part B with the same decisions and numbers within 0.0016;
+  Part C exactly.
+- Lap counts agree across files, and the 2026 timeline is clean.
+- 210 tests pass.
+
+**CI:** GitHub's run list shows Day 20's new workflow (`4d6f99e`) and Day 21 (`4a29751`)
+green. The latest run used `ubuntu-24.04` and has no annotations, so the Node 20 warning is gone.
+
+**Verified:**
+- The audit file contains no personal paths.
+- README and report show the new audit date and counts, generated from the audit file;
+  `docs/preregistration.md` is byte-identical.
+- The working tree after the audit holds only today's intended changes (the audit restores
+  what it rewrote).

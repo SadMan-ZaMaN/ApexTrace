@@ -722,12 +722,12 @@
   }
  },
  "audit": {
-  "date": "2026-11-09",
-  "experiments": 25,
-  "not_rerun": 5,
-  "files": "183",
+  "date": "2026-11-14",
+  "experiments": 26,
+  "not_rerun": 6,
+  "files": "187",
   "largest_2025": "0.0016",
-  "tests": "197 passed"
+  "tests": "210 passed"
  },
  "x21": {
   "dev": {
