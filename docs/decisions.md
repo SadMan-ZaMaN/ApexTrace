@@ -651,3 +651,13 @@ explainable yet), one combined model answers that directly.
   "corner features add information beyond whole-lap statistics"; if it includes 0: "no clear gain
   from adding corner features"; if it lies below 0: "adding them made it worse" (35 inputs fitted on
   about 100–250 laps per team can overfit). The same words for development and 2025, each on its own.
+
+## 2026-11-15 — Day 23: the learned model stays a plan (`docs/ml_plan.md`)
+The optional neural network (Phase 9) is written down as a plan, not built. Reasons as on
+2026-11-13: no unused test season is left, the data are small for it, and it should only be built
+once it can be explained line by line. The plan fixes the design before any result: a tiny 1-D CNN
+(873 weights) on field-relative corner traces of the usable, clean corner passes; exactly the H3
+protocol (same pairs, leave one weekend out, everything fitted on training weekends only); "both
+together" as the baseline to beat; settings fixed in advance; and the confirmatory test on 2027
+after a preregistration Part D. Every number in the plan is checked by
+`tests/test_handwritten_numbers.py`.

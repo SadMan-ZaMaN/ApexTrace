@@ -1,5 +1,5 @@
-"""Hand-written documents that quote numbers: docs/sources.md and the READMEs of the two frozen
-tests (results/final/README.md, results/final_2026/README.md). Like test_design_numbers.py for
+"""Hand-written documents that quote numbers: docs/sources.md, docs/ml_plan.md and the READMEs of
+the two frozen tests (results/final/README.md, results/final_2026/README.md). Like test_design_numbers.py for
 h5_design.md: every quoted number is rebuilt from the committed results files and the exact
 phrase must be in the document. If a number goes stale or is mistyped, this fails.
 Reads only committed files; no F1 data is downloaded.
@@ -159,3 +159,103 @@ def test_final_2026_readme():
     either = sum(s["samples_with_either"] for s in diagnosis["sessions"])
     expect(readme, "final_2026/README.md", f"{either / diagnosis['samples_inside_kept_laps'] * 100:.2f} % of throttle",
            "25 diagnosis")
+
+
+# ---------------------------------------------------------------- docs/ml_plan.md
+
+def conv_weights(filters, channels, length):
+    """A 1-D convolution has filters x channels x length coefficients plus one bias per filter."""
+    return filters * channels * length + filters
+
+
+def test_ml_plan_numbers():
+    from apextrace.corners import GAP_S, WINDOW_AFTER_M, WINDOW_BEFORE_M
+    from apextrace.dataset import MIN_PLAUSIBLE_SPEED_KMH
+    from apextrace.identification import ALL_FEATURES, CORNER_TYPES, RAW_STATS
+
+    plan = text_of("docs/ml_plan.md")
+    name = "ml_plan.md"
+
+    # The input: the features' own window, gap rule and cleaning.
+    expect(plan, name, f"no interval longer than {GAP_S:g} s between samples", "corners.GAP_S")
+    expect(plan, name, f"minimum speed at least {MIN_PLAUSIBLE_SPEED_KMH:g} km/h", "dataset.MIN_PLAUSIBLE_SPEED_KMH")
+    step_m = 5
+    points = int((WINDOW_BEFORE_M + WINDOW_AFTER_M) / step_m) + 1
+    expect(plan, name, f"from {WINDOW_BEFORE_M:g} m before to {WINDOW_AFTER_M:g} m after the corner marker, "
+                       f"every {step_m} m ({points} points)", "corners.WINDOW_*_M")
+    channels = 4
+    expect(plan, name, f"the {channels} × {points} grid", "the input section")
+
+    # The model's weight count: the arithmetic in the table, from the design.
+    first, second, length = 8, 16, 5
+    summary_size = second * len(CORNER_TYPES)
+    w1 = conv_weights(first, channels, length)
+    w2 = conv_weights(second, first, length)
+    w3 = summary_size + 1
+    expect(plan, name, f"{first} × {channels} × {length} + {first} = {w1}", "weight arithmetic")
+    expect(plan, name, f"{second} × {first} × {length} + {second} = {w2}", "weight arithmetic")
+    expect(plan, name, f"{summary_size} + 1 = {w3}", "weight arithmetic")
+    expect(plan, name, f"**{w1 + w2 + w3}**", "weight arithmetic")
+    expect(plan, name, f"the {w1 + w2 + w3}-weight model", "weight arithmetic")
+    expect(plan, name, f"({', '.join(CORNER_TYPES)}): {summary_size} numbers", "identification.CORNER_TYPES")
+
+    # The feature counts the baselines are named by.
+    corner_count = len(ALL_FEATURES) * len(CORNER_TYPES)
+    expect(plan, name, f"Corner features ({corner_count})", "identification.ALL_FEATURES")
+    expect(plan, name, f"Whole-lap statistics ({len(RAW_STATS)})", "identification.RAW_STATS")
+    expect(plan, name, f"Both together ({corner_count + len(RAW_STATS)})", "both")
+
+    # The development pairs.
+    pairs = pd.read_csv(RESULTS / "12_identification" / "teammates.csv")
+    expect(plan, name, f"Development has {len(pairs)} team-seasons, with {pairs['laps'].min()}–{pairs['laps'].max()} "
+                       f"laps and {pairs['sessions'].min()}–{pairs['sessions'].max()} weekends each", "teammates.csv")
+    expect(plan, name, f"({pairs['laps'].min()}–{pairs['laps'].max()} laps per team-season)", "teammates.csv")
+
+    # The baseline table: development and 2025.
+    development = load("12_identification/summary.json")["teammates"]
+    final = load("final/summary.json")["h3"]
+    combined = load("32_combined_inputs/summary.json")["data"]
+    both_dev = combined["development 2023-2024"]
+    both_2025 = combined["2025 (second look)"]
+    teams_2025 = final["ours minus lap time only"]["team_seasons"]
+    expect(plan, name, f"Development 2023–2024 ({both_dev['team_seasons']} team-seasons) | 2025 ({teams_2025} teams)",
+           "summaries")
+    rows = [("Lap time only", "lap time only | balanced_accuracy", None),
+            (f"Corner features ({corner_count})", "our features | balanced_accuracy", None),
+            (f"Whole-lap statistics ({len(RAW_STATS)})", "raw lap statistics | balanced_accuracy", None),
+            (f"Both together ({corner_count + len(RAW_STATS)})", None, "both")]
+    for label, h3_key, combined_key in rows:
+        if h3_key is not None:
+            dev_value, value_2025 = development[h3_key]["mean"], final[h3_key]["mean"]
+        else:
+            dev_value = both_dev["mean_balanced_accuracy"][combined_key]
+            value_2025 = both_2025["mean_balanced_accuracy"][combined_key]
+        expect(plan, name, f"| {label} | {dev_value:.3f} | {value_2025:.3f} |", "summaries")
+    # The combined-inputs check must agree with H3 where they overlap.
+    assert abs(both_dev["mean_balanced_accuracy"]["corner features"]
+               - development["our features | balanced_accuracy"]["mean"]) < 1e-9
+    expect(plan, name, f"about {teams_2025} team pairs (2025 had {teams_2025})", "final summary")
+
+    # The feed.
+    rate = load("01_data_pilot/summary.json")["check_1_sample_timing"]["car"]["rate_from_mean_hz"]
+    expect(plan, name, f"about {rate:.2f} samples per second, roughly one every {300 / 3.6 / rate:.0f} m at 300 km/h",
+           "01_data_pilot")
+    expect(plan, name, f"nothing faster than about {rate / 2:.1f} Hz", "01_data_pilot (Nyquist)")
+    corners = pd.read_csv(RESULTS / "09_dataset" / "sessions.csv")
+    with_corners = corners.loc[corners["corners"] > 0, "corners"]
+    expect(plan, name, f"A 2023–2024 session has {int(with_corners.min())}–{int(with_corners.max())} braking zones",
+           "09_dataset/sessions.csv")
+
+    # Cross-references: the quoted phrases and every path the plan names.
+    notes = text_of("docs/engineering_notes.md")
+    expect(plan, name, "(up to 23 s, `docs/engineering_notes.md`)", "the plan")
+    expect(notes, "engineering_notes.md", "holes of up to 23 s", "the plan's reference")
+    expect(text_of("docs/decisions.md"), "decisions.md", "## 2026-11-13", "the plan's reference")
+    expect(text_of("docs/decisions.md"), "decisions.md", "Instead of a neural network", "the plan's reference")
+    from apextrace.data_loading import FROZEN_SEASONS
+    assert {2025, 2026} <= set(FROZEN_SEASONS)
+    for path in ["docs/decisions.md", "results/12_identification/summary.json", "results/final/summary.json",
+                 "results/32_combined_inputs/summary.json", "docs/engineering_notes.md",
+                 "src/apextrace/data_loading.py", "experiments/32_combined_inputs.py"]:
+        assert f"`{path}`" in plan, path
+        assert (REPO_ROOT / path).exists(), path

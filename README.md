@@ -112,7 +112,7 @@ OpenF1 limits the request rate).
 | `results/` | small outputs (JSON, CSV, figures); `results/final/` and `results/final_2026/` hold the frozen 2025 and 2026 tests |
 | `app/` | the web app (Flask, vanilla JavaScript, D3) |
 | `tests/` | pytest tests on synthetic signals; they never download F1 data |
-| `docs/` | report, preregistration, deviations, research log, decisions, data report, related work, [data sources](docs/sources.md), 2026 rules notes, [engineering notes](docs/engineering_notes.md) (conventions and bug history) |
+| `docs/` | report, preregistration, deviations, research log, decisions, data report, related work, [data sources](docs/sources.md), 2026 rules notes, [ML plan](docs/ml_plan.md), [engineering notes](docs/engineering_notes.md) (conventions and bug history) |
 
 ## Limitations
 

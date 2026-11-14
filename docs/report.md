@@ -234,7 +234,8 @@ uncertain in size. The other way round, adding the whole-lap statistics to the c
 (+0.064, +0.038 to +0.097; +0.043, +0.007 to +0.089). So most of what tells teammates apart is
 either shared by the two inputs or sits in the whole-lap statistics; the corner features add a little on top, and their
 main value is that they show where two drivers differ. (A neural network on the raw corner traces was planned as an
-optional step and not done: no unused test season is left, and the data are small for it.)
+optional step and not done: no unused test season is left, and the data are small for it. Its design, and a fair
+test on 2027, are written down in `docs/ml_plan.md`.)
 
 ![Whole-lap statistics alone against both inputs together, per team-season](../results/32_combined_inputs/combined.png)
 
@@ -416,7 +417,7 @@ teammate-level driver signature that replicated on a held-out season. They do no
 did not show that style follows a driver into a new car, either after a change of team (2025) or after the 2026 change
 of rules. Next steps: more team changes as seasons accumulate; the rest of 2026 and 2027 as new held-out data, to tell
 a weakened signature from a lost one; a preregistered test of the teammate-relative signatures on that new data; the
-cause of the per-lap position offset; a learned sequence model under the same held-out protocol; and a full reading of the
+cause of the per-lap position offset; a learned model on the corner traces under the same held-out protocol (planned in `docs/ml_plan.md`); and a full reading of the
 closest related work (Section 2).
 
 ## Reproducibility

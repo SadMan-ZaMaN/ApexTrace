@@ -1559,3 +1559,37 @@ green. The latest run used `ubuntu-24.04` and has no annotations, so the Node 20
   `docs/preregistration.md` is byte-identical.
 - The working tree after the audit holds only today's intended changes (the audit restores
   what it rewrote).
+
+## 2026-11-15 — Day 23: a plan for the learned model
+
+**What:** `docs/ml_plan.md`, the optional neural network written as a plan for later, not built
+(decisions.md, 2026-11-15). It says what the model is in signals terms (a stack of learned FIR
+filters), what it reads, how it would be tested under the same protocol as H3, which baseline it
+has to beat ("both together": 0.750 development, 0.705 in 2025), how a fair test on 2027 would
+work, and what each outcome would mean. The report (Sections 6.3 and 8) and the README's docs list
+now point to it.
+
+**Found while checking the first draft against the code** (all fixed before anything was saved):
+- It said H3's cleaning drops corner passes with incomplete data. It doesn't: a pass is unusable
+  if any sample interval in its window is longer than 0.6 s (`corners.GAP_S`), and the cleaning
+  drops non-dry tyres and minimum speeds below 40 km/h. Single implausible features are set to
+  missing, not dropped.
+- Because unusable windows already have no gap over 0.6 s, the planned "mask" channel added
+  nothing. It was removed: 4 channels, so 873 weights, not 913.
+- The grid from −300 to +200 m every 5 m has 101 points, not 100.
+- Gear can't be interpolated (4.5 means nothing), so it is held like the brake flag.
+- The features are field-relative (minus the median of all drivers at the same corner and
+  session). Without the same step on the traces, the network would mostly learn the track.
+
+**Verified:**
+- The test `test_ml_plan_numbers` rebuilds every number in the plan from the results files or the
+  code. That covers the pairs, the lap and weekend ranges, the baseline table, the sample rate,
+  the corners per session, the window, the gap rule, the speed floor, the corner types and the
+  weight arithmetic. It also checks that every path the plan names exists.
+- Each of 10 deliberate changes to the plan (a baseline, the weight total, a weight formula, the
+  grid points, the lap range, the corner range, the gap rule, the sample rate, a results path)
+  made the test fail. The file was restored byte-identical.
+- The two checks of `test_public_files.py` were run on the plan as if it were committed: there
+  are no local-only mentions, and all paths exist.
+- README and report were regenerated; `docs/preregistration.md` is byte-identical (SHA-256
+  `bc8c2182…`). 211 tests pass.
