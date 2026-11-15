@@ -21,7 +21,7 @@ the same way for a second one.
 
 | | Question | Result | Verdict |
 |---|---|---|---|
-| H1 | Are corner features repeatable? | lap-level ICC 0.15–0.58, weekend-level 0.04–0.40 | partly |
+| H1 | Are corner features repeatable? | lap-level ICC 0.15–0.58 (2 of 30 at 0.5 or more), weekend-level 0.04–0.40 | weak to moderate; includes the car |
 | H2 | Do two teammates differ by more than the measurement error? (pilot) | 0 of 27 comparisons | not shown: too few laps, as predicted |
 | H3 | Can corner features tell teammates apart on weekends the model never saw? | 2025: 0.662 vs 0.575 for lap time, 8 of 10 teams, p = 0.027 | **supported**, replicated on the held-out season |
 | H4 | Does the style follow drivers who change teams? | 2025: 2 of 5 team changers, p = 0.81 | not supported |
@@ -29,18 +29,20 @@ the same way for a second one.
 
 In plain words:
 
-- **Inside a team there is a measurable driver signature.** Using only how two teammates take their corners, a model
-  tells them apart on unseen 2025 weekends with a balanced accuracy of 0.662 (0.5 = guessing), clearly better
-  than lap time alone. From one year to the next, a driver's season signature stays closer to their own previous
-  season than to their teammate's in the same car (17 of 20 drivers, p = 0.0013).
+- **Inside a team, the two sides of the garage can be told apart.** Using only how two teammates take their corners,
+  a model tells them apart on unseen 2025 weekends with a balanced accuracy of 0.662 (0.5 = guessing), clearly
+  better than lap time alone. What it separates is the driver together with their side of the garage (set-up, and
+  possibly parts and the qualifying segment reached), not the driver alone. Without a change of team or rules, a
+  driver's season signature stayed closer to their own previous season than to their teammate's (16 of 20 drivers
+  from 2023 to 2024, p = 0.0059).
 - **It does not beat simple whole-lap statistics** (0.680), such as the share of the lap spent braking.
   What the corner features add is that they are interpretable: they say *where* two drivers differ. An exploratory
   model given both inputs did a little better than the whole-lap statistics alone (+0.021 in development,
   +0.025 in 2025), a gain too small to be sure of.
 - **Whether the signature survives a change of team was not shown.** Only 2 of 5 drivers who moved
   in 2025 stayed closer to their own past than to their new teammate. Drivers who stayed in their team did so
-  8 times out of 10 in the same comparison, but with five changers the difference can't be told
-  from chance (p = 0.25). The car, or a driver adapting to it, matters a lot.
+  8 times out of 10 in the same comparison in 2025, but only 11 of 20 from 2023 to 2024: the comparison itself
+  leans towards the current teammate, so with five changers this "no" says little.
 - **Nor was it shown to survive the 2026 rule change.** 13 of 19 drivers' 2026 signatures were closer to their own
   2025 signature than to their 2025 teammate's; the test needed 14. Without a rule change the same comparison gave
   16 of 20 and 14 of 16. As stated before the test, this "no" can't tell a signature that weakened from one
@@ -76,10 +78,10 @@ the telemetry.
   known truth first. For example, "the first sample with the brake on" is 12.5 m late on average; the chosen
   estimator has 4.2 m error. A causal moving average shifts the middle of a braking event by 25.1 m, so events are
   located on raw samples.
-- **Alignment.** Laps are placed on one track coordinate by a complementary filter (integrated speed + car position),
-  with 1.15 m along-track error.
-- **No leakage, honest baselines.** Identification is always leave-one-weekend-out and is compared with lap time,
-  simple lap statistics and shuffled labels (which score 0.507, as they should).
+- **Alignment.** Laps are placed on one track coordinate by a simple complementary filter (integrated speed + car
+  position), with a random along-track error of about 1.15 m on the pilot session.
+- **Held-out weekends, honest baselines.** Identification is always leave-one-weekend-out and is compared with lap
+  time, simple lap statistics and shuffled labels (which score 0.507, as they should).
 - **Frozen test sets.** 2025 was refused by the code until the preregistration was committed, then run once. A
   crash before any result, and a team changer missing from the plan, are both reported as deviations. 2026 was
   handled the same way; its first run stopped at a data check before any result (a "no value" marker in the feed),

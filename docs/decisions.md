@@ -661,3 +661,25 @@ protocol (same pairs, leave one weekend out, everything fitted on training weeke
 together" as the baseline to beat; settings fixed in advance; and the confirmatory test on 2027
 after a preregistration Part D. Every number in the plan is checked by
 `tests/test_handwritten_numbers.py`.
+
+## 2026-11-16 — Day 25: report v2 after a fresh-eyes review
+A separate reviewer (another AI model, given only the public files and told to change nothing)
+read the report as a faculty member would and listed 31 findings. Each was checked against the
+code and the results files before anything changed; all 31 held, one in part (finding 12: the
+power figures now say they assume independent drivers, but the reviewer's rough "calibrated p"
+was not added, because nothing stored supports it). No frozen number, verdict or preregistered
+rule changed; only wording, definitions, limitations, and numbers that were already in the
+results files or now come from them.
+
+- **Robust spread for H1** (finding 3): the median pairwise difference within a (session, corner,
+  driver) group, divided by 0.9539, added to experiment 11 as new columns; the existing columns
+  and the bootstrap intervals are byte-for-byte unchanged (it uses no random numbers).
+- **"Driver signature" → "the driver together with their side of the garage"** (finding 4): set-up,
+  parts and the qualifying segment reached can separate teammates as well as style can, and the
+  identification test cannot tell them apart. Stated in Discussion, Limitations, Conclusion and
+  README.
+- **H4 control quoted in full** (finding 7): 8 of 10 in 2025, 11 of 20 on 2023 → 2024, 5 of 18
+  in 2026, not 8 of 10 alone.
+- **The H3 figure's bars start at chance (0.5)**, not at a cut-off axis of 0.4 (found while looking
+  at every figure; not a reviewer finding).
+- **The app's H1 verdict** follows the report: "weak to moderate" instead of "partly".

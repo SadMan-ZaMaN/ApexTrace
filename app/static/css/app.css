@@ -132,8 +132,8 @@ img, svg { display: block; }
 .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
 .chip-supported { color: var(--ink); }
 .chip-supported::before { background: var(--green); }
-.chip-partly { color: var(--ink); }
-.chip-partly::before { background: var(--yellow); }
+.chip-partly, .chip-weak-to-moderate { color: var(--ink); }
+.chip-partly::before, .chip-weak-to-moderate::before { background: var(--yellow); }
 .chip-not-shown::before, .chip-not-supported::before { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-3); }
 
 .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }

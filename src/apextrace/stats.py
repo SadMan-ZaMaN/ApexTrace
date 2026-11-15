@@ -14,6 +14,9 @@ Every method here answers one plain question:
   min_detectable_effect
                      "With this few laps, how big must a difference be to have
                       an 80 % chance of being detected?" (statistical power)
+  robust_within_group_sd
+                     "How far apart are two laps of the same driver at the same
+                      corner, typically, if a few broken laps are ignored?"
 """
 
 import itertools
@@ -272,3 +275,45 @@ def icc_from_group_stats(sizes, means, within_ss):
     k0 = (n_total - np.sum(sizes ** 2) / n_total) / (k - 1)
     denominator = ms_between + (k0 - 1) * ms_within
     return float((ms_between - ms_within) / denominator) if denominator > 0 else float("nan")
+
+
+# For a normal spread with standard deviation sigma, the difference of two independent values
+# has standard deviation sigma * sqrt(2), and the median of its absolute value is
+# 0.6745 * sigma * sqrt(2) = 0.9539 * sigma (0.6745 = the 75th percentile of a standard normal).
+PAIR_MEDIAN_TO_SD = float(scipy_stats.norm.ppf(0.75) * math.sqrt(2))
+
+
+def robust_within_group_sd(values, groups):
+    """A lap-to-lap spread that a few broken laps can't inflate: from the median pairwise difference.
+
+    WHY: the ordinary pooled standard deviation squares every deviation, so one
+    wrong detection (a braking point 60 m off because the brake flag came on at the
+    wrong place) can double it. Here every two values of the same group (the same
+    driver, corner and session) give one difference; the median of all those
+    absolute differences, divided by 0.9539, is the standard deviation a normal
+    spread with the same typical difference would have. One broken lap spoils only
+    its own pairs, and the median ignores them.
+
+    Unlike "deviation from the group median", this is not biased low for groups of
+    two: each pair difference has variance 2 sigma^2 whatever the group size.
+
+    Worked example: groups {0, 2} and {10, 13, 14} give the pairs |0-2| = 2,
+    |10-13| = 3, |10-14| = 4 and |13-14| = 1; their median is 2.5, so the spread
+    is 2.5 / 0.9539 = 2.62 (the pooled SD is 1.89). Add a broken lap of 70 to the
+    second group: the pooled SD jumps to 25.0, while this gives 4 / 0.9539 = 4.19
+    (the pairs are 2, 3, 4, 1, 60, 57, 56; their median is 4).
+    """
+    values = np.asarray(values, dtype=float)
+    groups = np.asarray(groups, dtype=object)
+    members = {}
+    for value, group in zip(values, groups):
+        if np.isfinite(value):
+            members.setdefault(group, []).append(value)
+    differences = []
+    for group_values in members.values():
+        for i in range(len(group_values)):
+            for j in range(i + 1, len(group_values)):
+                differences.append(abs(group_values[i] - group_values[j]))
+    if not differences:
+        return float("nan")
+    return float(np.median(differences) / PAIR_MEDIAN_TO_SD)

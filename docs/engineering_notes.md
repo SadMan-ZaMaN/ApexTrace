@@ -219,3 +219,14 @@ images the same way every time (Edge through Playwright, 1440 x 1000).
   `tests/test_public_files.py` must name the local-only files to look for them. While
   untracked it wasn't scanned; committed (`48c167a`), it failed on its own text, so CI on that
   commit fails. It now skips itself, like `.gitignore`.
+
+- **2026-11-16 — A spread ratio from the standard deviation overstated the H1 claim.**
+  The report said the lap-to-lap spread was 2.9 to 28 times the simulated measurement error, "so
+  the variation is the drivers'". A few broken laps (a wrong braking event, a lap that was not a
+  full attack) inflate a standard deviation: at slow-corner brake onset, 16.6 m against a typical
+  pair difference that gives 5.4 m. `stats.robust_within_group_sd` (the median difference
+  between two laps of the same driver, corner and session, divided by 0.9539) puts the ratio at
+  1.7 to 15, and 1.8 to 2.6 for brake onset. "Deviation from the group median" was rejected:
+  for groups of two laps it reads about 30 % low. Report both spreads, never the SD alone.
+  Guarded by the four `test_robust_spread_*` tests (they fail with the mean instead of the
+  median, without the conversion to an SD, and with the group-median version).

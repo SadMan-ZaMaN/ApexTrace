@@ -29,7 +29,18 @@
   "laps_dev_kept": "4,500",
   "drivers_total": 30,
   "download_minutes": "68",
-  "download_per_session_s": "92"
+  "download_per_session_s": "92",
+  "usable_share": {
+   "2023": "0.77",
+   "2024": "0.84",
+   "2025": "0.66",
+   "2026": "0.61"
+  },
+  "fast_sessions_dev": 22,
+  "zones_per_session_dev": "7",
+  "gap_s": "0.6",
+  "window_before_m": "300",
+  "window_after_m": "200"
  },
  "validation": {
   "q_laps": 261,
@@ -44,6 +55,7 @@
   "butter_mid_shift_m": "22.3",
   "zero_phase_mid_shift_m": "3.4",
   "zero_phase_onset_shift_m": "−35.8",
+  "zero_phase_onset_early_m": "35.8",
   "onset_naive_bias_m": "12.5",
   "onset_naive_rmse_m": "14.9",
   "onset_chosen_rmse_m": "4.2",
@@ -66,7 +78,10 @@
   "t5_p": "0.057",
   "t9_diff_m": "7.2",
   "t9_g": "1.9",
-  "t9_p": "0.057"
+  "t9_p": "0.057",
+  "t5_error_m": "2.5",
+  "t9_error_m": "3.0",
+  "laps_by_corner": "T5 4 and 4, T6 4 and 2, T9 3 and 4"
  },
  "h1": {
   "lap_min": "0.15",
@@ -76,12 +91,22 @@
   "ratio_min": "2.9",
   "ratio_max": "28",
   "ratio_cases": 21,
+  "robust_min": "1.7",
+  "robust_max": "15",
+  "robust_brake_min": "1.8",
+  "robust_brake_max": "2.6",
+  "cells": 30,
+  "lap_half": 2,
+  "lap_median": "0.34",
+  "weekend_half": 0,
+  "weekend_below_02": 19,
+  "weekend_median": "0.16",
   "brake_slow_lap": "0.45",
   "brake_slow_weekend": "0.04",
   "best_weekend": [
-   "min_speed_kmh (fast, 0.40)",
-   "throttle_pickup_m (medium, 0.38)",
-   "corner_time_s (fast, 0.33)"
+   "minimum speed (fast, 0.40)",
+   "throttle pickup (medium, 0.38)",
+   "corner time (fast, 0.33)"
   ]
  },
  "h3": {
@@ -677,6 +702,7 @@
  "x26": {
   "lost": 30,
   "driver_sessions": 22,
+  "no_data_anyway": 1,
   "most": 3,
   "most_driver": "VER",
   "most_location": "Shanghai",

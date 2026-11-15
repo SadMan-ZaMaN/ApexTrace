@@ -291,7 +291,7 @@ def build_headline(sessions):
              "result": f"lap-level ICC {min(icc_lap):.2f}–{max(icc_lap):.2f}; "
                        f"weekend-level {min(icc_weekend):.2f}–{max(icc_weekend):.2f}",
              "detail": "Minimum speed and throttle features repeat; braking points barely persist across weekends.",
-             "verdict": "partly", "data": "2023–2024", "source": "results/11_repeatability/summary.json"},
+             "verdict": "weak to moderate", "data": "2023–2024", "source": "results/11_repeatability/summary.json"},
             {"id": "H2", "question": "Do teammates differ by more than the measurement error? (pilot)",
              "result": f"{pilot['discoveries']} of {len(pilot['h2'])} comparisons after correction",
              "detail": "Norris vs Piastri, 2024 Abu Dhabi: too few laps for any test to pass, as predicted in advance.",

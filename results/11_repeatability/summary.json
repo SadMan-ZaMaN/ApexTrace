@@ -24,7 +24,9 @@
    "icc_weekend_high": 0.0681655466558404,
    "lap_to_lap_sd": 16.56895930675657,
    "measurement_error_per_lap": 2.945660580016972,
-   "sd_over_measurement_error": 5.624870502446384
+   "sd_over_measurement_error": 5.624870502446384,
+   "lap_to_lap_robust_sd": 5.442026806296593,
+   "robust_sd_over_measurement_error": 1.8474724627863397
   },
   {
    "corner_type": "slow",
@@ -38,7 +40,9 @@
    "icc_weekend_high": 0.10568643565976915,
    "lap_to_lap_sd": 15.65115449823672,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 6.062654791141043,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "slow",
@@ -52,7 +56,9 @@
    "icc_weekend_high": 0.15841098381674537,
    "lap_to_lap_sd": 1.2517410242774836,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 0.8575569114911614,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "slow",
@@ -66,7 +72,9 @@
    "icc_weekend_high": 0.30747097940911583,
    "lap_to_lap_sd": 2.6780027201053564,
    "measurement_error_per_lap": 0.354,
-   "sd_over_measurement_error": 7.564979435325866
+   "sd_over_measurement_error": 7.564979435325866,
+   "lap_to_lap_robust_sd": 2.1376021302328563,
+   "robust_sd_over_measurement_error": 6.038424096702984
   },
   {
    "corner_type": "slow",
@@ -80,7 +88,9 @@
    "icc_weekend_high": 0.2378429329902152,
    "lap_to_lap_sd": 5.3906450805568795,
    "measurement_error_per_lap": 1.3093300778130486,
-   "sd_over_measurement_error": 4.117101693379549
+   "sd_over_measurement_error": 4.117101693379549,
+   "lap_to_lap_robust_sd": 3.053342915303183,
+   "robust_sd_over_measurement_error": 2.3319886765322986
   },
   {
    "corner_type": "slow",
@@ -94,7 +104,9 @@
    "icc_weekend_high": 0.2641865072806242,
    "lap_to_lap_sd": 8.136680342419625,
    "measurement_error_per_lap": 1.4968020085054414,
-   "sd_over_measurement_error": 5.436043174837874
+   "sd_over_measurement_error": 5.436043174837874,
+   "lap_to_lap_robust_sd": 3.1812426013691018,
+   "robust_sd_over_measurement_error": 2.1253596556471597
   },
   {
    "corner_type": "slow",
@@ -108,7 +120,9 @@
    "icc_weekend_high": 0.32186646994604673,
    "lap_to_lap_sd": 11.282870605787515,
    "measurement_error_per_lap": 3.83302546986919,
-   "sd_over_measurement_error": 2.9435939558660347
+   "sd_over_measurement_error": 2.9435939558660347,
+   "lap_to_lap_robust_sd": 6.3981293775434604,
+   "robust_sd_over_measurement_error": 1.6692112869685185
   },
   {
    "corner_type": "slow",
@@ -122,7 +136,9 @@
    "icc_weekend_high": 0.15806069863363764,
    "lap_to_lap_sd": 4.772970593892031,
    "measurement_error_per_lap": 0.241,
-   "sd_over_measurement_error": 19.804857236066518
+   "sd_over_measurement_error": 19.804857236066518,
+   "lap_to_lap_robust_sd": 2.096716165015061,
+   "robust_sd_over_measurement_error": 8.70006707475129
   },
   {
    "corner_type": "slow",
@@ -136,7 +152,9 @@
    "icc_weekend_high": 0.18547964836487218,
    "lap_to_lap_sd": 3.9417141556912396,
    "measurement_error_per_lap": 0.232,
-   "sd_over_measurement_error": 16.990147222807067
+   "sd_over_measurement_error": 16.990147222807067,
+   "lap_to_lap_robust_sd": 2.5842026733810366,
+   "robust_sd_over_measurement_error": 11.138804626642399
   },
   {
    "corner_type": "slow",
@@ -150,7 +168,9 @@
    "icc_weekend_high": 0.23611862028751662,
    "lap_to_lap_sd": 0.15531397690505,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 0.10693252441576657,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "medium",
@@ -164,7 +184,9 @@
    "icc_weekend_high": 0.14811705863190958,
    "lap_to_lap_sd": 11.340944366111742,
    "measurement_error_per_lap": 2.516585236519106,
-   "sd_over_measurement_error": 4.506481323000338
+   "sd_over_measurement_error": 4.506481323000338,
+   "lap_to_lap_robust_sd": 5.801613628596665,
+   "robust_sd_over_measurement_error": 2.3053515312763055
   },
   {
    "corner_type": "medium",
@@ -178,7 +200,9 @@
    "icc_weekend_high": 0.2707683176853666,
    "lap_to_lap_sd": 12.19641484721652,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 7.347941800295282,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "medium",
@@ -192,7 +216,9 @@
    "icc_weekend_high": 0.3037552375307161,
    "lap_to_lap_sd": 1.3028982282233355,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 1.0284392789398855,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "medium",
@@ -206,7 +232,9 @@
    "icc_weekend_high": 0.4588570020884276,
    "lap_to_lap_sd": 3.937487783774953,
    "measurement_error_per_lap": 0.367,
-   "sd_over_measurement_error": 10.728849547070716
+   "sd_over_measurement_error": 10.728849547070716,
+   "lap_to_lap_robust_sd": 3.3526491478590756,
+   "robust_sd_over_measurement_error": 9.135283781632358
   },
   {
    "corner_type": "medium",
@@ -220,7 +248,9 @@
    "icc_weekend_high": 0.3347747045652765,
    "lap_to_lap_sd": 5.957093501630822,
    "measurement_error_per_lap": 1.3922586874090332,
-   "sd_over_measurement_error": 4.278726041003815
+   "sd_over_measurement_error": 4.278726041003815,
+   "lap_to_lap_robust_sd": 4.885348664485091,
+   "robust_sd_over_measurement_error": 3.5089374615981974
   },
   {
    "corner_type": "medium",
@@ -234,7 +264,9 @@
    "icc_weekend_high": 0.5102497281177519,
    "lap_to_lap_sd": 7.764822845686868,
    "measurement_error_per_lap": 1.9062256562815234,
-   "sd_over_measurement_error": 4.073401708816425
+   "sd_over_measurement_error": 4.073401708816425,
+   "lap_to_lap_robust_sd": 5.733470353233684,
+   "robust_sd_over_measurement_error": 3.0077605630479085
   },
   {
    "corner_type": "medium",
@@ -248,7 +280,9 @@
    "icc_weekend_high": 0.2966242239560963,
    "lap_to_lap_sd": 13.718565448137399,
    "measurement_error_per_lap": 4.370657187731145,
-   "sd_over_measurement_error": 3.1387877975529017
+   "sd_over_measurement_error": 3.1387877975529017,
+   "lap_to_lap_robust_sd": 8.388961376225254,
+   "robust_sd_over_measurement_error": 1.919382146871156
   },
   {
    "corner_type": "medium",
@@ -262,7 +296,9 @@
    "icc_weekend_high": 0.1969822064094812,
    "lap_to_lap_sd": 3.7332002740235093,
    "measurement_error_per_lap": 0.228,
-   "sd_over_measurement_error": 16.37368541238381
+   "sd_over_measurement_error": 16.37368541238381,
+   "lap_to_lap_robust_sd": 2.011799160331933,
+   "robust_sd_over_measurement_error": 8.823680527771636
   },
   {
    "corner_type": "medium",
@@ -276,7 +312,9 @@
    "icc_weekend_high": 0.19058799651752673,
    "lap_to_lap_sd": 3.6352633142042206,
    "measurement_error_per_lap": 0.238,
-   "sd_over_measurement_error": 15.274215605900087
+   "sd_over_measurement_error": 15.274215605900087,
+   "lap_to_lap_robust_sd": 2.475173432800284,
+   "robust_sd_over_measurement_error": 10.399888373110437
   },
   {
    "corner_type": "medium",
@@ -290,7 +328,9 @@
    "icc_weekend_high": 0.3451611569607864,
    "lap_to_lap_sd": 0.12083958854046067,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 0.08491700468311039,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "fast",
@@ -304,7 +344,9 @@
    "icc_weekend_high": 0.12363660345979438,
    "lap_to_lap_sd": 29.6559273071237,
    "measurement_error_per_lap": 2.9576425160363655,
-   "sd_over_measurement_error": 10.02688024206069
+   "sd_over_measurement_error": 10.02688024206069,
+   "lap_to_lap_robust_sd": 7.830710697289995,
+   "robust_sd_over_measurement_error": 2.647619059717937
   },
   {
    "corner_type": "fast",
@@ -318,7 +360,9 @@
    "icc_weekend_high": 0.12706843420087932,
    "lap_to_lap_sd": 31.184527612613373,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 12.398406862775298,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "fast",
@@ -332,7 +376,9 @@
    "icc_weekend_high": 0.33034157323405133,
    "lap_to_lap_sd": 1.4878494860068305,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 1.0819055411477716,
+   "robust_sd_over_measurement_error": NaN
   },
   {
    "corner_type": "fast",
@@ -346,7 +392,9 @@
    "icc_weekend_high": 0.4878372362397285,
    "lap_to_lap_sd": 7.802193516159901,
    "measurement_error_per_lap": 0.345,
-   "sd_over_measurement_error": 22.6150536700287
+   "sd_over_measurement_error": 22.6150536700287,
+   "lap_to_lap_robust_sd": 5.2580399628165075,
+   "robust_sd_over_measurement_error": 15.240695544395676
   },
   {
    "corner_type": "fast",
@@ -360,7 +408,9 @@
    "icc_weekend_high": 0.17350644419275807,
    "lap_to_lap_sd": 10.823951084839472,
    "measurement_error_per_lap": 1.394538006891861,
-   "sd_over_measurement_error": 7.761675215266336
+   "sd_over_measurement_error": 7.761675215266336,
+   "lap_to_lap_robust_sd": 8.955074740779326,
+   "robust_sd_over_measurement_error": 6.421535086546942
   },
   {
    "corner_type": "fast",
@@ -374,7 +424,9 @@
    "icc_weekend_high": 0.16102377111808294,
    "lap_to_lap_sd": 16.01811194957887,
    "measurement_error_per_lap": 3.0010325310909116,
-   "sd_over_measurement_error": 5.3375335933983
+   "sd_over_measurement_error": 5.3375335933983,
+   "lap_to_lap_robust_sd": 8.88221385404505,
+   "robust_sd_over_measurement_error": 2.9597192839546653
   },
   {
    "corner_type": "fast",
@@ -388,7 +440,9 @@
    "icc_weekend_high": 0.21029393633752852,
    "lap_to_lap_sd": 30.19542143200454,
    "measurement_error_per_lap": 5.015457033278814,
-   "sd_over_measurement_error": 6.02047255746592
+   "sd_over_measurement_error": 6.02047255746592,
+   "lap_to_lap_robust_sd": 13.534302845172217,
+   "robust_sd_over_measurement_error": 2.698518351442097
   },
   {
    "corner_type": "fast",
@@ -402,7 +456,9 @@
    "icc_weekend_high": 0.12651215450337513,
    "lap_to_lap_sd": 6.3206237013979765,
    "measurement_error_per_lap": 0.236,
-   "sd_over_measurement_error": 26.78230381948295
+   "sd_over_measurement_error": 26.78230381948295,
+   "lap_to_lap_robust_sd": 2.304291065351545,
+   "robust_sd_over_measurement_error": 9.763945192167565
   },
   {
    "corner_type": "fast",
@@ -416,7 +472,9 @@
    "icc_weekend_high": 0.32518926227015316,
    "lap_to_lap_sd": 6.144512823961491,
    "measurement_error_per_lap": 0.22,
-   "sd_over_measurement_error": 27.929603745279504
+   "sd_over_measurement_error": 27.929603745279504,
+   "lap_to_lap_robust_sd": 3.2347088635769965,
+   "robust_sd_over_measurement_error": 14.703222107168166
   },
   {
    "corner_type": "fast",
@@ -430,7 +488,9 @@
    "icc_weekend_high": 0.4250461014453946,
    "lap_to_lap_sd": 0.15506515256186112,
    "measurement_error_per_lap": NaN,
-   "sd_over_measurement_error": NaN
+   "sd_over_measurement_error": NaN,
+   "lap_to_lap_robust_sd": 0.07705431906430361,
+   "robust_sd_over_measurement_error": NaN
   }
  ]
 }

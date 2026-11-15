@@ -88,23 +88,30 @@ def h4_for(drivers, laps_2025, laps_2024):
 
 
 def figure_h3(teams):
-    """Per team: balanced accuracy of lap time only, raw lap statistics and our corner features."""
+    """Per team: balanced accuracy of lap time only, whole-lap statistics and our corner features.
+
+    The bars start at chance (0.5), not at 0.4: a bar that starts at a cut-off axis makes 0.45
+    look a fifth the length of 0.69. From 0.5, a bar's length is how far it is from guessing,
+    and a result below chance points left (McLaren, lap time only: 0.45).
+    """
     sets = [("lap time only | balanced_accuracy", "lap time only"),
-            ("raw lap statistics | balanced_accuracy", "raw lap statistics"),
+            ("raw lap statistics | balanced_accuracy", "whole-lap statistics"),
             ("our features | balanced_accuracy", "our corner features")]
     teams = teams.sort_values("our features | balanced_accuracy")
     fig, ax = plt.subplots(figsize=(8, 6))
     height = 0.26
+    chance = 0.5
     for k, (column, label) in enumerate(sets):
         positions = [i + (k - 1) * height for i in range(len(teams))]
-        ax.barh(positions, teams[column], height=height, color=SERIES[k], label=label)
+        ax.barh(positions, teams[column] - chance, left=chance, height=height, color=SERIES[k], label=label)
     ax.axvline(0.5, color=TEXT_SECONDARY, linewidth=1, linestyle="--")
     ax.text(0.505, len(teams) - 0.45, "chance", color=TEXT_SECONDARY, fontsize=8)
     ax.set_yticks(range(len(teams)))
     ax.set_yticklabels([f"{t.replace(' 2025', '')} ({d})" for t, d in zip(teams["team_season"], teams["drivers"])],
                        fontsize=8)
     ax.set_xlim(0.4, 1.0)
-    ax.set_xlabel("balanced accuracy, leave-one-session-out (which teammate drove this lap?)")
+    ax.set_xlabel("balanced accuracy, each weekend held out in turn (which teammate drove this lap?)\n"
+                  "bars start at chance (0.5)")
     ax.set_title("2025 (frozen test): teammate identification per team", fontsize=10, pad=10)
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles[::-1], labels[::-1], loc="lower right", fontsize=8, frameon=False)  # same order as the bars

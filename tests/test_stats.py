@@ -12,6 +12,7 @@ from apextrace.stats import (
     min_detectable_effect,
     min_permutation_p,
     permutation_test,
+    robust_within_group_sd,
 )
 
 
@@ -114,3 +115,68 @@ def test_icc_from_group_stats_matches_icc_oneway():
         means.append(v.mean())
         within.append(np.sum((v - v.mean()) ** 2))
     assert icc_from_group_stats(sizes, means, within) == pytest.approx(icc_oneway(values, groups))
+
+
+def realistic_groups(rng, sigma, broken_share=0.0, broken_m=60.0):
+    """Qualifying-like groups: one (driver, corner, session) has 2 to 6 laps, mostly 2 to 4.
+
+    A broken lap (a wrong braking event) is moved by broken_m metres.
+    """
+    values, groups = [], []
+    for group in range(3000):
+        size = int(rng.choice([2, 2, 3, 3, 4, 4, 5, 6]))
+        offset = rng.normal(0.0, 10.0)   # the driver's own level: must not count as spread
+        for _ in range(size):
+            value = offset + rng.normal(0.0, sigma)
+            if rng.random() < broken_share:
+                value += broken_m
+            values.append(value)
+            groups.append(group)
+    return np.array(values), np.array(groups)
+
+
+def pooled_sd(values, groups):
+    total, degrees = 0.0, 0
+    for group in np.unique(groups):
+        part = values[groups == group]
+        total += float(np.sum((part - part.mean()) ** 2))
+        degrees += len(part) - 1
+    return float(np.sqrt(total / degrees))
+
+
+def test_robust_spread_docstring_example():
+    groups = ["a", "a", "b", "b", "b"]
+    assert robust_within_group_sd([0, 2, 10, 13, 14], groups) == pytest.approx(2.5 / 0.9539, abs=0.001)
+    assert robust_within_group_sd([0, 2, 10, 13, 14, 70], groups + ["b"]) == pytest.approx(4 / 0.9539, abs=0.001)
+
+
+def test_robust_spread_constant_matches_scipy():
+    from scipy import stats as scipy_stats
+    from apextrace.stats import PAIR_MEDIAN_TO_SD
+    rng = np.random.default_rng(5)
+    differences = np.abs(rng.normal(0, 1, 400000) - rng.normal(0, 1, 400000))
+    assert PAIR_MEDIAN_TO_SD == pytest.approx(scipy_stats.norm.ppf(0.75) * np.sqrt(2))
+    assert np.median(differences) == pytest.approx(PAIR_MEDIAN_TO_SD, rel=0.01)
+
+
+def test_robust_spread_recovers_a_known_sd_with_small_groups():
+    """Clean normal laps, groups of 2-6 (pairs included): both spreads find sigma = 3 m."""
+    rng = np.random.default_rng(11)
+    values, groups = realistic_groups(rng, sigma=3.0)
+    assert robust_within_group_sd(values, groups) == pytest.approx(3.0, rel=0.05)
+    assert pooled_sd(values, groups) == pytest.approx(3.0, rel=0.05)
+
+
+def test_robust_spread_ignores_a_few_broken_laps():
+    """5 % of laps 60 m off: the pooled SD more than triples, the robust spread stays within 15 %."""
+    rng = np.random.default_rng(12)
+    values, groups = realistic_groups(rng, sigma=3.0, broken_share=0.05)
+    assert pooled_sd(values, groups) > 3 * 3.0
+    assert robust_within_group_sd(values, groups) == pytest.approx(3.0, rel=0.15)
+
+
+def test_robust_spread_skips_missing_values_and_single_laps():
+    # the missing third lap is skipped: one pair, |0 - 2| = 2
+    assert robust_within_group_sd([0.0, 2.0, np.nan], ["a", "a", "a"]) == pytest.approx(2 / 0.9539, abs=0.001)
+    # no group with two real values: no pair, no spread
+    assert np.isnan(robust_within_group_sd([1.0, np.nan, 5.0], ["a", "a", "b"]))

@@ -24,6 +24,7 @@ from pathlib import Path
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
+from apextrace.corners import GAP_S, WINDOW_AFTER_M, WINDOW_BEFORE_M
 from apextrace.dataset import clean, load_dataset
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -67,6 +68,13 @@ def interval(block, digits=3):
 
 # ---------------------------------------------------------------- the numbers
 
+# Plain words for the feature names in the code (the report printed "min_speed_kmh" until 2026-11-16).
+FEATURE_WORDS = {"brake_onset_m": "brake onset", "braking_distance_m": "braking distance",
+                 "mean_decel_ms2": "mean deceleration", "min_speed_kmh": "minimum speed", "apex_m": "slowest point",
+                 "throttle_pickup_m": "throttle pickup", "full_throttle_m": "full throttle",
+                 "entry_speed_kmh": "entry speed", "exit_speed_kmh": "exit speed", "corner_time_s": "corner time"}
+
+
 def collect_numbers():
     n = {}
 
@@ -108,6 +116,26 @@ def collect_numbers():
         "download_minutes": f(download_log["seconds"].sum() / 60, 0),
         "download_per_session_s": f(download_log["seconds"].median(), 0),
     })
+    # Share of (lap, corner) pairs with a usable window (car data, no feed gap over 0.6 s), per season
+    # (review 2026-11-16: the loss differs by season and was reported for 2026 only).
+    sessions_dev = pd.read_csv(RESULTS / "09_dataset" / "sessions.csv")
+    sessions_2026 = pd.read_csv(RESULTS / "final_2026" / "sessions_2026.csv")
+    usable_share = {}
+    for year, rows_of_year in sessions_dev.groupby("year"):
+        usable_share[str(year)] = f(rows_of_year["usable_pairs"].sum() / rows_of_year["pairs"].sum(), 2)
+    usable_share["2025"] = f(sessions_2025["usable_pairs"].sum() / sessions_2025["pairs"].sum(), 2)
+    usable_share["2026"] = f(sessions_2026["usable_pairs"].sum() / sessions_2026["pairs"].sum(), 2)
+    zones_dev = pd.read_csv(RESULTS / "09_dataset" / "corners.csv")
+    zones_dev = zones_dev[zones_dev["session_key"].isin(dev_clean["session_key"].unique())]
+    fast_sessions = int(dev_clean.loc[dev_clean["corner_type"] == "fast", "session_key"].nunique())
+    assert fast_sessions == int(zones_dev.loc[zones_dev["type"] == "fast", "session_key"].nunique())
+    n["data"].update({
+        "usable_share": usable_share,
+        "fast_sessions_dev": fast_sessions,
+        "zones_per_session_dev": f(zones_dev.groupby("session_key").size().mean(), 0),
+        # the usable-window rule, from the code that applies it (corners.py)
+        "gap_s": f(GAP_S, 1), "window_before_m": f(WINDOW_BEFORE_M, 0), "window_after_m": f(WINDOW_AFTER_M, 0),
+    })
 
     # --- OpenF1 = the same feed as FastF1 (validation on 2024 Abu Dhabi)
     validation = load("07_openf1_validation/summary.json")
@@ -129,6 +157,7 @@ def collect_numbers():
         "butter_mid_shift_m": f(shift["Butterworth 0.5 Hz, causal"]["mid_mean_shift_m"], 1),
         "zero_phase_mid_shift_m": f(shift["moving average 5, zero-phase"]["mid_mean_shift_m"], 1),
         "zero_phase_onset_shift_m": f(shift["moving average 5, zero-phase"]["onset_mean_shift_m"], 1),
+        "zero_phase_onset_early_m": f(-shift["moving average 5, zero-phase"]["onset_mean_shift_m"], 1),
         "onset_naive_bias_m": f(real.loc[("brake_onset_m", "first on sample"), "bias"], 1),
         "onset_naive_rmse_m": f(real.loc[("brake_onset_m", "first on sample"), "rmse"], 1),
         "onset_chosen_rmse_m": f(real.loc[("brake_onset_m", "speed breakpoint inside off-on interval"), "rmse"], 1),
@@ -151,19 +180,33 @@ def collect_numbers():
         "t5_p": p_value(onset["T5"]["p_permutation"]),
         "t9_diff_m": f(onset["T9"]["difference_NOR_minus_PIA"], 1), "t9_g": f(onset["T9"]["hedges_g"], 1),
         "t9_p": p_value(onset["T9"]["p_permutation"]),
+        "t5_error_m": f(onset["T5"]["per_lap_measurement_error"], 1),
+        "t9_error_m": f(onset["T9"]["per_lap_measurement_error"], 1),
+        "laps_by_corner": ", ".join(f"{corner} {onset[corner]['n_NOR']} and {onset[corner]['n_PIA']}"
+                                    for corner in sorted(onset)),
     }
 
     # --- H1 repeatability
     rows = pd.DataFrame(repeat["rows"])
     ratio = rows["sd_over_measurement_error"].dropna()
+    robust = rows["robust_sd_over_measurement_error"].dropna()
+    robust_brake = rows.loc[rows["feature"] == "brake_onset_m", "robust_sd_over_measurement_error"]
+    assert len(robust) == len(ratio)
     weekend = rows.sort_values("icc_weekend")
     n["h1"] = {
         "lap_min": f(rows["icc_lap"].min(), 2), "lap_max": f(rows["icc_lap"].max(), 2),
         "weekend_min": f(rows["icc_weekend"].min(), 2), "weekend_max": f(rows["icc_weekend"].max(), 2),
         "ratio_min": f(ratio.min(), 1), "ratio_max": f(ratio.max(), 0), "ratio_cases": int(len(ratio)),
+        "robust_min": f(robust.min(), 1), "robust_max": f(robust.max(), 0),
+        "robust_brake_min": f(robust_brake.min(), 1), "robust_brake_max": f(robust_brake.max(), 1),
+        # ICC > 0.5 means more variation between drivers than within: H1 taken literally
+        "cells": int(len(rows)), "lap_half": int((rows["icc_lap"] >= 0.5).sum()),
+        "lap_median": f(rows["icc_lap"].median(), 2), "weekend_half": int((rows["icc_weekend"] >= 0.5).sum()),
+        "weekend_below_02": int((rows["icc_weekend"] < 0.2).sum()), "weekend_median": f(rows["icc_weekend"].median(), 2),
         "brake_slow_lap": f(rows.set_index(["corner_type", "feature"]).loc[("slow", "brake_onset_m"), "icc_lap"], 2),
         "brake_slow_weekend": f(rows.set_index(["corner_type", "feature"]).loc[("slow", "brake_onset_m"), "icc_weekend"], 2),
-        "best_weekend": [f"{r.feature} ({r.corner_type}, {r.icc_weekend:.2f})" for r in weekend.tail(3)[::-1].itertuples()],
+        "best_weekend": [f"{FEATURE_WORDS[r.feature]} ({r.corner_type}, {r.icc_weekend:.2f})"
+                         for r in weekend.tail(3)[::-1].itertuples()],
     }
 
     # --- H3 identification
@@ -323,6 +366,7 @@ def collect_exploratory_2026(h5):
     assert sensitivity["all_sessions"]["own_closer"] == h5["all"]["own"], "experiment 28 differs from the frozen test"
     worst = per_driver.sort_values("lost", ascending=False).iloc[0]
     x = {"lost": lost["lost"], "driver_sessions": int(len(per_driver)),
+         "no_data_anyway": lost["kept_laps"] - lost["with_data_without_rule"],
          "most": int(worst["lost"]), "most_driver": worst["driver"], "most_location": worst["location"],
          "most_kept": int(worst["kept"]),
          "whole_weekends": len(lost["whole_weekends_lost"]),

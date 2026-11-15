@@ -1593,3 +1593,66 @@ now point to it.
   are no local-only mentions, and all paths exist.
 - README and report were regenerated; `docs/preregistration.md` is byte-identical (SHA-256
   `bc8c2182…`). 211 tests pass.
+
+## 2026-11-16 — Day 25: report v2 after a fresh-eyes review
+
+**What:** a separate reviewer (another AI model, Fable, with only the public files and no
+permission to change anything) read `docs/report.md` as a faculty member would. It returned 31
+findings (7 must-fix), and found every frozen 2025 and 2026 number, every sign-test p-value and
+the power figures correct. Its verdict: the numbers are faithful, but several interpretive
+sentences claimed more than the data and the code's own comments support. I checked each
+finding against the code and results files before changing anything (decisions.md, 2026-11-16).
+All held; the main ones:
+- **H1:** the ICCs compare drivers of all teams, so they include the car (experiment 11's own
+  docstring says so). Only 2 of 30 lap-level ICCs reach 0.5 and none at the weekend level, so
+  "features repeat" became "weakly to moderately repeatable".
+- **H1 spread vs error:** the standard deviation is inflated by a few broken laps. The new robust
+  spread (`stats.robust_within_group_sd`) gives 1.7 to 15 times the simulated error, not 2.9 to 28
+  (brake onset 1.8 to 2.6). It is still above the instrument everywhere, but "the variation is
+  the drivers'" was too strong.
+- **H3/H4 framing:** what separates teammates is the driver together with their side of the
+  garage. The development 17 of 20 predates the fairness rules (16 of 20 with them). The 2025
+  "non-changer" check included Colapinto (9 of 10 without him). The stayer control is 8 of 10,
+  11 of 20 and 5 of 18 across the three seasons, not just 8 of 10.
+- **Measurement and data:**
+  - 1.15 m is a split-half noise estimate from the pilot session.
+  - The "complementary filter" is one weighted offset per corner window.
+  - The usable share of corner passes is 0.77 / 0.84 / 0.66 / 0.61 for 2023–2026.
+  - Only 22 of 44 development sessions have a fast braking zone.
+- **Missing pieces:**
+  - the Part A deviation;
+  - three related works (with how little of them was read);
+  - definitions of terms used before they were explained;
+  - citations for the methods;
+  - Holm dropped (never used).
+
+**Also found myself, looking at every figure and the rendered text:**
+- The 2025 H3 bar chart started its axis at 0.4, so bar lengths were not proportional. The bars
+  now start at chance (0.5), and below-chance results point left.
+- Section 6.2 printed code names ("min_speed_kmh"); now plain words.
+- A worked example I typed into the new function's docstring had wrong numbers. The real ones
+  (pooled SD 1.89 → 25.0 with a broken lap, robust 4.19) came from running it.
+
+**Changed outputs:**
+- experiment 11: `icc.csv` and `summary.json` gain two columns;
+- experiment 15: `final_h3_teams.png`;
+- experiment 16: `headline.json`, one line;
+- `docs/images/overview.png`, retaken by `31_screenshots.py`; the other four were restored to the
+  committed images.
+
+**Verified:**
+- Experiment 11 re-run offline: every old column of `icc.csv` and every old key of `summary.json`
+  is identical, and `icc.png` is byte-identical. Experiments 15 and 16 re-run offline: only the
+  intended file changed in each.
+- The robust spread was checked with tests of its own:
+  - the worked example, exactly;
+  - SciPy's normal quantile for the 0.9539 constant;
+  - a known SD recovered within 5 % with groups of 2 to 6 laps;
+  - within 15 % when 5 % of laps are broken (the pooled SD more than triples).
+  The tests fail on three broken versions (mean, no conversion, group-median deviations), and the
+  file was restored byte-identical after each.
+- Every new number in the report comes from a results file or from the code's constants (gap
+  rule, window), through `collect_numbers`, with asserts where two files must agree (fast zones
+  from the dataset and from the corner list).
+- All 31 findings were re-read against the regenerated report. `docs/preregistration.md` is
+  byte-identical (SHA-256 `bc8c2182…`). 216 tests pass.

@@ -20,7 +20,10 @@ sessions; weekend level over driver-seasons (see the functions for why).
 
 Also: within-driver lap-to-lap spread compared with the per-lap measurement
 error from the Phase 2 Monte Carlo (slow -> heavy_braking type, medium ->
-medium, fast -> fast; distances include the 1.15 m alignment noise).
+medium, fast -> fast; distances include the 1.15 m alignment noise). Twice: with
+the ordinary pooled SD, and with a robust spread (median difference between two
+laps of the same group, stats.robust_within_group_sd) that a few broken laps
+can't inflate.
 
 Outputs in results/11_repeatability/: icc.csv, icc.png, summary.json.
 Run from the repo root:
@@ -37,7 +40,7 @@ import pandas as pd
 from apextrace.dataset import add_field_relative, clean, load_dataset
 from apextrace.identification import ALL_FEATURES, CORNER_TYPES
 from apextrace.plots import SERIES, TEXT_SECONDARY, apply_style
-from apextrace.stats import icc_from_group_stats
+from apextrace.stats import icc_from_group_stats, robust_within_group_sd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO_ROOT / "results" / "11_repeatability"
@@ -187,6 +190,12 @@ def main():
             row["lap_to_lap_sd"] = lap_to_lap_sd(part, column)
             row["measurement_error_per_lap"] = errors.get((corner_type, feature), np.nan)
             row["sd_over_measurement_error"] = row["lap_to_lap_sd"] / row["measurement_error_per_lap"]
+            # Added 2026-11-16 (report review): the SD above is inflated by a few broken laps
+            # (a wrong braking event, a lap that was not a full attack); this spread ignores them.
+            # Deterministic, no random numbers: the bootstrap intervals above can't change.
+            groups = part["session_key"].astype(str) + "|" + part["corner"].astype(str) + "|" + part["driver"]
+            row["lap_to_lap_robust_sd"] = robust_within_group_sd(part[column].to_numpy(), groups.to_numpy())
+            row["robust_sd_over_measurement_error"] = row["lap_to_lap_robust_sd"] / row["measurement_error_per_lap"]
             rows.append(row)
             print(f"{corner_type:6s} {feature:20s} n {len(part):5d}  ICC lap {row['icc_lap']:.2f} "
                   f"[{row['icc_lap_low']:.2f}, {row['icc_lap_high']:.2f}]  weekend {row['icc_weekend']:.2f} "

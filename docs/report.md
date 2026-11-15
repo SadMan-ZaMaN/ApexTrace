@@ -10,11 +10,12 @@ about 3.77 times per second, on an irregular clock with gaps. We ask whether sig
 extract repeatable, interpretable *driving signatures* from these data, whether those signatures identify a driver on
 unseen sessions, and how much of them belongs to the driver rather than the car. We first quantify what the feed can
 measure with synthetic laps of known truth, choose event estimators by Monte Carlo error, and place every lap on one
-track coordinate with a complementary filter (1.15 m along-track error). From every braking zone of
+track coordinate with a simple complementary filter (random along-track error about 1.15 m on the pilot session). From every braking zone of
 66 dry qualifying sessions (2023–2025) we compute corner features such as brake onset, minimum speed and throttle pickup.
-Features repeat lap to lap (intraclass correlation 0.15–0.58) but much less from weekend to weekend
-(0.04–0.40). In a preregistered test on the held-out 2025 season, the features told teammates apart
-on unseen weekends with balanced accuracy 0.662, against 0.575 for lap time (8 of 10 teams,
+Across all drivers, the features are weakly to moderately repeatable from lap to lap (intraclass correlation
+0.15–0.58; 2 of 30 at 0.5 or more) and weakly from weekend to weekend (0.04–0.40); across teams this
+includes the car. In a preregistered test on the held-out 2025 season, the features told teammates apart on unseen
+weekends with balanced accuracy 0.662 (0.5 = guessing), against 0.575 for lap time (8 of 10 teams,
 Wilcoxon p = 0.027), but not better than simple whole-lap statistics (0.680). Whether a signature follows a driver
 to a new team was not supported: 2 of 5 team changers stayed closer to their own previous season than to
 their new teammate (sign test p = 0.81). A second preregistered test, on 2026, the first season under new technical
@@ -29,7 +30,8 @@ Television graphics and fan tools compare drivers through telemetry traces, but 
 traces are measured, or whether an apparent difference would appear again next weekend. This project treats the
 public feed as a measured signal with known limits, and tests five hypotheses, each of which could come out "no":
 
-- **H1, repeatability.** Corner-level features vary less within a driver than between drivers.
+- **H1, repeatability.** Corner-level features vary less within a driver than between drivers (across all teams, so
+  the car is part of "between drivers").
 - **H2, teammate differences.** Two teammates differ by more than the measurement error (pilot only).
 - **H3, identification.** The features identify which of two teammates drove a lap, on sessions the model never
   saw, better than baselines including lap time alone.
@@ -38,12 +40,14 @@ public feed as a measured signal with known limits, and tests five hypotheses, e
   signature stays closer to their own 2025 signature than to their 2025 teammate's.
 
 We do not claim who is the better driver, anything faster than the data can show, or brake pressure (the public
-brake channel is on/off).
+brake channel is on/off). The code and much of the text were written with an AI coding assistant under the author's
+direction (see Acknowledgements).
 
 **Contributions.** (i) An error budget for corner features from 3.77 Hz public telemetry, built from synthetic
-laps with known truth. (ii) A reproducible pipeline from raw feed to field-relative corner features for every
-qualifying session of 2023–2025, and of 2026 up to a fixed cutoff. (iii) A leakage-free identification protocol with explicit baselines, replicated on a
-season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
+laps with known truth. (ii) A reproducible pipeline from raw feed to corner features, measured relative to the
+rest of the field at the same corner, for every available qualifying session of 2023–2025, and of 2026 up to a fixed
+cutoff. (iii) An identification protocol that holds out whole weekends and fits everything on training data only, with
+explicit baselines, repeated on a season held out until a preregistered final test. (iv) A first, small test of whether driving style survives a change
 of team, with an exploratory control, and a second held-out test of whether it survives a change of technical rules.
 (v) A web application that shows every result with its uncertainty.
 
@@ -55,10 +59,17 @@ turn and found turns more informative than straights, and Chen, Cho and Shin (20
 turn with phone motion sensors, for groups of 12 down to 5 drivers. Later work uses sequence models (Girma, Yan and
 Homaifar, 2019; Govers et al., 2024). These studies log sensors inside the car. Here the data are a public broadcast
 feed at about 3.77 samples per second with an on/off brake signal, the drivers to separate are teammates
-in identical cars, and the test is on unseen weekends and an unseen season.
+in cars of the same model (their set-ups, and sometimes their parts, differ), and the test is on unseen weekends and an
+unseen season.
 
 **Driving style in racing.** In simulators, telemetry separates human skill levels (Remonda, Veas and Luzhnica, 2021)
-and individual drivers (Vogel et al., 2022). For Formula 1, Taylor and Secco (2026) cluster drivers on race-level
+and individual drivers (Vogel et al., 2022). A doctoral thesis on machine learning for race-car drivers (Löckel,
+2022) is described in a secondary summary as identifying drivers from lap-based metrics, with transfer from a simulator
+to real-track data; a FISITA paper lists supervised identification of a driver from control inputs in a race car near
+its limits (F2018-VDY-050); we have not yet checked either in full. The closest public project (roeeam9,
+F1-Clustering-Project, GitHub) clusters Formula 1 drivers into three driving archetypes from per-corner features of
+the fastest lap in four 2023 qualifying sessions, read through the same OpenF1 interface; it does not test
+identification on unseen sessions or quantify measurement error. Also for Formula 1, Taylor and Secco (2026) cluster drivers on race-level
 statistics such as lap-time consistency and tyre degradation. A 2026 scoping review of artificial intelligence in
 motorsport (Lucaciu and Győrödi, 2026) finds race strategy and vehicle optimisation well covered; its abstract does not
 mention driver identification or driving style.
@@ -74,7 +85,8 @@ outcomes, not how the car is driven.
 that cite Hallac et al., 2016) found no study that identifies
 drivers from real Formula 1 telemetry on held-out sessions, quantifies the measurement error of corner features at the
 public feed's sample rate, or separates driver from car at the level of driving style. This describes what we found,
-not a proof that no such study exists.
+not a proof that no such study exists. The summaries above come from abstracts, listings and project pages; most of
+the papers have not yet been read in full.
 
 ## 3. Data
 
@@ -96,11 +108,17 @@ because the 2023 Imola weekend was cancelled; 4,500 kept laps, 4,497 of them wit
 (24 sessions; OpenF1 has no lap data for one, so 23 were built). The 2026 season, the second final test, was
 still running: the test used the 21 qualifying sessions that ended before a cutoff fixed in advance (2026-11-06 00:00 UTC),
 the last being Mexico City. OpenF1 has no lap data for two of them (Sakhir and Jeddah), so 19 were built, with
-1,795 kept laps; 1,764 still had car data once the marker samples were removed (Section 6.6), 1,752 had
-at least one usable corner pass and 1,751 at least one clean one. Laps were kept by FastF1-style
-rules (timed, accurate, not an out or in lap, green flag, not deleted, within 107 % of the best lap of the same stint).
-Braking zones were detected automatically on each session's fastest kept lap and typed slow (< 120 km/h minimum),
-medium or fast (≥ 200 km/h).
+1,795 kept laps; 1,764 still had car data once the marker samples were removed (30 lost it with them,
+Section 6.6, and 1 had none to begin with), 1,752 had at least one usable corner pass and 1,751 at least one clean one. Laps were kept by FastF1-style
+rules (timed, accurate, not an out or in lap, green flag, not deleted, and no slower than 107 % of the best lap of the
+same stint, a run on one set of tyres). Braking zones were detected automatically on each session's fastest kept lap
+and typed slow (< 120 km/h minimum), medium or fast (≥ 200 km/h). A development session has about
+7 braking zones, and only 22 of the 44 dry development sessions have a fast one.
+
+**Usable corner passes.** A corner pass is measured only if the car data have no gap longer than 0.6 s inside its
+window (300 m before to 200 m after the corner marker). The share of (lap, corner) pairs that pass was
+0.77 in 2023, 0.84 in 2024, 0.66 in 2025 and 0.61 in 2026, so the later seasons rest on fewer corner
+passes per lap, and the passes that are lost may not be lost at random.
 
 **Cleaning.** Rules were fixed in an exploratory data analysis of 2023–2024 and applied unchanged to 2025 and 2026: dry
 compounds only, corner passes with an implausible minimum speed dropped, and impossible feature values (for example,
@@ -112,7 +130,8 @@ the 19 sessions of 2026.
 final script refused to run unless the preregistration was committed, unchanged, and had not been run before. 2026 was
 locked the same way, with its own flag, from 2026-10-26 (no 2026 data had been downloaded before; the cache was
 checked) until its test plan was committed. Until then the project read only the 2026 rule texts; what the author knew
-of the season from following it is disclosed in the plan (Part C).
+of the season from following it is disclosed in the plan (Part C), which also notes that the AI assistant used to write
+the code was trained on text up to mid-2026 and may know some early-2026 results.
 
 ## 4. Measurement science
 
@@ -120,9 +139,10 @@ Every estimator was tested on synthetic laps with a known truth (realistic speed
 sampling and dropouts, whole-unit quantisation), with 1,000 laps per corner type.
 
 **Filtering moves events.** A causal 5-sample moving average shifted the middle of a braking event by
-25.1 m, and a causal 0.5 Hz Butterworth filter by 22.3 m (group delay). Zero-phase filtering removes
-the shift of the middle (3.4 m) but smears the onset −35.8 m early. Events are therefore located
-on the raw samples, and smoothing is never used for a reported value.
+25.1 m, and a causal 0.5 Hz Butterworth filter by 22.3 m (group delay). Running the same moving
+average forwards and backwards (zero-phase) reduces the shift of the middle to 3.4 m but smears the onset
+35.8 m early. Events are therefore located on the raw samples: speed, throttle and brake are never smoothed
+before a reported value is measured.
 
 ![Braking-point shift caused by filters](../results/02_group_delay/braking_shift.png)
 
@@ -139,32 +159,43 @@ Peak deceleration cannot be measured: the best estimator still had 8.0 m/s² err
 brake onset to the slowest point is used instead.
 
 **Alignment.** Projecting X/Y onto a reference path gives a track coordinate that is right on average but noisy;
-integrating speed gives one that is smooth but drifts. A complementary filter (integrated speed plus a low-pass
-correction from position, weighted by 1/speed²) gives 1.15 m along-track error in each corner window.
+integrating speed gives one that is smooth but drifts. The simplest complementary filter combines the two: inside each
+corner window, integrated distance is shifted by one offset, the mean of (projected position − integrated distance)
+weighted by 1/speed² (a timing error moves the position more at high speed). Comparing the offsets from the two halves
+of each window puts the random error of that offset at about 1.15 m on the pilot session. This check cannot see an
+error shared by both halves; Section 6.8 finds such per-lap offsets, and that they do not move the features.
 
 ## 5. Features and statistical design
 
 **Features.** For each (driver, lap, corner): brake onset, entry speed (200 m before the marker), minimum speed,
 slowest point, braking distance, mean deceleration, throttle pickup, full throttle, exit speed (150 m after), corner
-time and minimum gear (11 features). Positions are in metres from the corner marker. For comparisons across
+time and minimum gear (11 features; minimum gear, a whole number, is not used in the comparisons below). Positions
+are in metres from the corner marker. For comparisons across
 tracks, each value is taken relative to the field median at the same corner and session (*field-relative*).
 
-**Repeatability (H1).** The intraclass correlation ICC(1) gives the share of the variance that lies between drivers,
-at two levels: laps within a weekend, and weekend means within a season. Intervals come from a bootstrap that
-resamples whole driver-seasons.
+**Repeatability (H1).** The intraclass correlation (the one-way ICC(1); Shrout and Fleiss, 1979) gives the share of
+the variance that lies between drivers rather than within them, at two levels: laps within a weekend, and weekend means
+within a season. Above 0.5, a driver's laps resemble each other more than they resemble other drivers'. Both levels
+compare drivers of all teams, so "between drivers" here means driver and car together; only the teammate comparisons
+below separate the two. Intervals come from a bootstrap (Efron and Tibshirani, 1993) that resamples whole sessions
+for the lap level and whole driver-seasons for the weekend level.
 
-**Identification (H3).** For each team-season, a logistic regression (with imputation and scaling fitted on training
-data only) predicts which teammate drove a lap from 30 numbers: the field-relative mean of 10 features over the
-lap's slow, medium and fast corners. Evaluation is leave-one-weekend-out, the score is balanced accuracy, and every
-model is compared with a majority guess, lap time only, simple whole-lap statistics (mean and top speed, mean
-throttle, share at full throttle, share braking) and shuffled labels. Ours vs lap time is a two-sided Wilcoxon
-signed-rank test over teams.
+**Identification (H3).** For each team-season, the two drivers with most laps are compared on the weekends both
+drove (at least 5). A logistic regression (with imputation and scaling fitted on training data only) predicts which
+of them drove a lap from 30 numbers: the field-relative mean of 10 features over the lap's slow, medium and fast
+corners; a lap with no corner of a type gets that type's median from the training laps. Evaluation is
+leave-one-weekend-out, and the score is balanced accuracy (the mean of the two drivers' hit rates, so 0.5 is guessing
+even when one driver has more laps). In a *weekend vote*, all of a driver's laps in the held-out weekend vote for one
+answer. Every model is compared with a majority guess, lap time only, simple whole-lap statistics (mean and top speed,
+mean throttle, share at full throttle, share braking) and shuffled labels. Ours vs lap time is a two-sided Wilcoxon
+signed-rank test over teams (Wilcoxon, 1945).
 
 **Driver vs car (H4).** A season signature is the mean of a driver's weekend means (each weekend counts once),
 z-scored with the 2024 spread; the distance between signatures is the root-mean-square difference. For each
 driver who changed teams for 2025, we ask whether their 2025 signature is closer to their own 2024 signature (another
 car) than to their new teammate's 2025 signature (the same car, the same weekends). One-sided sign test over the
-changers.
+changers: it counts how many were closer to their own past and asks how likely at least that many would be if each
+were a coin flip.
 
 **Rule change (H5).** For every driver with at least 5 weekends in both 2025 and 2026, the 2026 signature is compared
 with the driver's own 2025 signature (another car, other rules) and with their 2025 teammate's (the same 2025 car). If
@@ -175,29 +206,42 @@ added after a synthetic test in which only the car matters, so that the true ans
 inside the spread the share came out 0.43, and with all laps of a teammate who had fewer laps 0.73; with the rules it
 is 0.50. Two teammates' answers are not independent, because each uses the other as reference: in that test,
 pairs split one-and-one 71 % of the time and the whole test had a false-positive rate of 0.007 (at most 0.05 is
-allowed), so the sign test is conservative here. One-sided sign test, p < 0.05. Three secondary feature sets (control
-points, energy-sensitive, no throttle) are reported but do not decide. H4 is repeated on the 2026 team changers, found
+allowed), so the sign test is conservative here; the power figures below assume independent drivers. One-sided sign
+test, p < 0.05. Three secondary feature sets are reported but do not decide: control points (brake onset, minimum
+speed, slowest point, throttle pickup), energy-sensitive features (entry and exit speed, full throttle, corner time),
+and all features except the throttle ones. H4 is repeated on the 2026 team changers, found
 from the data by a fixed rule (team lineages across renames), with the drivers who stayed as a control.
 
 **Preregistration.** The pilot tests (Part A, commit `ab2510c`), the final 2025 evaluation (Part B, commit
 `225385c`) and the 2026 test (Part C, commit `f653d49`, with Addendum 1, commit `ac3a793`) were committed
-before they were run. Deviations are reported in a separate file and below.
+before they were run (on preregistration: Nosek et al., 2018). Deviations are reported in a separate file and below.
 
 ## 6. Results
 
 ### 6.1 Pilot (H2): too few laps, as predicted
 
-Norris vs Piastri, 2024 Abu Dhabi qualifying, 4 and 4 push laps: 0 of 27 feature-by-corner comparisons survived
-Benjamini–Hochberg correction, as the preregistration predicted from the smallest possible p-values. The largest
-effects: Norris braked 7.4 m later at T5 (Hedges' g 2.2, p = 0.057) and 7.2 m later at T9 (g 1.9, p = 0.057):
-consistent with a real difference, not confirmed.
+Norris vs Piastri, 2024 Abu Dhabi qualifying, with few push laps (laps at full attack) per driver and
+corner (T5 4 and 4, T6 4 and 2, T9 3 and 4, Norris first). 0 of 27 feature-by-corner comparisons survived the Benjamini–Hochberg correction
+for many tests (Benjamini and Hochberg, 1995), as the preregistration predicted from the smallest possible p-values.
+The largest effects: Norris braked 7.4 m later at T5 (Hedges' g 2.2, the difference in units of the lap-to-lap
+spread; Hedges, 1981; p = 0.057) and 7.2 m later at T9 (g 1.9, p = 0.057), against a per-lap measurement error of
+brake onset of 2.5 m at T5 and 3.0 m at T9: consistent with a real difference, not confirmed.
 
-### 6.2 Repeatability (H1): partly
+### 6.2 Repeatability (H1): above zero, mostly below one half
 
-Across all 2023–2024 drivers, lap-level ICCs ranged from 0.15 to 0.58, and weekend-level ICCs from 0.04 to
-0.40. The lap-to-lap spread was 2.9 to 28 times the per-lap measurement error in all 21 cases where the error
-was simulated, so the variation is the drivers', not the instrument's. The features that carry over best between
-weekends are min_speed_kmh (fast, 0.40), throttle_pickup_m (medium, 0.38), corner_time_s (fast, 0.33). Brake onset at slow corners repeats within a weekend
+Across all 2023–2024 drivers, lap-level ICCs ranged from 0.15 to 0.58 (median 0.34), and weekend-level ICCs from
+0.04 to 0.40 (median 0.16). Taken literally, H1 (more variation between drivers than within) holds at the
+lap level for 2 of 30 combinations of feature and corner type, and at the weekend level for 0; 19 of the
+30 weekend-level ICCs are below 0.2. Every lap-level ICC, interval included, is above zero, so the features carry a repeatable
+difference between drivers, and across teams that difference includes the car. H1 was exploratory and was not
+retested on 2025 or 2026.
+
+The lap-to-lap standard deviation was 2.9 to 28 times the simulated per-lap measurement error in all 21 cases
+where the error was simulated. A few broken laps (a wrong braking event, a lap that was not a full attack) inflate
+that ratio; a robust spread that ignores them, the median difference between two laps of the same driver at the same
+corner and session, gives 1.7 to 15 times, and 1.8 to 2.6 for brake onset. So laps vary more than the
+instrument alone would make them, but the remainder mixes the driver with track evolution between qualifying
+segments, tyres, and laps that were not full attacks. The features that carry over best between weekends are minimum speed (fast, 0.40), throttle pickup (medium, 0.38), corner time (fast, 0.33). Brake onset at slow corners repeats within a weekend
 (ICC 0.45) but hardly between weekends (0.04).
 
 ![ICC per feature and corner type](../results/11_repeatability/icc.png)
@@ -214,8 +258,12 @@ weekends are min_speed_kmh (fast, 0.40), throttle_pickup_m (medium, 0.38), corne
 | Ours better than lap time | 18 of 20, p < 0.001 | 8 of 10, p = 0.027 |
 | Ours better than whole-lap statistics | 8 of 20, p = 0.14 | 5 of 10, p = 1 |
 
+Brackets: 95 % bootstrap intervals over teams (the team-seasons resampled 5,000 times). The development p-values are
+descriptive: the 20 team-seasons are 10 teams in two seasons, mostly with the same pairs, so they are not independent.
+
 The preregistered criterion (Wilcoxon p < 0.05 and ours higher than lap time) was met on 2025. Shuffled labels sit at
-chance, so the pipeline does not leak. Removing the throttle features costs the most (0.592 without them in
+chance, which is consistent with no label leakage; it cannot rule out a difference between the two sides of a garage
+other than driving (Section 7, Limitations). Removing the throttle features costs the most (0.592 without them in
 2025). The whole-lap statistics are as good or better; the extreme case is Ferrari 2025 (Hamilton vs Leclerc),
 0.87 for whole-lap statistics vs 0.62 for corner features. Across all drivers of a season (a harder task: 21 and 22
 drivers), corner features reached 0.240 in 2024 (chance 0.045, lap time 0.087, whole-lap statistics 0.287);
@@ -241,9 +289,11 @@ test on 2027, are written down in `docs/ml_plan.md`.)
 
 ### 6.4 Driver vs car (H4): not supported
 
-**Development (2023 → 2024, same car both years).** A driver's 2024 signature ranked their own 2023 signature
-3.05 of 21 on average (chance 11; first for 12 of 20, permutation p < 0.001) and was closer to it than to the
-teammate's for 17 of 20 drivers (p = 0.0013).
+**Development (2023 → 2024, same team both years; the car is a new model each year).** A driver's 2024 signature
+ranked their own 2023 signature 3.05 of 21 on average (chance 11; first for 12 of 20, permutation p < 0.001); since driver
+and team both stayed, this measures the two together. It was closer to the own 2023 signature than to the teammate's
+for 17 of 20 drivers (p = 0.0013). These development numbers were computed before the three fairness rules of Section 5
+existed; with the rules, the same comparison gives 16 of 20 (Section 6.5).
 
 **Final test (2025 team changers).**
 
@@ -258,7 +308,8 @@ teammate's for 17 of 20 drivers (p = 0.0013).
 2 of 5 changers stayed closer to their own past: sign test p = 0.81 (the smallest possible p with five drivers
 was 0.031, so all five had to agree). H4 is not supported. Secondary results: the share of the lap spent
 braking stayed closer to the driver's own for 4 of 5 (p = 0.19), and drivers who did not change
-teams kept their signature against their old teammate for 10 of 11 (p = 0.0059).
+teams kept their signature against their old teammate for 10 of 11 (p = 0.0059) as preregistered; the 11 include
+Colapinto, who had in fact changed teams (Section 6.6), and without him the count is 9 of 10 (p = 0.011).
 
 **Exploratory, not preregistered.** Running the same comparison on the drivers who stayed (own 2024 vs current
 teammate, same weekends) gave 8 of 10 (p = 0.055). Changers (2 of 5) and stayers (8 of 10) can't be told apart with
@@ -283,7 +334,7 @@ fewer than 5 weekends in 2026 (TSU with 3). In the figure, HAM's two distances d
 
 **What this "no" means.** Part C stated in advance that this test cannot tell a weakened signature from a lost one.
 The share, 0.68, is above one half, and its interval (0.43–0.87) includes both chance and the development rates. With
-19 drivers the test would have said "yes" with probability 84–98 % if 2026 had kept the development rates, but only
+19 drivers, and treating them as independent, the test would have said "yes" with probability 84–98 % if 2026 had kept the development rates, but only
 47 % if the true rate had dropped to 0.7. The data fit a signature that survived in weaker form and one that did
 not survive; they do not show which.
 
@@ -316,11 +367,14 @@ descriptive. It also means that the "fast" part of a 2026 signature rests on few
 
 ### 6.6 Deviations from the plan
 
-1. The first 2025 run crashed while downloading, before any result existed: OpenF1 has no lap data for 2025 Baku
+1. Part A gave the smallest possible p-value for the corners where the two drivers had different numbers of laps as
+   twice its true value. The code always computed the correct p-values, so only the text was wrong and no result
+   changed.
+2. The first 2025 run crashed while downloading, before any result existed: OpenF1 has no lap data for 2025 Baku
    qualifying. The session is skipped (a one-line fix with a test); the deviation was recorded before the rerun.
-2. Franco Colapinto (Williams → Alpine) also changed teams but was missing from the preregistered list. The primary test
+3. Franco Colapinto (Williams → Alpine) also changed teams but was missing from the preregistered list. The primary test
    was kept as planned; with him included the result is 3 of 6 (p = 0.66), so the conclusion does not change.
-3. The first 2026 run (after Part C, commit `f653d49`) stopped at the feed check, before any feature was computed:
+4. The first 2026 run (after Part C, commit `f653d49`) stopped at the feed check, before any feature was computed:
    1.13 % of the samples inside kept laps had 104, the feed's "no value" marker (Section 3), in throttle or brake,
    and the check required at least 99.9 % of values in range. Addendum 1 (commit `ac3a793`), written and committed before the
    second run, treats 104 inside a lap as a missing sample; rehearsed on 2024, it changed 18 of 15,129 rows and left
@@ -356,7 +410,8 @@ cosine: +1 means the same driver is ahead on the same features, 0 means no commo
 | 2025 → 2026 (new rules) | 6 of 8 (p = 0.14) | 0.32 | 0.43 |
 
 The p-values are one-sided sign tests, for orientation only. The split-half cosine compares odd with even weekends of
-one season, so each side has half the data; it is a rough reference for how alike a difference is to itself. The
+one season, so each side has half the data; it is a rough reference for how alike a difference is to itself, not a ceiling: the halves are
+noisier than full seasons, so a cosine between two full seasons can exceed it. The
 method's tests (`tests/test_teammate_relative.py`) require, on synthetic seasons where the car is redrawn each season
 and is five times larger than the drivers' offsets, a median cosine above 0.9, and with no driver offset at all, a mean
 within 0.05 of 0.
@@ -369,38 +424,9 @@ changed their difference to the teammate through experience as well as through t
 
 ![Teammate-relative signatures: cosine between seasons per pair of teammates](../results/29_teammate_relative/teammate_relative.png)
 
-## 7. Discussion
+### 6.8 A check made after the frozen results: per-lap position offsets
 
-**What holds.** Within a team, corner-level telemetry carries a driver signature that generalises to unseen
-weekends and to an unseen season, and that is stable from one year to the next for drivers who stay. It is weak
-per lap and stronger per weekend (vote 0.746).
-
-**Interpretability, not extra power.** Simple statistics of the whole lap identify teammates at least as well. The
-value of the corner features is that they locate a difference (where a driver brakes, where they get back on the
-throttle) with a known error, which the Corner lab in the web app makes visible.
-
-**Driver or car.** The "no" for H4 has two readings that these data cannot separate: the car (its brakes, downforce
-and set-up) shapes the measured style, or drivers adapt their style to a new car. The comparison is also not
-symmetric: a driver's own signature is a year apart, while the teammate's comes from the same weekends. The
-exploratory control suggests the own past usually wins when the car stays the same, but five changers are too few to
-compare the groups.
-
-**Rule change.** H5 asks the H4 question for everyone at once: in 2026 every driver has a new car. Without a rule
-change, the own past won 16 of 20 and 14 of 16 times; across the rule change it won 13 of 19, which the
-test cannot separate from chance. The secondary results point the same way: the drivers who stayed in their team were
-mostly closer to their current teammate than to their own 2025 signature, and the 2026 braking zones are slower. Both
-readings from H4 apply again (the new cars shape the measured style, or drivers adapt to them), and the same asymmetry:
-the own signature is a year and a rule change away, the teammate's is from the same weekends. A weakened signature
-cannot be ruled out; the test had 47 % power against a share of 0.7. The exploratory check with the car removed
-(Section 6.7) leans the same way: the difference between teammates mostly survived the rule change, less strongly than
-without one.
-
-**Limitations.** Qualifying laps only. A 3.77 Hz feed with an on/off brake signal and coarse positions. Corners are
-detected per session, so the same corner can be typed differently in different years. The identification task is
-between two teammates; the all-driver task is much harder. H4 rests on five drivers. H5 rests on 19 drivers and a
-season cut off at Mexico City (19 sessions with data), and in 2026 only one team changer was eligible for H4.
-
-**A check made after the frozen results: per-lap position offsets.** Projected position minus integrated distance,
+Projected position minus integrated distance,
 measured just after the line where integrated distance has not yet drifted, varies from lap to lap far more than its
 measurement noise (4.4 m within a driver and session against a 0.75 m noise
 floor; 6,544 laps); 57 % of that variance is shared by a whole session. It explains
@@ -410,10 +436,52 @@ lap pairs), but it does not move the corner features (slope 0.006, 95 % interval
 the line, a gap from either coordinate is typically about 0.064 s from the official lap-time gap
 (median; 0.061 s from projected position); integrated distance's advantage is a smooth curve.
 
+## 7. Discussion
+
+**What holds.** Within a team, corner-level telemetry separates the two sides of the garage on unseen weekends, and
+the same protocol, repeated once on a held-out season, worked again. What it separates is the driver together with
+their side of the garage (set-up, and possibly parts and the qualifying segment reached), not the driver alone. From
+one year to the next it stayed closer to the own past than to the teammate's in development (Section 6.5), but not
+clearly across the 2026 rule change. It is weak per lap and stronger per weekend (vote 0.746).
+
+**Interpretability, not extra power.** Simple statistics of the whole lap identify teammates at least as well. The
+value of the corner features is that they locate a difference (where a driver brakes, where they get back on the
+throttle) with a known error, which the Corner lab in the web app makes visible.
+
+**Driver or car.** The "no" for H4 has two readings that these data cannot separate: the car (its brakes, downforce
+and set-up) shapes the measured style, or drivers adapt their style to a new car. The comparison is also not
+symmetric: a driver's own signature is a year apart, while the teammate's comes from the same weekends. The
+control is weak too: for drivers who stayed in their team, the own past won 8 of 10 times in 2025 but only
+11 of 20 on 2023 → 2024 and 5 of 18 in 2026. This comparison leans towards the current teammate even
+without a change of team, so the H4 "no" says little, and five changers are too few to compare the groups.
+
+**Rule change.** H5 asks the H4 question for everyone at once: in 2026 every driver has a new car. Without a rule
+change, the own past won 16 of 20 and 14 of 16 times; across the rule change it won 13 of 19, which the
+test cannot separate from chance. The secondary results point the same way: the drivers who stayed in their team were
+mostly closer to their current teammate than to their own 2025 signature. Both
+readings from H4 apply again (the new cars shape the measured style, or drivers adapt to them), and the same asymmetry:
+the own signature is a year and a rule change away, the teammate's is from the same weekends. A weakened signature
+cannot be ruled out; the test had 47 % power against a share of 0.7. The exploratory check with the car removed
+(Section 6.7) leans the same way: the difference between teammates mostly survived the rule change, less strongly than
+without one.
+
+**Limitations.** Qualifying laps only. A 3.77 Hz feed with an on/off brake signal and coarse positions. Corners are
+detected per session, so the same corner can be typed differently in different years. The identification task is
+between two teammates; the all-driver task is much harder. H4 rests on five drivers. H5 rests on 19 drivers and a
+season cut off at Mexico City (19 sessions with data), and in 2026 only one team changer was eligible for H4; H3 was
+not retested on 2026. Teammates are not identical: set-ups differ, parts and upgrades can arrive at different times,
+and a driver eliminated in Q1 sets laps on a less rubbered-in track, with a different use of tyres, than one who
+reaches Q3, while the field-relative values are taken against the whole session. Any of these can separate the two
+sides of a garage as well as driving style can, and the identification test cannot tell them apart. The usable
+share of corner passes fell in 2025 and 2026 (Section 3), and the fast corner type is missing from half the
+development sessions.
+
+
 ## 8. Conclusion and future work
 
-Low-rate public telemetry supports corner-level features with known errors, and those features carry a
-teammate-level driver signature that replicated on a held-out season. They do not beat simple lap statistics, and they
+Low-rate public telemetry supports corner-level features with known errors, and those features separate teammates
+on unseen weekends, a result that replicated on a held-out season; what they separate is the driver together with
+their side of the garage. They do not beat simple whole-lap statistics, and they
 did not show that style follows a driver into a new car, either after a change of team (2025) or after the 2026 change
 of rules. Next steps: more team changes as seasons accumulate; the rest of 2026 and 2027 as new held-out data, to tell
 a weakened signature from a lost one; a preregistered test of the teammate-relative signatures on that new data; the
@@ -463,9 +531,10 @@ Formula 1 timing data.
   Intelligent Transportation Systems (ITSC)*, 953–958.
 - Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect size and related estimators. *Journal of
   Educational Statistics*, 6(2), 107–128.
-- Holm, S. (1979). A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*, 6(2), 65–70.
 - Lindner, T., Almeida, R. J., Baştürk, N. and Smeekes, S. (2026). Drivers of success: a Bayesian state-space model to
   disentangling latent driver and constructor abilities in Formula One. arXiv:2608.04629.
+- Löckel, S. (2022). *Machine Learning for Modeling and Analyzing of Race Car Drivers*. Doctoral thesis, Technische
+  Universität Darmstadt. https://tuprints.ulb.tu-darmstadt.de/20218
 - Lucaciu, R. C. and Győrödi, C. A. (2026). Artificial intelligence in motorsport: a scoping review of applications,
   challenges, and research gaps. *International Journal of Advanced Computer Science and Applications*, 17(5).
 - Nosek, B. A., Ebersole, C. R., DeHaven, A. C. and Mellor, D. T. (2018). The preregistration revolution. *Proceedings of
@@ -484,6 +553,9 @@ Formula 1 timing data.
   driving styles in a sim-racing setting. *International Conference on Electrical, Computer and Energy Technologies
   (ICECET)*. DOI 10.1109/ICECET55527.2022.9872663.
 - Wilcoxon, F. (1945). Individual comparisons by ranking methods. *Biometrics Bulletin*, 1(6), 80–83.
+- FISITA (2018). Paper F2018-VDY-050, FISITA World Automotive Congress 2018 (listing only):
+  https://go.fisita.com/store/papers/F2018/F2018-VDY-050
+- roeeam9. F1-Clustering-Project (GitHub repository), https://github.com/roeeam9/F1-Clustering-Project
 - FastF1 (Python package, MIT licence), https://github.com/theOehrly/Fast-F1, and OpenF1 (API, data under CC BY-NC-SA 4.0),
   https://openf1.org.
 
