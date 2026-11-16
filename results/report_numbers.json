@@ -81,6 +81,8 @@
   "t9_p": "0.057",
   "t5_error_m": "2.5",
   "t9_error_m": "3.0",
+  "laps_min": 2,
+  "laps_max": 4,
   "laps_by_corner": "T5 4 and 4, T6 4 and 2, T9 3 and 4"
  },
  "h1": {
@@ -285,7 +287,7 @@
   "part_b": "225385c"
  },
  "repo": {
-  "last_experiment": "32"
+  "last_experiment": "33"
  },
  "c": {
   "written": "2026-11-06",

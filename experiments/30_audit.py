@@ -78,6 +78,9 @@ NOT_RERUN = {
     "30_audit": "this script",
     "31_screenshots": "pictures of the app taken with a browser: the replay frame differs from run to run, and "
                       "nothing in them is a computed result; looked at by eye when taken",
+    "33_summary_pdf": "prints the generated summary (checked by test_docs) to PDF with a browser; the PDF "
+                      "embeds its creation time, and test_summary_pdf checks it was printed from the current "
+                      "summary and has one page",
 }
 EXTRA_ENVIRONMENT = {"15_final_exploratory": {"FINAL_TEST": "1"}}
 

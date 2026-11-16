@@ -30,7 +30,9 @@ from apextrace.dataset import clean, load_dataset
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS = REPO_ROOT / "results"
 TEMPLATES = REPO_ROOT / "docs" / "templates"
-OUTPUTS = {"README.md.j2": REPO_ROOT / "README.md", "report.md.j2": REPO_ROOT / "docs" / "report.md"}
+OUTPUTS = {"README.md.j2": REPO_ROOT / "README.md", "report.md.j2": REPO_ROOT / "docs" / "report.md",
+           # the one-page summary for faculty; experiments/33_summary_pdf.py prints it to docs/summary.pdf
+           "summary.html.j2": REPO_ROOT / "docs" / "summary.html"}
 
 
 def load(relative):
@@ -182,6 +184,8 @@ def collect_numbers():
         "t9_p": p_value(onset["T9"]["p_permutation"]),
         "t5_error_m": f(onset["T5"]["per_lap_measurement_error"], 1),
         "t9_error_m": f(onset["T9"]["per_lap_measurement_error"], 1),
+        "laps_min": min(min(r["n_NOR"], r["n_PIA"]) for r in onset.values()),
+        "laps_max": max(max(r["n_NOR"], r["n_PIA"]) for r in onset.values()),
         "laps_by_corner": ", ".join(f"{corner} {onset[corner]['n_NOR']} and {onset[corner]['n_PIA']}"
                                     for corner in sorted(onset)),
     }

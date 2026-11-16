@@ -1656,3 +1656,40 @@ All held; the main ones:
   from the dataset and from the corner list).
 - All 31 findings were re-read against the regenerated report. `docs/preregistration.md` is
   byte-identical (SHA-256 `bc8c2182…`). 216 tests pass.
+
+## 2026-11-17 — Day 26: the one-page summary for faculty
+
+**What:** `docs/summary.pdf`, one A4 page for a faculty member: the question, the approach (the
+measurement science first), the five hypotheses with their results, what they mean, next steps,
+and how the project was made (with an AI coding assistant, every number generated and tested).
+It uses the wording of report v2 (the driver together with their side of the garage; repeatability
+weak to moderate).
+- `docs/templates/summary.html.j2` is rendered by `17_write_docs.py` like README and report, so
+  every number comes from the results files and `tests/test_docs.py` fails if it is stale. The
+  pilot's lap range (2–4) was the one number first typed by hand; it is now computed.
+- `experiments/33_summary_pdf.py` prints it with Edge through Playwright and stops if the page
+  count is not 1. It records the SHA-256 of the HTML it printed, and `tests/test_summary_pdf.py`
+  fails if the PDF is older than the summary.
+- The README's docs list links the PDF. The audit lists 33 as not re-run (a browser-made PDF that
+  embeds its creation time). The engineering notes' repository map was stale ("scripts 00-17")
+  and is now updated.
+
+**Found while making it:**
+- The first draft printed on two pages (1,058 px of text for 1,028 px of page). The script's
+  guard caught it. Four lines were shortened and the line spacing tightened (1.36 → 1.32).
+- The first "how full is the page" number said 100 % for any page that fits, because a
+  document's scroll height can't be smaller than the window. It now measures the bottom edge
+  of the text: 96 %.
+- The real PDF, rendered to an image, broke the GitHub link across lines, separated "12.5" from
+  "m", and left the word "corner." alone on a line. The HTML screenshot had not shown this. Fixed
+  with an unbreakable link, non-breaking spaces between numbers and units, and a shorter bullet.
+
+**Verified:**
+- The final PDF was rendered to an image (pypdfium2, installed in a scratch folder, not in the
+  project) and read in full. It is one A4 page (595 × 842 pt) with the Barlow fonts embedded.
+- Every number in it was compared with the report: data counts, estimator errors, H1–H5 results,
+  power and the usable shares.
+- The PDF has no e-mail address (a test checks the HTML).
+- The new tests fail on a stale summary, on a page counter that also counts the page tree, and
+  on an e-mail address in the summary. The files were restored byte-identical each time.
+- `docs/preregistration.md` is byte-identical (SHA-256 `bc8c2182…`). 219 tests pass.

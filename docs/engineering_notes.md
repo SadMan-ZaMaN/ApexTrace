@@ -25,10 +25,13 @@ src/apextrace/          the package
   protocol.py           the identification protocol shared by development and the final test
   signatures.py         season signatures, distances, own-rank, sign test
   session_build.py      one session -> dataset rows
-experiments/            numbered scripts 00-17; every number and figure comes from one of them
+experiments/            numbered scripts (00, 01, ...); every number and figure comes from one of them
   14_final_2025.py      the one-time final test (run once; results/final/ is frozen)
   16_app_data.py        exports results/app/*.json for the web app
-  17_write_docs.py      renders README.md and docs/report.md from docs/templates/*.j2
+  17_write_docs.py      renders README.md, docs/report.md and docs/summary.html from docs/templates/*.j2
+  23_final_2026.py      the one-time 2026 test (run once; results/final_2026/ is frozen)
+  30_audit.py           the full audit (see the update loop below)
+  33_summary_pdf.py     prints docs/summary.html to docs/summary.pdf (one A4 page, or it stops)
 app/                    the web app (Flask + vanilla JavaScript + D3)
 tests/                  pytest, on synthetic signals and tiny fixtures; never downloads F1 data
 docs/                   report, preregistration, deviations, research log, decisions,
@@ -76,6 +79,9 @@ hand-written documents). `--quick` skips the re-runs. Results: `results/30_audit
 
 After changing what a page shows: `experiments/31_screenshots.py` re-takes the five README
 images the same way every time (Edge through Playwright, 1440 x 1000).
+
+After `17_write_docs.py` changes `docs/summary.html`: `experiments/33_summary_pdf.py` prints it
+again (`tests/test_summary_pdf.py` fails while the PDF is older than the summary).
 
 ## Bug history
 
