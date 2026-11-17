@@ -100,6 +100,8 @@ def samples_in_window(lap_samples, start_m, end_m):
 
     One extra sample is kept on each side (if there is one), so that events
     near the window edge can still be bracketed and interpolated.
+    Example: samples at s = 0, 100, ..., 600 m and the window 250-450 m -> the samples at 200,
+    300, 400 and 500 m (300 and 400 are inside); no sample inside -> None.
     """
     s = lap_samples["s_m"]
     inside = np.where((s >= start_m) & (s <= end_m))[0]

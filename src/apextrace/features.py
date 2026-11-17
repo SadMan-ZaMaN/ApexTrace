@@ -64,6 +64,8 @@ def corner_features(window, fused_s, corner_s):
       brake onset    the last braking that starts before the apex
       throttle       searched from the end of that braking (the last "on"
                      sample of the run) to the start of the next braking
+    Positions are in metres from the marker: brake_onset_m = -130 means the braking starts
+    130 m before the marker, apex_m = +5 that the slowest point is 5 m after it.
     """
     t = np.asarray(window["time_s"], dtype=float)
     speed = np.asarray(window["speed_kmh"], dtype=float)

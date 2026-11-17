@@ -236,3 +236,13 @@ again (`tests/test_summary_pdf.py` fails while the PDF is older than the summary
   for groups of two laps it reads about 30 % low. Report both spreads, never the SD alone.
   Guarded by the four `test_robust_spread_*` tests (they fail with the mean instead of the
   median, without the conversion to an SD, and with the group-median version).
+- **2026-11-18 — An interval of exactly 0.6 s is a gap or not by floating-point rounding (kept as it is).**
+  The usable-window rule drops a corner pass if an interval is longer than 0.6 s
+  (`corners.has_feed_gap`: `diff > GAP_S`). On the feed's 40 ms clock, 0.60 s is a real interval,
+  and `0.9 - 0.3` is 0.6000000000000001 (a gap) while `0.6 - 0.0` is 0.6 (not one). Measured by
+  `experiments/34_gap_boundary.py`, the passes whose longest interval is exactly 0.60 s are:
+  2023–2024 185 of 30,428 passes, 92 kept and 93 dropped; 2025 145 of 14,051 passes, 64 kept and 81 dropped; 2026 144 of 12,041 passes, 59 kept and 85 dropped. A kept boundary pass is
+  measured normally, so this decides which passes count, not what they measure. The rule is
+  deterministic and every dataset (including the frozen 2025 and 2026 tests) was built with it,
+  so it is NOT changed. `tests/test_corners.py` pins both cases, so a "fix" can't slip in unnoticed.
+  For a new season it could be made exact by comparing whole clock ticks (round(diff / 0.04) > 15).

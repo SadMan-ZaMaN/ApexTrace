@@ -1,0 +1,31 @@
+{
+ "note": "code review check; the rule is not changed (frozen datasets)",
+ "gap_s": 0.6,
+ "limit_ticks": 15,
+ "seasons": {
+  "2023-2024": {
+   "passes_with_samples": 30428,
+   "longest_exactly_at_limit": 185,
+   "share": 0.0061,
+   "of_those_usable": 92,
+   "of_those_feed_gap": 93,
+   "of_those_unmatched": 0
+  },
+  "2025": {
+   "passes_with_samples": 14051,
+   "longest_exactly_at_limit": 145,
+   "share": 0.0103,
+   "of_those_usable": 64,
+   "of_those_feed_gap": 81,
+   "of_those_unmatched": 0
+  },
+  "2026": {
+   "passes_with_samples": 12041,
+   "longest_exactly_at_limit": 144,
+   "share": 0.012,
+   "of_those_usable": 59,
+   "of_those_feed_gap": 85,
+   "of_those_unmatched": 0
+  }
+ }
+}

@@ -683,3 +683,16 @@ results files or now come from them.
 - **The H3 figure's bars start at chance (0.5)**, not at a cut-off axis of 0.4 (found while looking
   at every figure; not a reviewer finding).
 - **The app's H1 verdict** follows the report: "weak to moderate" instead of "partly".
+
+## 2026-11-18 — Day 27: code review; the 0.6 s boundary stays as it is
+The code review found that an interval of exactly 0.60 s (15 ticks of the 40 ms clock) counts as a
+feed gap or not depending on floating-point rounding (engineering notes, 2026-11-18). It affects
+0.61% of corner passes in 2023–2024, 1.03% in 2025 and 1.20% in 2026, of
+which about half were kept. **Not changed:** the rule is deterministic, every dataset and both
+frozen tests were built with it, and a change would rebuild all of them differently.
+`tests/test_corners.py` pins the current behaviour; a new held-out season (2027) could adopt an
+exact tick comparison in its own preregistration.
+
+Also: `events.brake_release_index` was removed (never called; `braking_event` superseded it).
+The unused `numpy` import in `h5_protocol.py` is left in place on purpose: that file is the code
+of the frozen 2026 test, and it stays as it was when the test ran.

@@ -32,6 +32,8 @@ def first_brake_index(brake, before_index=None):
     With before_index: the LAST transition at or before that index, i.e. the
     braking that leads into a given apex. This matters when a corner window
     contains two braking zones (a chicane, or the previous corner).
+    Example: brake = off, on, on, off, off, on, on -> 1; with before_index=6 -> 5 (the second
+    braking); with before_index=3 -> 1.
     """
     end = len(brake) if before_index is None else min(before_index + 1, len(brake))
     last = None
@@ -73,14 +75,6 @@ def brake_onset_midpoint(times_s, brake, before_time_s=None):
     """
     i = first_brake_index(brake, index_at_or_before(times_s, before_time_s))
     return float(0.5 * (times_s[i - 1] + times_s[i]))
-
-
-def brake_release_index(brake, onset_index):
-    """Index of the last "on" sample of the braking run that starts at onset_index."""
-    i = onset_index
-    while i + 1 < len(brake) and brake[i + 1]:
-        i += 1
-    return i
 
 
 def braking_event(brake, throttle_pct, apex_index, throttle_threshold=10.0):

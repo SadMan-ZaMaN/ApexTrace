@@ -20,6 +20,7 @@ NAV = [("pages.home", "Overview"), ("pages.telemetry", "Lap compare"), ("pages.c
 
 
 def data():
+    """The AppData loaded once at start-up (app/__init__.py)."""
     return current_app.config["APP_DATA"]
 
 
@@ -33,6 +34,7 @@ def navigation():
 
 @pages.route("/")
 def home():
+    """The overview: the replayed pole laps and the results board."""
     return render_template("index.html", headline=data().headline, active="pages.home")
 
 
@@ -49,17 +51,20 @@ def telemetry():
 
 @pages.route("/corners")
 def corners():
+    """The Corner lab, opening on the pilot session."""
     hero = data().hero
     return render_template("corners.html", active="pages.corners", default_session=hero["session_key"])
 
 
 @pages.route("/signatures")
 def signatures():
+    """Driver vs car: H3, H4 and H5."""
     return render_template("signatures.html", active="pages.signatures")
 
 
 @pages.route("/method")
 def method():
+    """The measurement science (sampling, filters, estimators, alignment, cleaning)."""
     return render_template("method.html", active="pages.method")
 
 
@@ -67,16 +72,20 @@ def method():
 
 @api.route("/hero")
 def hero():
+    """The two pole laps the overview replays (2024 Abu Dhabi)."""
     return jsonify(data().hero)
 
 
 @api.route("/sessions")
 def sessions():
+    """Every session the app can show, for the season and session pickers."""
     return jsonify(data().session_index())
 
 
 @api.route("/sessions/<int:key>")
 def session(key):
+    """One session's drivers, laps and corners; 404 for an unknown key. raw_available says whether
+    the local raw samples of that season exist (Lap compare needs them)."""
     if key not in data().sessions:
         abort(404)
     session = data().sessions[key]
@@ -93,6 +102,9 @@ def parse_lap(text):
 
 @api.route("/compare/<int:key>")
 def compare(key):
+    """Two laps of one session on one distance axis, with the gap between them
+    (?a=NOR:15&b=PIA:12). 400 for a malformed lap, 404 for an unknown session or lap, 503 with a
+    hint if the raw samples were never built."""
     if key not in data().sessions:
         abort(404)
     a = parse_lap(request.args.get("a"))
@@ -119,31 +131,37 @@ def export_or_503(content, name):
 
 @api.route("/features")
 def features():
+    """The feature table (errors and repeatability per corner type)."""
     return export_or_503(data().features, "features.json")
 
 
 @api.route("/identification")
 def identification():
+    """The H3 results per team-season."""
     return export_or_503(data().identification, "identification.json")
 
 
 @api.route("/signatures")
 def signature_data():
+    """The H4 signatures and distances."""
     return export_or_503(data().signatures, "signatures.json")
 
 
 @api.route("/h5")
 def h5_data():
+    """The frozen 2026 test (H5)."""
     return export_or_503(data().h5, "h5.json")
 
 
 @api.route("/method")
 def method_data():
+    """The measurement-science charts of the Method page."""
     return export_or_503(data().method, "method.json")
 
 
 @api.route("/corners/<int:key>")
 def corner_rows(key):
+    """Every clean corner pass of one session (Corner lab); 503 with a hint if the dataset is missing."""
     if key not in data().sessions:
         abort(404)
     rows = data().corner_rows(key)
@@ -156,4 +174,5 @@ def corner_rows(key):
 @api.errorhandler(400)
 @api.errorhandler(404)
 def json_error(error):
+    """API errors as JSON ({"error": ...}) instead of an HTML page, so the page scripts can show them."""
     return jsonify({"error": error.description}), error.code

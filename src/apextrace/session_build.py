@@ -31,7 +31,16 @@ def kept_laps_by_driver(laps):
 
 
 def build_session(year, round_number, session):
-    """All rows for one session, plus its corner list and a summary row."""
+    """All rows for one session, plus its corner list, a summary row and the raw samples.
+
+    The reference is the fastest kept lap that has car data; braking zones are detected on it;
+    then every kept lap x every braking zone gives one row. A row is usable only if the lap has
+    car data and the corner window has no interval over 0.6 s; otherwise it says why.
+    Example (the synthetic session of tests/test_session_build.py): 3 drivers x 3 kept laps and
+    2 braking zones -> 18 rows; a driver without car data gives 6 rows "no car/position data",
+    and a lap with a 1.4 s gap in the second corner 1 row "feed gap in window".
+    Returns (rows, corner rows, summary, raw sample table).
+    """
     key = int(session["session_key"])
     laps = lap_table(key, session["date_end"])
     summary = {"year": year, "round": round_number, "location": session["location"], "session_key": key,
@@ -112,6 +121,7 @@ def raw_sample_table(base, samples):
     x_m, y_m are interpolated in time from the position samples (car and
     position samples come at different moments), so they are for drawing
     track maps, not measurements.
+    Example: a lap with 280 car samples -> 280 rows; times rounded to 1 ms, positions to 1 cm.
     """
     times = samples["time_s"]
     columns = {}

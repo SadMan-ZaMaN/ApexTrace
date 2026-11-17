@@ -20,6 +20,16 @@ from apextrace.identification import FEATURE_GROUPS, RAW_STATS, leave_one_sessio
 
 
 def feature_sets(laps):
+    """The inputs of each model, by name.
+
+    "our features" are the 30 corner columns ("<feature>_rel__<type>": 10 features x slow,
+    medium, fast); the baselines are lap time alone and the 5 whole-lap statistics. "majority"
+    ignores its inputs (it always guesses the driver with more training laps: the floor), and
+    "our features (nearest centroid)" uses the same 30 columns with the simplest classifier, to
+    check that the result is not a property of logistic regression.
+    Example: a lap table with the 30 corner columns gives "our features" = those 30 columns and
+    "our features + lap time" = 31.
+    """
     ours = [c for c in laps.columns if "__" in c]
     return {
         "majority": ours,                      # ignored by the model
@@ -35,6 +45,14 @@ MODEL_KIND = {"majority": "majority", "our features (nearest centroid)": "neares
 
 
 def run(laps, columns, name, labels=None, kind=None):
+    """Leave-one-weekend-out predictions for one set of inputs, and their scores.
+
+    labels replaces the true drivers (the shuffled-label control); kind overrides the model,
+    which otherwise follows the name (MODEL_KIND; logistic regression by default).
+    Returns (one prediction per lap, None where a weekend could not be predicted;
+    {"n", "balanced_accuracy", "macro_f1"}).
+    Example: a pair with 18 shared weekends -> 18 models, each trained on 17 weekends.
+    """
     kind = kind or MODEL_KIND.get(name, "logistic")
     y = laps["driver"].to_numpy() if labels is None else labels
     predictions = leave_one_session_out(laps[columns].to_numpy(dtype=float), y, laps["session_key"].to_numpy(), kind)
@@ -51,6 +69,19 @@ def weekend_vote(laps, predictions):
 
 
 def teammate_task(laps, rng, shuffles=5, verbose=True):
+    """Task (a) of H3: for every team-season, can the inputs tell its two drivers apart on
+    weekends the model never saw?
+
+    The pair is the two drivers with most laps, compared on the weekends both drove; with fewer
+    than 5 such weekends the team-season is skipped (a stand-in for two races can't be tested
+    fairly). For each pair: every input set of feature_sets; the weekend vote; `shuffles` runs
+    with the drivers' labels shuffled inside each weekend (must score about 0.5, else something
+    leaks); each feature group left out in turn (an ablation: how much the score drops without
+    it); and each whole-lap statistic alone, with how often the same driver is higher.
+    Example: a team with drivers A (96 laps), B (90) and a stand-in C (8 laps) is compared as
+    A vs B on the weekends both drove; C's laps are not used.
+    Returns one row per team-season (tests/test_protocol.py checks it on planted differences).
+    """
     sets = feature_sets(laps)
     ours = sets["our features"]
     rows = []
@@ -96,6 +127,13 @@ def teammate_task(laps, rng, shuffles=5, verbose=True):
 
 
 def summarise_teammates(table, rng):
+    """Means over team-seasons with 95 % bootstrap intervals (team-seasons resampled 5,000
+    times), and our features against each baseline: the mean difference, the number of
+    team-seasons where ours was higher, and a two-sided Wilcoxon signed-rank test over the
+    paired differences (one per team-season).
+    Example: four team-seasons, all higher with our features than with lap time -> wins 4,
+    Wilcoxon p = 2 / 2^4 = 0.125, the smallest possible with four.
+    """
     summary = {}
     columns = [c for c in table.columns if c.endswith("| balanced_accuracy") or c.endswith("| weekend vote")
                or c.endswith("| same sign share")]

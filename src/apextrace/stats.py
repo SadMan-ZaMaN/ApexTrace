@@ -27,6 +27,7 @@ from scipy import stats as scipy_stats
 
 
 def mean_difference(a, b):
+    """Mean of a minus mean of b. Example: brake onsets a = [10, 12], b = [7, 9] -> 3.0 (A brakes 3 m later)."""
     return float(np.mean(a) - np.mean(b))
 
 

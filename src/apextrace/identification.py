@@ -78,6 +78,9 @@ def make_model(kind):
     logistic: logistic regression, a linear model with one weight per feature
         and driver; class_weight="balanced" so drivers with fewer laps count equally.
     majority: always predicts the most common driver in training (the floor).
+    Example: logistic regression on 30 inputs and two drivers learns 30 weights and a bias. A
+    missing input (a lap with no fast corner) first gets that column's median over the training
+    laps, then every column is scaled to mean 0 and SD 1 with the training laps' values.
     """
     if kind == "majority":
         return DummyClassifier(strategy="most_frequent")
@@ -98,6 +101,8 @@ def leave_one_session_out(X, y, groups, kind):
     For each session: train on all other sessions, predict this one. A session
     whose training data has fewer than two drivers can't be predicted (None).
     The assert is a leakage guard: a session is never on both sides.
+    Example: 18 sessions -> 18 models, each trained on the other 17; every lap is predicted once,
+    by a model that never saw its session.
     """
     X = np.asarray(X, dtype=float)
     y = np.asarray(y)

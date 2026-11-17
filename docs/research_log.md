@@ -1693,3 +1693,78 @@ weak to moderate).
 - The new tests fail on a stale summary, on a page counter that also counts the page tree, and
   on an e-mail address in the summary. The files were restored byte-identical each time.
 - `docs/preregistration.md` is byte-identical (SHA-256 `bc8c2182…`). 219 tests pass.
+
+## 2026-11-18 — Day 27: code review pass (docstrings, dead code, test gaps)
+
+**Inventory:**
+- every module was parsed for missing docstrings and for functions that nothing calls;
+- coverage was measured over the whole test suite (`coverage`, installed in a scratch folder,
+  not in the project);
+- `pyflakes` checked for unused imports and undefined names.
+
+Coverage was 83 % overall, but two core modules had almost no unit tests:
+- `session_build.py` (19 %): it built every dataset, development, 2025 and 2026;
+- `protocol.py` (22 %): it produced every H3 number.
+
+The usable-window functions in `corners.py` (the 0.6 s rule) were not tested at all.
+
+**New tests:**
+- `tests/test_session_build.py` runs `build_session` end to end on a synthetic session. The four
+  OpenF1 functions are replaced by stand-ins that serve synthetic laps: two corners from
+  `synthetic.make_true_corner`, sampled like the feed, each lap with a planted 20–40 m offset
+  between integrated distance and position. It checks:
+  - the row counts and the reasons for unusable rows;
+  - that the reference skips a driver without car data;
+  - that the raw table keeps every measured sample;
+  - that the measured brake onset of every usable pass is within 15 m of the true onset. The
+    fusion recovered every planted offset, and the errors were −2.3 to +5.9 m.
+- `tests/test_protocol.py` uses synthetic teams whose drivers differ in one corner feature only.
+  It checks:
+  - the pair rule (two drivers with most laps, at least 5 shared weekends);
+  - that our features find the driver (0.79–0.92);
+  - that lap time, whole-lap statistics, shuffled labels and the features without the throttle
+    group all score about 0.5;
+  - the summary against SciPy's Wilcoxon;
+  - a worked weekend-vote example.
+  The first version planted too weak a signal (1.5 SD among 29 noise columns, about 50 training
+  laps), so teams could not be told apart reliably. It is now 3 SD, and the test was cut from 50 s
+  to 6 s with four teams instead of six.
+- `tests/test_corners.py` covers the window bounds, the extra sample kept on each side, the gap
+  threshold and the corner-type boundaries.
+
+**Found:** an interval of exactly 0.60 s counts as a feed gap or not by floating-point rounding.
+`experiments/34_gap_boundary.py` measured it:
+- 0.61% of passes in 2023–2024, 1.03% in 2025 and 1.20% in 2026 sit on
+  that edge;
+- about half of them were kept (92/93,
+  64/81, 59/85
+  kept/dropped).
+
+The rule is not changed (frozen datasets; decisions.md, 2026-11-18). A test pins the current
+behaviour.
+
+**Cleaned up:**
+- `events.brake_release_index` removed (never called).
+- Two unused imports removed in experiments 07 and 13.
+- Docstrings with worked examples for the four `protocol.py` functions, `build_session`,
+  `raw_sample_table`, `samples_in_window`, `first_brake_index`, `make_model`,
+  `leave_one_session_out` and `mean_difference`, plus every web-app route. Each example was run
+  before it was written down.
+- The unused import in `h5_protocol.py` (the frozen 2026 test's code) is left as it was.
+
+**Coverage after:** `protocol.py` 98 %, `session_build.py` 95 %, `corners.py` 95 %, overall 89 %.
+What stays untested is mainly OpenF1 download code, which needs the network and can't run in CI.
+
+**Verified:**
+- The changes to `src/` and `app/` are documentation only. Each file's syntax tree, with
+  docstrings removed, is identical to the committed one, apart from the deliberately removed
+  unused function.
+- Experiments 07 and 13 were re-run offline, and their outputs are byte-identical.
+- The new tests fail on these broken versions, with the files restored byte-identical after each:
+  - session build: the gap rule off; measuring on integrated distance without fusion; a lap
+    without car data allowed as the reference;
+  - protocol: 4 shared weekends accepted; a third driver in the pair; an unshuffled control; a
+    group removal that removes nothing; wins counted the wrong way round.
+- The quick audit passed with today's code (`audit_2026-11-18_quick.json`): Parts A and C exact,
+  Part B within 0.0016, counts and the 2026 timeline consistent.
+- 239 tests pass. `docs/preregistration.md` is byte-identical (SHA-256 `bc8c2182…`).

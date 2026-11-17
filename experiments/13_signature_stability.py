@@ -34,7 +34,7 @@ import pandas as pd
 
 from apextrace.dataset import add_field_relative, clean, load_dataset
 from apextrace.identification import build_lap_table
-from apextrace.plots import SERIES, TEXT_SECONDARY, apply_style
+from apextrace.plots import SERIES, apply_style
 from apextrace.signatures import distance_table, own_rank, season_signatures, sign_test_p, standardise
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
