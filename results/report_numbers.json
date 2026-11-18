@@ -750,12 +750,12 @@
   }
  },
  "audit": {
-  "date": "2026-11-14",
-  "experiments": 26,
-  "not_rerun": 6,
-  "files": "187",
+  "date": "2026-11-19",
+  "experiments": 27,
+  "not_rerun": 7,
+  "files": "189",
   "largest_2025": "0.0016",
-  "tests": "210 passed"
+  "tests": "239 passed"
  },
  "x21": {
   "dev": {

@@ -498,10 +498,10 @@ frozen in `results/final/` and `results/final_2026/`, and `27_final_2026_figures
 saved per-driver tables. `30_audit.py` checks the whole project: it re-runs every development experiment with the
 network blocked (no output may change), recomputes the three preregistered tests in memory from the saved data,
 checks lap counts across files and the 2026 timeline, and runs the tests. Its last full run
-(2026-11-14) re-ran 26 experiments (6 were not re-run, each for a stated reason: the three
-preregistered tests, recomputed in memory instead; two scripts that need OpenF1 online; and the screenshots) and found all 187 output files unchanged, apart from what measures the computer rather than the data (a
+(2026-11-19) re-ran 27 experiments (7 were not re-run, each for a stated reason: the three
+preregistered tests, recomputed in memory instead; two scripts that need OpenF1 online; and two made with a browser, the screenshots and the summary PDF) and found all 189 output files unchanged, apart from what measures the computer rather than the data (a
 build stopwatch and the pilot's cache sizes) and one session note; the recomputed 2025 test matched the frozen one to within
-0.0016 (the saved data have three decimals), and the tests passed (210 passed).
+0.0016 (the saved data have three decimals), and the tests passed (239 passed).
 Every number in this report is filled in from the results files by `experiments/17_write_docs.py`. A
 research log and a decision log record what was done and why, with dates, and `docs/sources.md` lists what was
 downloaded from where and when.

@@ -352,6 +352,12 @@ def collect_audit():
         return None
     report = passed[-1]
     rerun = report["A+B+C re-run, no output may change"]
+    # The report names the scripts that are not re-run by kind: 3 preregistered tests, 2 that need
+    # OpenF1 online, 2 made with a browser (screenshots, summary PDF). A new one must be named there too.
+    named_in_report = {"06_pilot_stats", "14_final_2025", "23_final_2026", "08_download_openf1",
+                       "25_feed_check_2026_diagnosis", "31_screenshots", "33_summary_pdf", "30_audit"}
+    assert set(rerun["reruns"]["not_rerun"]) == named_in_report, (
+        "the audit's NOT_RERUN list changed: update the audit sentence in report.md.j2 and this set")
     return {"date": report["date"], "experiments": len(rerun["reruns"]["runs"]),
             "not_rerun": len(rerun["reruns"]["not_rerun"]) - 1,          # minus the audit itself
             "files": thousands(rerun["outputs"]["files"]),

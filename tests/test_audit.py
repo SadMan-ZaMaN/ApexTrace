@@ -3,6 +3,7 @@ audit or listed with the reason it is not. Otherwise a new script could slip pas
 unnoticed (scripts 31 and 32 nearly did before Audit II)."""
 
 import importlib.util
+import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -29,3 +30,20 @@ def test_the_docs_are_regenerated_last():
     """17_write_docs reads every other result, so it must run after them."""
     audit = load_audit()
     assert audit.RERUN[-1] == "17_write_docs"
+
+
+def test_audit_files_never_contain_local_folders():
+    """Found 2026-11-19: run from a fresh clone under the home folder, the audit file contained the
+    Windows user name (library paths in the last output lines). Every form is replaced."""
+    audit = load_audit()
+    repo, home = r"C:\Users\someone\clone", r"C:\Users\someone"
+    raw = r'File "C:\Users\someone\clone\.venv\x.py", line 3'
+    assert audit.without_local_paths(raw, repo, home) == r'File "<repo>\.venv\x.py", line 3'
+    assert audit.without_local_paths(r"C:\Users\someone\AppData\python.exe", repo, home) == r"<home>\AppData\python.exe"
+    # inside the audit file the same line is JSON, where every backslash is doubled
+    as_json = json.dumps(raw)
+    assert "\\\\" in as_json                                           # really doubled
+    assert audit.without_local_paths(as_json, repo, home) == json.dumps(r'File "<repo>\.venv\x.py", line 3')
+    assert audit.without_local_paths("c:/users/SOMEONE/clone/cache", repo, home) == "<repo>/cache"
+    assert "someone" not in audit.without_local_paths(raw + as_json + "C:/Users/someone/x", repo, home).lower()
+    assert audit.without_local_paths(r"E:\Formula1-Project", repo, home) == r"E:\Formula1-Project"   # others untouched

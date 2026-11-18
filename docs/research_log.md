@@ -1768,3 +1768,56 @@ What stays untested is mainly OpenF1 download code, which needs the network and 
 - The quick audit passed with today's code (`audit_2026-11-18_quick.json`): Parts A and C exact,
   Part B within 0.0016, counts and the 2026 timeline consistent.
 - 239 tests pass. `docs/preregistration.md` is byte-identical (SHA-256 `bc8c2182…`).
+
+## 2026-11-19 — Day 28: the final audit, from a fresh clone of GitHub
+
+**Why:** to show that the published repository alone reproduces every result, with nothing that
+exists only on the author's laptop.
+
+**What was done:**
+- A fresh `git clone` of GitHub at `9b1d804` (the latest pushed commit) into a temporary folder:
+  336 files, and none of the local-only files.
+- A new virtual environment from `requirements.txt` only (Python 3.13.2; FastF1 3.8.3, NumPy 2.5.4,
+  SciPy 1.18.1, pandas 2.3.3), then `pip install -e .`.
+- **239 tests pass in the clone.**
+- The only files copied in were the documented local data, which are not on GitHub because of
+  their size and the data licence:
+  - `cache/` (401 MB of OpenF1/FastF1 downloads);
+  - the three `raw_samples*.parquet` files;
+  - the four files of the 2024 dry runs of the 2026 test.
+  Git in the clone saw no change after the copy, so nothing that came from GitHub was overwritten.
+- **The full audit passed** (`results/30_audit/audit_2026-11-19.json`):
+  - 27 experiments re-run with the network blocked, and all 189 output files unchanged (apart
+    from the documented volatile parts);
+  - Part A recomputed exactly, Part B within 0.0016 (3-decimal saved data), Part C exactly;
+  - lap counts consistent across files; 239 tests.
+- GitHub's CI is green on the last four commits, including `9b1d804`.
+
+**Three things looked at before calling it a pass:**
+- **Four documents showed as modified in the clone.** They were identical apart from line endings
+  (the generator writes LF; git on Windows checks out CRLF): `git diff` showed nothing, and the
+  preregistration's SHA-256 is still `bc8c2182…`.
+- **The 2026 timeline check passed only trivially at first.** Copying the cache reset the files'
+  dates to the copy time. The cache was copied again with its dates kept (`cp -p`), and the quick
+  audit was re-run: the oldest 2026 lap table is from 2026-11-07 08:41:35 UTC, after the first
+  allowed moment (08:41:31) (`audit_2026-11-19_quick.json`).
+- **That quick run first failed one test:** `test_docs`, because the report quotes the latest full
+  audit, and a new one had just been written. After regenerating the documents, the quick audit
+  passed in full.
+
+**Found and fixed:**
+- **The audit file contained the Windows user name**, in library paths of the last output lines
+  (10 lines). The audit now replaces local folders itself (`without_local_paths`; engineering
+  notes, 2026-11-19), and the two files were cleaned with the same function before being added.
+  None of the earlier audit files contained it.
+- **The report's audit sentence said "7 were not re-run"** but named only 6 kinds; the summary PDF
+  (17 Nov) was missing. It is now named, and `17_write_docs.py` stops with a message if a recorded
+  audit's list ever differs from the scripts the sentence names.
+
+**Verified:**
+- The cleaned audit files: no user name or home path left, valid JSON, every section's result
+  identical before and after cleaning, and only the 10 path lines changed.
+- The new test fails on four broken versions of the cleaning function. The guard in
+  `17_write_docs.py` fails when a recorded audit names an extra script.
+- In the project: the documents were regenerated, `docs/preregistration.md` is byte-identical
+  (`bc8c2182…`), and 240 tests pass.

@@ -246,3 +246,14 @@ again (`tests/test_summary_pdf.py` fails while the PDF is older than the summary
   deterministic and every dataset (including the frozen 2025 and 2026 tests) was built with it,
   so it is NOT changed. `tests/test_corners.py` pins both cases, so a "fix" can't slip in unnoticed.
   For a new season it could be made exact by comparing whole clock ticks (round(diff / 0.04) > 15).
+- **2026-11-19 — An audit run from a fresh clone wrote the Windows user name into the audit file.**
+  The audit keeps the last output lines of every re-run script; with the network blocked, FastF1
+  logs a traceback whose file paths point into the virtual environment. Run from
+  `E:\Formula1-Project` those paths reveal nothing, but from a clone under the home folder they
+  contain the user name, and the audit file is committed. Fix: `30_audit.without_local_paths`
+  replaces the repository folder with `<repo>` and the home folder with `<home>` (as written, with
+  doubled backslashes as in JSON, and with forward slashes; any case; the repository first, since it
+  may sit inside the home folder), applied to everything the audit writes. Guarded by
+  `test_audit_files_never_contain_local_folders` (fails without the JSON form, without the
+  forward-slash form, when case-sensitive, and with the folders in the wrong order). The two
+  fresh-clone audit files of 2026-11-19 were cleaned with the same function before being added.

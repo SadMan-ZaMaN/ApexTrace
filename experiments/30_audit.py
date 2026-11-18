@@ -30,6 +30,7 @@ import importlib.util
 import json
 import math
 import os
+import re
 import subprocess
 import sys
 import time
@@ -203,6 +204,28 @@ def offline_environment():
     environment["PYTHONIOENCODING"] = "utf-8"
     environment["MPLBACKEND"] = "Agg"
     return environment
+
+
+def without_local_paths(text, repo_root=None, home=None):
+    """The text with this computer's folders replaced by "<repo>" and "<home>".
+
+    WHY: the audit file is committed, and the last output lines of a script can contain file
+    paths (a library's traceback when the network is blocked). Run from E:\\Formula1-Project those
+    paths reveal nothing, but run from a fresh clone under the user's home folder they contain the
+    Windows user name (found on 2026-11-19). Each path is replaced in the three forms it can take:
+    as written, with doubled backslashes (inside JSON) and with forward slashes; upper or lower case.
+    The repository folder is replaced first, since it may sit inside the home folder.
+    Example: repo C:\\Users\\someone\\clone, home C:\\Users\\someone:
+      'File "C:\\Users\\someone\\clone\\.venv\\x.py"' -> 'File "<repo>\\.venv\\x.py"'
+      'C:\\Users\\someone\\AppData\\python.exe'        -> '<home>\\AppData\\python.exe'
+    """
+    repo_root = str(REPO_ROOT) if repo_root is None else str(repo_root)
+    home = str(Path.home()) if home is None else str(home)
+    for folder, placeholder in ((repo_root, "<repo>"), (home, "<home>")):
+        forms = {folder, folder.replace("\\", "\\\\"), folder.replace("\\", "/")}
+        for form in sorted(forms, key=len, reverse=True):
+            text = re.sub(re.escape(form), lambda _: placeholder, text, flags=re.IGNORECASE)
+    return text
 
 
 def rerun_experiments():
@@ -509,7 +532,7 @@ def main():
         print(f"  -> {'OK' if result['ok'] else 'PROBLEM'}  {json.dumps(shown, default=str)[:600]}", flush=True)
     report["all_ok"] = all(report[title]["ok"] for title, _ in steps)
     out = OUT_DIR / f"audit_{report['date']}{'_quick' if quick else ''}.json"
-    out.write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
+    out.write_text(without_local_paths(json.dumps(report, indent=1, default=str)), encoding="utf-8")
     print(f"\nall checks ok: {report['all_ok']}  (written to {out.relative_to(REPO_ROOT)})")
 
 
