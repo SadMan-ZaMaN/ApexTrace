@@ -1821,3 +1821,45 @@ exists only on the author's laptop.
   `17_write_docs.py` fails when a recorded audit names an extra script.
 - In the project: the documents were regenerated, `docs/preregistration.md` is byte-identical
   (`bc8c2182…`), and 240 tests pass.
+
+## 2026-11-20 — Day 30: handover
+
+**State.**
+- The project is complete as planned, and the working tree is clean at `5a38e39`, which is
+  pushed. GitHub's CI is green on it.
+- **Research:** H1–H5, with both one-time held-out tests: 2025 (H3 replicated, H4 not supported)
+  and 2026 (H5 not supported).
+- **Write-ups and tools:** report v2 after an independent review, the one-page summary
+  (`docs/summary.pdf`), and the web app.
+- **Checks:** 240 tests; the final audit from a fresh clone of GitHub passed on 2026-11-19.
+
+**Open, in order:**
+1. A demo video of the app (link to be added to the README template).
+2. A full reading of the closest related work (most entries in `docs/related_work.md` are
+   abstract-level). Until then, the report says so.
+3. Contact with faculty, using `docs/summary.pdf`.
+
+**Optional research, each under the same rules as before (develop first; write the test down and
+commit it before any held-out data):**
+- the learned model of `docs/ml_plan.md`;
+- 2027 as the next held-out season. Lock it in `FROZEN_SEASONS` before any download, then write a
+  preregistration Part D. Candidates for Part D:
+  - H5 again, with more drivers;
+  - teammate-relative signatures as a confirmatory test;
+  - the CNN;
+  - an exact clock-tick version of the 0.6 s gap rule;
+- the cause of the per-lap position offset (`docs/report.md`, section 6.8);
+- the 2026 sessions after the cutoff: exploratory only.
+
+**Rules for anyone continuing:**
+- Never re-run `06_pilot_stats.py`, `14_final_2025.py` or `23_final_2026.py`, and never write into
+  `results/final/` or `results/final_2026/`.
+- Edit `docs/templates/`, never the generated README, report or summary.
+- Read `docs/engineering_notes.md` before changing a shared rule.
+- Run `experiments/30_audit.py` after any change to shared code.
+
+**Verified:**
+- `git status` was clean, and the local branch equals `origin/main` (`5a38e39`), checked after a
+  fetch.
+- GitHub's Actions API shows the run for `5a38e39` completed with success.
+- Every path named above exists.
